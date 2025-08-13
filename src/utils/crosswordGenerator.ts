@@ -36,11 +36,11 @@ export class CrosswordGenerator {
   
   // Word length constraints
   private readonly MIN_WORD_LENGTH = 3; // Minimum letters per word
-  private readonly MAX_WORD_LENGTH = 4; // Maximum letters per word
+  private readonly MAX_WORD_LENGTH = 5; // Maximum letters per word
   private readonly MIN_FOUNDATION_LENGTH = 4; // Minimum letters for foundation words
-  private readonly MAX_FOUNDATION_LENGTH = 4; // Maximum letters for foundation words
+  private readonly MAX_FOUNDATION_LENGTH = 5; // Maximum letters for foundation words
   private readonly MIN_MEDIUM_LENGTH = 3; // Minimum letters for medium words
-  private readonly MAX_MEDIUM_LENGTH = 4; // Maximum letters for medium words
+  private readonly MAX_MEDIUM_LENGTH = 5; // Maximum letters for medium words
   private readonly SHORT_WORD_LENGTH = 3; // Exact length for short words
 
   constructor(words: string[], gridSize = 12, maxAttempts = 5000) {

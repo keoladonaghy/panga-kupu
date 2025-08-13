@@ -17,7 +17,7 @@ import LanguageSwitcher from './LanguageSwitcher';
 
 // Constants
 const MIN_WORD_LENGTH = 3; // Minimum character limit for valid words
-const MAX_WORD_LENGTH = 4; // Maximum character limit for typed words
+const MAX_WORD_LENGTH = 5; // Maximum character limit for typed words
 
 interface GameState {
   foundWords: string[];
@@ -335,7 +335,7 @@ const HawaiianWordGame: React.FC = () => {
             .replace(/'/g, '') // Remove right single quotes
             .replace(/'/g, '') // Remove left single quotes
         })
-        .filter(word => word.length >= 3 && word.length <= 8 && word.length > 0)
+        .filter(word => word.length >= 3 && word.length <= 5 && word.length > 0)
         .filter((word, index, arr) => arr.indexOf(word) === index); // Remove duplicates
         
       console.log('Words after length filter:', filteredWords.length);
