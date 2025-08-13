@@ -160,16 +160,25 @@ export class CrosswordGenerator {
     const placedWords: CrosswordWord[] = [];
     const usedWords = new Set<string>();
 
-    // Step 1: Start with foundation words
+    // Step 1: Start with foundation words (ensure at least 2 five-letter words)
+    const fiveLetterWords = this.filteredWords.filter(word => word.length === 5);
     const foundationWords = this.filteredWords.filter(word => word.length >= this.MIN_FOUNDATION_LENGTH && word.length <= this.MAX_FOUNDATION_LENGTH);
+    
+    // Check if we have at least 2 five-letter words available
+    if (fiveLetterWords.length < 2) {
+      console.log(`Not enough five-letter words available: ${fiveLetterWords.length}`);
+      return null;
+    }
+    
     if (foundationWords.length < this.MIN_FOUNDATION_WORDS) {
       console.log(`Not enough foundation words (${this.MIN_FOUNDATION_LENGTH}-${this.MAX_FOUNDATION_LENGTH} letters)`);
       return null;
     }
 
-    const shuffledFoundation = [...foundationWords].sort(() => Math.random() - 0.5);
-    const selectedFoundation = shuffledFoundation.slice(0, 2);
-    console.log('Foundation words selected:', selectedFoundation);
+    // Prioritize five-letter words for foundation - ensure we get at least 2
+    const shuffledFiveLetterWords = [...fiveLetterWords].sort(() => Math.random() - 0.5);
+    const selectedFoundation = shuffledFiveLetterWords.slice(0, 2);
+    console.log('Foundation words selected (ensuring 2 five-letter words):', selectedFoundation);
 
     // Place first foundation word horizontally in center
     const firstWord = selectedFoundation[0];
