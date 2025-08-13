@@ -262,7 +262,7 @@ const HawaiianWordGame: React.FC = () => {
     }
   }, []);
 
-  // Function to properly uppercase Hawaiian words while preserving diacritical marks and 'okina
+  // Function to properly uppercase Māori words while preserving diacritical marks
   const toHawaiianUppercase = (word: string): string => {
     const result = word
       .replace(/ā/g, 'Ā')
@@ -270,14 +270,13 @@ const HawaiianWordGame: React.FC = () => {
       .replace(/ī/g, 'Ī')
       .replace(/ō/g, 'Ō')
       .replace(/ū/g, 'Ū')
-      .replace(/'/g, '\u2018') // Convert straight quotes to left single quotation mark
-      .replace(/ʻ/g, '\u2018') // Convert 'okina to left single quotation mark
-      .replace(/`/g, '\u2018') // Convert backticks to left single quotation mark
-      .replace(/'/g, '\u2018') // Convert right single quotes to left single quotation mark
-      .toUpperCase() // This will handle regular letters
-      .replace(/\u2018/g, '\u2018') // Ensure left single quotation mark is preserved after uppercase conversion
-      .replace(/ʻ/g, '\u2018') // Handle any remaining variations
-      .replace(/'/g, '\u2018'); // Ensure all quotes become left single quotation mark
+      // Remove all 'okina character variants
+      .replace(/'/g, '') // Remove straight quotes
+      .replace(/ʻ/g, '') // Remove 'okina
+      .replace(/`/g, '') // Remove backticks
+      .replace(/'/g, '') // Remove right single quotes
+      .replace(/'/g, '') // Remove left single quotes
+      .toUpperCase(); // This will handle regular letters
     
     return result;
   };
@@ -325,22 +324,19 @@ const HawaiianWordGame: React.FC = () => {
       const hasIII = wordsToUse.includes('iii') || wordsToUse.includes('III');
       console.log(`Word list contains "iii": ${hasIII}`);
       
-      // Filter by length (3-8 letters) and remove duplicates while preferring 'okina versions
-      const wordMap = new Map<string, string>();
-      
-      // Process words to handle duplicates - prefer versions with 'okina
-      wordsToUse.forEach(word => {
-        const baseWord = word.replace(/[''ʻ`]/g, ''); // Remove all 'okina variants
-        const existing = wordMap.get(baseWord);
-        
-        // Prefer the version with 'okina if one exists
-        if (!existing || (word.includes("'") || word.includes("'") || word.includes("ʻ"))) {
-          wordMap.set(baseWord, word);
-        }
-      });
-      
-      const filteredWords = Array.from(wordMap.values())
-        .filter(word => word.length >= 3 && word.length <= 8);
+      // Filter by length (3-8 letters) and remove 'okina characters
+      const filteredWords = wordsToUse
+        .map(word => {
+          // Remove all 'okina character variants
+          return word
+            .replace(/'/g, '') // Remove straight quotes
+            .replace(/ʻ/g, '') // Remove 'okina
+            .replace(/`/g, '') // Remove backticks
+            .replace(/'/g, '') // Remove right single quotes
+            .replace(/'/g, '') // Remove left single quotes
+        })
+        .filter(word => word.length >= 3 && word.length <= 8 && word.length > 0)
+        .filter((word, index, arr) => arr.indexOf(word) === index); // Remove duplicates
         
       console.log('Words after length filter:', filteredWords.length);
       console.log('Sample words with okina:', filteredWords.filter(w => w.includes("'") || w.includes("'") || w.includes("ʻ")).slice(0, 10));

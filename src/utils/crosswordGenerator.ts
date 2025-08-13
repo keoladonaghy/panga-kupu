@@ -44,14 +44,15 @@ export class CrosswordGenerator {
   private readonly SHORT_WORD_LENGTH = 3; // Exact length for short words
 
   constructor(words: string[], gridSize = 12, maxAttempts = 5000) {
-    // Normalize and validate words before processing - convert to proper 'okina
+    // Normalize and validate words before processing - remove 'okina characters
     const normalizedWords = words.map(word => {
-      // Ensure consistent 'okina character usage - use U+2018 left single quotation mark
+      // Remove all 'okina character variants
       let normalized = word
-        .replace(/'/g, '\u2018') // Convert straight quotes to left single quotation mark
-        .replace(/ʻ/g, '\u2018') // Convert 'okina to left single quotation mark
-        .replace(/`/g, '\u2018') // Convert backticks to left single quotation mark
-        .replace(/'/g, '\u2018') // Convert right single quotes to left single quotation mark
+        .replace(/'/g, '') // Remove straight quotes
+        .replace(/ʻ/g, '') // Remove 'okina
+        .replace(/`/g, '') // Remove backticks
+        .replace(/'/g, '') // Remove right single quotes
+        .replace(/'/g, '') // Remove left single quotes
         .trim();
       
       console.log(`Word normalization: "${word}" -> "${normalized}"`);
@@ -107,15 +108,10 @@ export class CrosswordGenerator {
   }
 
   private selectRandomLetters(): void {
-    // Hawaiian alphabet consists of: a, e, i, o, u (vowels), ā, ē, ī, ō, ū (vowels with kahakō), h, k, l, m, n, p, w (consonants), and ʻ (ʻokina)
+    // Māori alphabet consists of: a, e, i, o, u (vowels), ā, ē, ī, ō, ū (vowels with kahakō), h, k, l, m, n, p, r, t, w, wh, ng (consonants)
     const vowels = ['a', 'e', 'i', 'o', 'u'];
     const vowelsWithKahako = ['ā', 'ē', 'ī', 'ō', 'ū'];
-    const consonants = ['h', 'k', 'l', 'm', 'n', 'p', 'w'];
-    const okina = '\u2018'; // ʻokina
-    
-    // 80% chance to include ʻokina
-    const includeOkina = Math.random() < 0.8;
-    console.log('Including ʻokina in puzzle:', includeOkina);
+    const consonants = ['h', 'k', 'l', 'm', 'n', 'p', 'r', 't', 'w'];
     
     let selectedLetters: string[] = [];
     
@@ -126,33 +122,18 @@ export class CrosswordGenerator {
       kahakoVowel = vowelsWithKahako[Math.floor(Math.random() * vowelsWithKahako.length)];
     }
     
-    if (includeOkina) {
-      // Include ʻokina and select 6 more letters
-      selectedLetters.push(okina);
-      
-      // Create pool of available letters (excluding kahakō vowels except the selected one)
-      const availableLetters = [...vowels, ...consonants];
-      if (kahakoVowel) {
-        availableLetters.push(kahakoVowel);
-      }
-      
-      const shuffled = [...availableLetters].sort(() => Math.random() - 0.5);
-      selectedLetters = selectedLetters.concat(shuffled.slice(0, this.LETTERS_PER_PUZZLE - 1));
-    } else {
-      // Select 7 letters without ʻokina
-      const availableLetters = [...vowels, ...consonants];
-      if (kahakoVowel) {
-        availableLetters.push(kahakoVowel);
-      }
-      
-      const shuffled = [...availableLetters].sort(() => Math.random() - 0.5);
-      selectedLetters = shuffled.slice(0, this.LETTERS_PER_PUZZLE);
+    // Select 7 letters from available letters
+    const availableLetters = [...vowels, ...consonants];
+    if (kahakoVowel) {
+      availableLetters.push(kahakoVowel);
     }
+    
+    const shuffled = [...availableLetters].sort(() => Math.random() - 0.5);
+    selectedLetters = shuffled.slice(0, this.LETTERS_PER_PUZZLE);
     
     this.selectedLetters = selectedLetters;
     
     console.log(`Selected exactly ${this.LETTERS_PER_PUZZLE} letters for crossword:`, this.selectedLetters);
-    console.log('Contains ʻokina:', this.selectedLetters.includes(okina));
     console.log('Kahakō vowel selected:', kahakoVowel || 'none');
   }
 
@@ -169,15 +150,6 @@ export class CrosswordGenerator {
         return this.selectedLetters.includes(letter);
       });
     });
-    
-    // If any filtered words contain 'okina, ensure it's in selected letters
-    const hasOkinaWords = this.filteredWords.some(word => word.includes('\u2018'));
-    if (hasOkinaWords && !this.selectedLetters.includes('\u2018')) {
-      // Replace a random selected letter with 'okina
-      const randomIndex = Math.floor(Math.random() * this.selectedLetters.length);
-      this.selectedLetters[randomIndex] = '\u2018';
-      console.log('Added \'okina to selected letters due to words containing it');
-    }
   }
 
   private buildStructuredCrossword(): CrosswordGrid | null {
