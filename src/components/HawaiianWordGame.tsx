@@ -294,9 +294,13 @@ const HawaiianWordGame: React.FC = () => {
     }
     
     // If no length provided, check if any version of this word exists
-    return gameState.foundWords.some(foundWord => 
-      foundWord === normalizedWord || foundWord.startsWith(`${normalizedWord}_`)
-    );
+    // Fix: Only match exact word boundaries, not substrings
+    return gameState.foundWords.some(foundWord => {
+      if (foundWord === normalizedWord) return true;
+      // Check for exact word_length format match
+      const parts = foundWord.split('_');
+      return parts.length === 2 && parts[0] === normalizedWord;
+    });
   };
 
   // Load words from public file based on current language
