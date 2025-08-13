@@ -1,0 +1,92 @@
+{
+  "welcome": {
+    "title": "Huli Hua'ōlelo",
+    "startButton": "Start Game",
+    "helpButton": "Help"
+  },
+  "instructions": {
+    "title": "How to Play",
+    "hawaiianToggle": "'Ōlelo Hawaiʻi",
+    "englishToggle": "English",
+    "close": "Close",
+    "steps": {
+      "selectLetters": {
+        "title": "Select Letters:",
+        "description": "Tap the buttons around the wheel to form a word. The wheel contains a mix of:",
+        "vowels": "Hawaiian vowels: a, e, i, o, u",
+        "longVowels": "Long vowels with kahakō: ā, ē, ī, ō, ū",
+        "okina": "The glottal stop: ʻokina (ʻ)",
+        "note": "Letters may appear more than once across different words but are shown only once in the wheel."
+      },
+      "formingWords": {
+        "title": "Forming Words:",
+        "correctSpelling": "Words in the puzzle must be spelled correctly in ʻōlelo Hawaiʻi.",
+        "availableLetters": "All letters in the word must come from the seven on the wheel.",
+        "minLength": "Each word must be at least X letters long (define this minimum if applicable)."
+      },
+      "submitAuto": {
+        "title": "Submit Automatically:",
+        "autoAppear": "When you complete a valid word, it will automatically appear in the crossword-style grid above the wheel.",
+        "noSubmit": "No need to press a \"submit\" button."
+      },
+      "editing": {
+        "title": "Editing:",
+        "mistake": "Made a mistake? Tap the center delete button to remove the last letter you selected.",
+        "keepTapping": "Keep tapping delete to remove letters one by one."
+      },
+      "continue": {
+        "title": "Continue Guessing:",
+        "afterSuccess": "After a successful word, keep going to find more.",
+        "findAll": "Try to discover all the words hidden in the puzzle!"
+      }
+    },
+    "tips": {
+      "title": "Tips",
+      "diacriticals": "Don't forget to use the kahakō (macron) and the ʻokina where needed—they count as distinct characters.",
+      "differences": "Many Hawaiian words differ only by the use of kahakō or the ʻokina. Be careful:",
+      "example": "For example, these are all different words: pau, paʻu, paʻū, and pāʻū.",
+      "pronunciation": "Listen closely to how Hawaiian words are pronounced—they often hint at correct spelling."
+    }
+  },
+  "game": {
+    "wordsFound": "Words Found",
+    "hintsUsed": "Hints Used",
+    "currentWord": "Your Word",
+    "delete": "Delete",
+    "hint": "Hint",
+    "refresh": "New Game",
+    "upload": "Upload Words",
+    "debug": "Debug",
+    "showWords": "Show Words",
+    "hideWords": "Hide Words",
+    "confirmRefresh": {
+      "title": "Start New Game?",
+      "message": "This will reset your current progress and start a new puzzle.",
+      "confirm": "Yes, New Game",
+      "cancel": "Cancel"
+    },
+    "messages": {
+      "wordFound": "UIHĀ!",
+      "wordFoundDesc": "Ua koho pono 'oe iā {{word}}!",
+      "alreadyFound": "UA LOA'A MUA!",
+      "invalidWord": "Not a valid word",
+      "tooShort": "Word too short",
+      "letterNotAvailable": "Letter not available",
+      "threeLetterHint": "Try typing more letters for longer words!",
+      "hintUsed": "Hint used!",
+      "hintLetterRevealed": "Letter revealed: {{letter}}",
+      "noHintsLeft": "No hints left!",
+      "celebrationComplete": "Hauʻoli! Ua pau nā huaʻōlelo!"
+    }
+  },
+  "uploader": {
+    "title": "Upload Custom Word List",
+    "description": "Upload a text file with Hawaiian words (one per line) to create a custom puzzle.",
+    "dragDrop": "Drag and drop a .txt file here, or click to select",
+    "processing": "Processing...",
+    "success": "{{count}} words loaded successfully!",
+    "error": "Error loading file. Please try again.",
+    "useDefault": "Use Default Words",
+    "startGame": "Start Game with Custom Words"
+  }
+}

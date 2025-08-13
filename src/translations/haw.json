@@ -1,0 +1,93 @@
+{
+  "welcome": {
+    "title": "Huli Hua'ōlelo",
+    "startButton": "Holo'ana",
+    "helpButton": "Kōkua"
+  },
+  "instructions": {
+    "title": "Pehea e Pā'ani Ai",
+    "hawaiianToggle": "'Ōlelo Hawaiʻi",
+    "englishToggle": "Pelekania",
+    "close": "Pani",
+    "steps": {
+      "selectLetters": {
+        "title": "Koho Huapalapala:",
+        "description": "Koho i nā pihi i loko o ka huila e kākau ai i kekahi huaʻōlelo. Aia i loko o ka huila 'ehiku huapalapala i 'ike 'ia i loko o nā hua'ōlelo:",
+        "vowels": "Nā hua Hawaiʻi: a, e, i, o, u",
+        "longVowels": "Nā hua me ka kahakō: ā, ē, ī, ō, ū",
+        "okina": "Ka ʻokina: (ʻ)",
+        "note": "Hiki i nā leka ke hōʻike ʻia ma nā huaʻōlelo he nui, akā e hōʻike ʻia hoʻokahi wale nō manawa i loko o ka huila."
+      },
+      "formingWords": {
+        "title": "Ke Haku Huaʻōlelo:",
+        "correctSpelling": "Pono e kākau pololei ʻia nā huaʻōlelo 'ōlelo Hawai'i i hūnā 'ia i loko o ka nane hua'ōlelo.",
+        "availableLetters": "Aia i loko o ka huila nā huapalapala a pau i loa'a i loko o nā hua'ōlelo.",
+        "minLength": "Pono e lōʻihi ka huaʻōlelo i ka nui X o nā leka (hoʻoholo i kēia inā kūpono)."
+      },
+      "submitAuto": {
+        "title": "Hoʻouna ʻAkomi:",
+        "autoAppear": "Ke pau ka huaʻōlelo kūpono, e pāʻia ʻakomi ia ma loko o ka papa huaʻōlelo ma luna o ka huila.",
+        "noSubmit": "ʻAʻole pono e kaomi i ka pihi \"hoʻouna\"."
+      },
+      "editing": {
+        "title": "Hoʻoponopono:",
+        "mistake": "Ua kiko hewa 'oe? E kaomi i ke pihi holoi i waena o nā huapalapala e wehe ai i ka huapalapala hope loa āu i koho ai.",
+        "keepTapping": "Paʻi mau i ka holoi e wehe mau i nā leka hoʻokahi i ka manawa."
+      },
+      "continue": {
+        "title": "E Hoʻomau i ka Nānā ʻana:",
+        "afterSuccess": "Ma hope o ka loaʻa ʻana o kekahi huaʻōlelo kūpono, e hoʻomau e ʻimi i nā mea hou aku.",
+        "findAll": "E hoʻāʻo e ʻike i nā huaʻōlelo a pau i hūnā ʻia i loko o ka pakuhi!"
+      }
+    },
+    "tips": {
+      "title": "Nā Manaʻo Kōkua",
+      "diacriticals": "Mai poina e hoʻohana i ka kahakō (macron) a me ka ʻokina i nā wahi kūpono—he mau leka kūʻokoʻa nō lāua.",
+      "differences": "E makaʻala: Nui nā huaʻōlelo Hawaiʻi e koe wale nō ka hoʻohana ʻana i ka ʻokina a i ʻole ka kahakō.",
+      "example": "He laʻana: ʻokoʻa kēia mau huaʻōlelo: pau, paʻu, paʻū, a me pāʻū.",
+      "pronunciation": "E hoʻolohe pono i ka puana ʻana o nā huaʻōlelo Hawaiʻi—he kōkua ka lohe pono ana i ke kikokiko 'ana i ka hua'ōlelo pololei."
+    }
+  },
+  "game": {
+    "wordsFound": "Nā Huaʻōlelo i Loaʻa",
+    "hintsUsed": "Nā 'ōlelo hoʻohani i hoʻohana ʻia",
+    "currentWord": "Ka Huaʻōlelo e kū nei",
+    "delete": "Holoi",
+    "hint": "'Ōlelo Ho'ohani",
+    "refresh": "Pāʻani Hou",
+    "upload": "Hoʻouka Huaʻōlelo",
+    "debug": "Hoʻoponopono",
+    "showWords": "Hōʻike i nā Huaʻōlelo",
+    "hideWords": "Hūnā i nā Huaʻōlelo",
+    "confirmRefresh": {
+      "title": "Hoʻomaka i pāʻani hou?",
+      "message": "E holoi ʻia kāu holomua a hoʻomaka kekahi nane hou.",
+      "confirm": "Pāʻani Hou",
+      "cancel": "Haʻalele"
+    },
+    "messages": {
+      "wordFound": "UIHĀ!",
+      "wordFoundDesc": "Ua koho pono 'ia 'o {{word}}!",
+      "alreadyFound": "UA LOA'A MUA!",
+      "invalidWord": "ʻAʻole ia he huaʻōlelo i loa'a",
+      "tooShort": "Pōkole loa ka huaʻōlelo",
+      "letterNotAvailable": "ʻAʻole loa'a ia hua papalapala",
+      "threeLetterHint": "E kaomi hou i pihi i huli 'ia no nā huaʻōlelo lōʻihi!",
+      "hintUsed": "Ua hoʻohana ʻia ka 'ōlelo ho'ohani!",
+      "hintLetterRevealed": "Huapalapala i hōʻike ʻia: {{letter}}",
+      "noHintsLeft": "ʻAʻohe 'ōlelo ho'ohani i koe!",
+      "celebrationComplete": "Hulo! Ua lanakila 'oe!"
+    }
+  },
+  "uploader": {
+    "title": "Hoʻouka Papa Huaʻōlelo Hou",
+    "description": "Hoʻouka i kekahi faila kikokikona me nā huaʻōlelo Hawaiʻi (hoʻokahi ma kēlā me kēia laina) e hana ai i pakuhi kūikawā.",
+    "dragDrop": "Kaualakō i ka waihona .txt ma ʻaneʻi, a ho'oku'u, a i 'ole kaomi e koho",
+    "processing": "Ke hoʻoponopono nei...",
+    "success": "{{count}} huaʻōlelo i hoʻouka pono ʻia!",
+    "error": "Hewa i ka hoʻouka faila. E hoʻāʻo hou.",
+    "useDefault": "Hoʻohana i nā Huaʻōlelo Paʻamau",
+    "startGame": "Hoʻomaka i ka Pāʻani me nā Huaʻōlelo Kūikawā"
+  },
+  "loading": "Ke hoʻouka 'ia nei\nnā huaʻōlelo Hawaiʻi..."
+}
