@@ -69,7 +69,7 @@ export class CrosswordGenerator {
     console.log('=== CROSSWORD GENERATION STARTING ===');
     console.log('Total input words:', this.words.length);
     
-    // Try different letter combinations until we get at least MAX_WORDS words
+    // Try different letter combinations until we get at least MAX_WORDS words AND at least 2 five-letter words
     for (let letterAttempt = 0; letterAttempt < 10; letterAttempt++) {
       console.log(`=== LETTER SELECTION ATTEMPT ${letterAttempt + 1}/10 ===`);
       
@@ -82,9 +82,18 @@ export class CrosswordGenerator {
       console.log('Filtered words count:', this.filteredWords.length);
       console.log('Sample filtered words:', this.filteredWords.slice(0, 10));
       
+      // Check if we have enough five-letter words specifically
+      const fiveLetterWords = this.filteredWords.filter(word => word.length === 5);
+      console.log('Five-letter words available:', fiveLetterWords.length, fiveLetterWords.slice(0, 5));
+      
       if (this.filteredWords.length < this.MAX_WORDS) {
         console.log(`WARNING: Not enough words with selected letters for ${this.MAX_WORDS}-word puzzle:`, this.selectedLetters);
         console.log('Available filtered words:', this.filteredWords.length);
+        continue; // Try different letters
+      }
+      
+      if (fiveLetterWords.length < 2) {
+        console.log(`WARNING: Not enough five-letter words with selected letters:`, fiveLetterWords.length);
         continue; // Try different letters
       }
       
@@ -95,15 +104,21 @@ export class CrosswordGenerator {
         }
         const result = this.buildStructuredCrossword();
         if (result && result.words.length >= this.MAX_WORDS) {
-          console.log(`=== CROSSWORD GENERATION SUCCESS WITH ${result.words.length} WORDS ===`);
-          return result;
+          // Verify that we actually have at least 2 five-letter words in the result
+          const resultFiveLetterWords = result.words.filter(word => word.word.length === 5);
+          if (resultFiveLetterWords.length >= 2) {
+            console.log(`=== CROSSWORD GENERATION SUCCESS WITH ${result.words.length} WORDS (${resultFiveLetterWords.length} five-letter words) ===`);
+            return result;
+          } else {
+            console.log(`WARNING: Generated puzzle only has ${resultFiveLetterWords.length} five-letter words, continuing...`);
+          }
         }
       }
       
-      console.log(`Letter set ${letterAttempt + 1} failed to produce ${this.MAX_WORDS}+ words. Trying new letters...`);
+      console.log(`Letter set ${letterAttempt + 1} failed to produce ${this.MAX_WORDS}+ words with 2+ five-letter words. Trying new letters...`);
     }
     
-    console.log(`=== CROSSWORD GENERATION FAILED - Could not achieve ${this.MAX_WORDS} words with any letter combination ===`);
+    console.log(`=== CROSSWORD GENERATION FAILED - Could not achieve ${this.MAX_WORDS} words with 2+ five-letter words ===`);
     return null;
   }
 
