@@ -242,7 +242,7 @@ const HawaiianWordGame: React.FC = () => {
         setGrid(grid);
         setGameState(prev => ({
           ...prev,
-          availableLetters: selectedLetters || [...new Set(placedWords.join('').toLowerCase().split(''))].slice(0, 7),
+          availableLetters: selectedLetters || ['a', 'e', 'i', 'o', 'u', 'h', 'k'], // Use proper Māori letters as fallback
           crosswordWords,
           availableWords
         }));
@@ -254,7 +254,7 @@ const HawaiianWordGame: React.FC = () => {
         setGrid(newGrid);
         setGameState(prev => ({
           ...prev,
-          availableLetters: [...new Set(fallbackWords.join('').toLowerCase().split(''))].slice(0, 7),
+          availableLetters: ['a', 'e', 'i', 'o', 'u', 'h', 'k'], // Use proper Māori letters as fallback
           crosswordWords: [],
           availableWords: fallbackWords.map(word => toHawaiianUppercase(word))
         }));
