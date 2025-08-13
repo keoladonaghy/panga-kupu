@@ -108,10 +108,10 @@ export class CrosswordGenerator {
   }
 
   private selectRandomLetters(): void {
-    // Māori alphabet consists of: a, e, i, o, u (vowels), ā, ē, ī, ō, ū (vowels with kahakō), h, k, l, m, n, p, r, t, w, wh, ng (consonants)
+    // Māori alphabet consists of: a, e, i, o, u (vowels), ā, ē, ī, ō, ū (vowels with kahakō), h, k, m, n, ng, p, r, t, w, wh (consonants)
     const vowels = ['a', 'e', 'i', 'o', 'u'];
     const vowelsWithKahako = ['ā', 'ē', 'ī', 'ō', 'ū'];
-    const consonants = ['h', 'k', 'l', 'm', 'n', 'p', 'r', 't', 'w'];
+    const consonants = ['h', 'k', 'm', 'n', 'ng', 'p', 'r', 't', 'w', 'wh'];
     
     let selectedLetters: string[] = [];
     
