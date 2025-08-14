@@ -89,5 +89,16 @@
     "useDefault": "Use Default Words",
     "startGame": "Start Game with Custom Words"
   },
+  "languageDropdown": {
+    "interfaceLanguage": "Interface Language",
+    "gameLanguage": "Game Language", 
+    "hawaiian": "Hawaiian",
+    "maori": "Māori",
+    "english": "English",
+    "underDevelopment": "(under development)",
+    "cancel": "Cancel",
+    "ok": "OK",
+    "acknowledgment": "Mahalo to Mary Boyce for the Māori word list used in this game."
+  },
   "loading": "Loading Hawaiian words..."
 }

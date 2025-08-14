@@ -88,5 +88,16 @@
     "useDefault": "Whakamahia Kupu Taunoa",
     "startGame": "Tīmata i te kēmu ki ngā kupu motuhake"
   },
+  "languageDropdown": {
+    "interfaceLanguage": "Reo Taputapu",
+    "gameLanguage": "Reo Kēmu",
+    "hawaiian": "ʻŌlelo Hawaiʻi",
+    "maori": "Te Reo Māori", 
+    "english": "Reo Ingarihi",
+    "underDevelopment": "(ka whakawhanaketia nei)",
+    "cancel": "Whakakore",
+    "ok": "Ae",
+    "acknowledgment": "Ngā mihi ki a Mary Boyce nāna ka rārangi kupu e whakamahia i tēnei tanga kupu."
+  },
   "loading": "E tukuatu ana ngā kupu Māori..."
 }

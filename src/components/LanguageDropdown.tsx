@@ -28,15 +28,15 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ className = '' }) =
   const [isOpen, setIsOpen] = useState(false);
 
   const interfaceLanguages = [
-    { code: 'haw', name: 'Hawaiian', disabled: false },
-    { code: 'mao', name: 'Māori', disabled: true },
-    { code: 'en', name: 'English', disabled: false }
+    { code: 'haw', nameKey: 'hawaiian', disabled: false },
+    { code: 'mao', nameKey: 'maori', disabled: true },
+    { code: 'en', nameKey: 'english', disabled: false }
   ];
 
   const gameLanguages = [
-    { code: 'haw', name: 'Hawaiian', disabled: false },
-    { code: 'mao', name: 'Māori', disabled: false },
-    { code: 'en', name: 'English', disabled: true }
+    { code: 'haw', nameKey: 'hawaiian', disabled: false },
+    { code: 'mao', nameKey: 'maori', disabled: false },
+    { code: 'en', nameKey: 'english', disabled: true }
   ];
 
   // Handle applying changes
@@ -84,7 +84,7 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ className = '' }) =
           <div className="space-y-6">
             {/* Interface Language Section */}
             <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Interface Language</h3>
+              <h3 className="font-semibold text-gray-900 mb-3">{t('languageDropdown.interfaceLanguage')}</h3>
               <RadioGroup 
                 value={pendingInterfaceLanguage} 
                 onValueChange={(value) => setPendingInterfaceLanguage(value as SupportedLanguage)}
@@ -104,9 +104,9 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ className = '' }) =
                         lang.disabled ? 'text-gray-400' : 'text-gray-700'
                       }`}
                     >
-                      {lang.name}
+                      {t(`languageDropdown.${lang.nameKey}`)}
                       {lang.disabled && (
-                        <span className="text-xs text-gray-400 ml-1">(under development)</span>
+                        <span className="text-xs text-gray-400 ml-1">{t('languageDropdown.underDevelopment')}</span>
                       )}
                     </Label>
                   </div>
@@ -116,7 +116,7 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ className = '' }) =
 
             {/* Game Language Section */}
             <div>
-              <h3 className="font-semibold text-gray-900 mb-3">Game Language</h3>
+              <h3 className="font-semibold text-gray-900 mb-3">{t('languageDropdown.gameLanguage')}</h3>
               <RadioGroup 
                 value={pendingGameLanguage} 
                 onValueChange={(value) => setPendingGameLanguage(value as SupportedLanguage)}
@@ -136,9 +136,9 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ className = '' }) =
                         lang.disabled ? 'text-gray-400' : 'text-gray-700'
                       }`}
                     >
-                      {lang.name}
+                      {t(`languageDropdown.${lang.nameKey}`)}
                       {lang.disabled && (
-                        <span className="text-xs text-gray-400 ml-1">(under development)</span>
+                        <span className="text-xs text-gray-400 ml-1">{t('languageDropdown.underDevelopment')}</span>
                       )}
                     </Label>
                   </div>
@@ -148,9 +148,7 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ className = '' }) =
 
             {/* Thank you message to Mary Boyce */}
             <div className="text-xs text-gray-500 italic border-t border-gray-100 pt-3">
-              {interfaceLanguage === 'en' && "Mahalo to Mary Boyce for the Māori word list used in this game."}
-              {interfaceLanguage === 'haw' && "Mahalo nui iā Mary Boyce nāna ka papa hua'ōlelo e ho'ohana 'ia i kēia nane."}
-              {interfaceLanguage === 'mao' && "Ngā mihi ki a Mary Boyce nāna ka rārangi kupu e whakamahia i tēnei tanga kupu."}
+              {t('languageDropdown.acknowledgment')}
             </div>
 
             {/* Action Buttons */}
@@ -161,14 +159,14 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ className = '' }) =
                 size="sm"
                 className="flex-1"
               >
-                Cancel
+                {t('languageDropdown.cancel')}
               </Button>
               <Button 
                 onClick={handleApply}
                 size="sm"
                 className="flex-1"
               >
-                OK
+                {t('languageDropdown.ok')}
               </Button>
             </div>
           </div>
