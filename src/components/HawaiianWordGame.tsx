@@ -2531,19 +2531,9 @@ const HawaiianWordGame: React.FC = () => {
       <Dialog open={showInstructions} onOpenChange={setShowInstructions}>
         <DialogOverlay className="bg-black/50" />
         <DialogContent className="max-w-4xl w-full h-[90vh] p-0 bg-white">
-          {/* Header with Close Button and Language Toggle */}
-          <div className="flex items-center justify-between p-4 border-b bg-gray-50">
+          {/* Header with Language Toggle */}
+          <div className="flex items-center justify-start p-4 border-b bg-gray-50">
             <LanguageDropdown />
-
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setShowInstructions(false)}
-              className="rounded-full hover:bg-gray-200"
-              title={t('instructions.close')}
-            >
-              <X className="h-5 w-5" />
-            </Button>
           </div>
 
           {/* Scrollable Content */}
