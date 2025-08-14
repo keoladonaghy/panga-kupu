@@ -832,6 +832,7 @@ const HawaiianWordGame: React.FC = () => {
     // Prevent clicking beyond max length - use dynamic word limits
     const currentWordLimits = getWordLimitsForLanguage(gameLanguage);
     if (currentLength >= currentWordLimits.maxWordLength) {
+      console.log('🔍 DEBUG: HOKA trigger #4 - Letter click blocked at max length', { currentLength, maxLength: currentWordLimits.maxWordLength, timestamp: Date.now() });
       console.log(`🚫 BLOCKED - already at max length (${currentWordLimits.maxWordLength}), cannot add more letters`);
       return;
     }
