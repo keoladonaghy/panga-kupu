@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Globe } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -6,6 +6,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { useLanguageContext } from '@/contexts/LanguageContext';
 import { useTranslation } from '@/hooks/useTranslation';
+import type { SupportedLanguage } from '@/contexts/LanguageContext';
 
 interface LanguageDropdownProps {
   className?: string;
@@ -21,6 +22,11 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ className = '' }) =
   } = useLanguageContext();
   const { t } = useTranslation();
 
+  // Local state for pending selections
+  const [pendingInterfaceLanguage, setPendingInterfaceLanguage] = useState<SupportedLanguage>(interfaceLanguage);
+  const [pendingGameLanguage, setPendingGameLanguage] = useState<SupportedLanguage>(gameLanguage);
+  const [isOpen, setIsOpen] = useState(false);
+
   const interfaceLanguages = [
     { code: 'haw', name: "'Ōlelo Hawaiʻi", disabled: false },
     { code: 'mao', name: 'Te Reo Māori', disabled: true },
@@ -33,9 +39,32 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ className = '' }) =
     { code: 'en', name: 'English', disabled: true }
   ];
 
+  // Handle applying changes
+  const handleApply = () => {
+    setInterfaceLanguage(pendingInterfaceLanguage);
+    setGameLanguage(pendingGameLanguage);
+    setIsOpen(false);
+  };
+
+  // Handle canceling changes
+  const handleCancel = () => {
+    setPendingInterfaceLanguage(interfaceLanguage);
+    setPendingGameLanguage(gameLanguage);
+    setIsOpen(false);
+  };
+
+  // Reset pending changes when popover opens
+  const handleOpenChange = (open: boolean) => {
+    if (open) {
+      setPendingInterfaceLanguage(interfaceLanguage);
+      setPendingGameLanguage(gameLanguage);
+    }
+    setIsOpen(open);
+  };
+
   return (
     <div className={className}>
-      <Popover>
+      <Popover open={isOpen} onOpenChange={handleOpenChange}>
         <PopoverTrigger asChild>
           <Button
             variant="ghost"
@@ -56,8 +85,8 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ className = '' }) =
             <div>
               <h3 className="font-semibold text-gray-900 mb-3">Interface Language</h3>
               <RadioGroup 
-                value={interfaceLanguage} 
-                onValueChange={(value) => setInterfaceLanguage(value as any)}
+                value={pendingInterfaceLanguage} 
+                onValueChange={(value) => setPendingInterfaceLanguage(value as SupportedLanguage)}
                 className="space-y-2"
               >
                 {interfaceLanguages.map((lang) => (
@@ -88,8 +117,8 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ className = '' }) =
             <div>
               <h3 className="font-semibold text-gray-900 mb-3">Game Language</h3>
               <RadioGroup 
-                value={gameLanguage} 
-                onValueChange={(value) => setGameLanguage(value as any)}
+                value={pendingGameLanguage} 
+                onValueChange={(value) => setPendingGameLanguage(value as SupportedLanguage)}
                 className="space-y-2"
               >
                 {gameLanguages.map((lang) => (
@@ -114,6 +143,25 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ className = '' }) =
                   </div>
                 ))}
               </RadioGroup>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-2 pt-4 border-t border-gray-200">
+              <Button 
+                onClick={handleCancel}
+                variant="outline" 
+                size="sm"
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleApply}
+                size="sm"
+                className="flex-1"
+              >
+                OK
+              </Button>
             </div>
           </div>
         </PopoverContent>
