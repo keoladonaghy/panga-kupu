@@ -13,11 +13,11 @@ export interface AllLanguageLimits {
 export const DEFAULT_WORD_LIMITS: AllLanguageLimits = {
   haw: {
     minWordLength: 3,
-    maxWordLength: 5
+    maxWordLength: 4  // Updated from 5 to 4
   },
   mao: {
     minWordLength: 3,
-    maxWordLength: 5
+    maxWordLength: 5  // Stays at 5
   },
   en: {
     minWordLength: 3,
