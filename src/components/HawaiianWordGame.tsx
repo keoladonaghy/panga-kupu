@@ -2234,8 +2234,8 @@ const HawaiianWordGame: React.FC = () => {
                     }
                   }
                   
-                  // If it's exactly 3 letters and not found, start the timeout
-                  if (newValue.length === 3) {
+                  // Check for minimum word length detection with 3-second delay
+                  if (newValue.length >= wordLimits.minWordLength && newValue.length < wordLimits.maxWordLength) {
                     const normalizedWord = toHawaiianUppercase(newValue.trim());
                      const isWordInCrossword = gameState.crosswordWords.some(crosswordWord => 
                        toHawaiianUppercase(crosswordWord.word) === normalizedWord && 
@@ -2244,11 +2244,12 @@ const HawaiianWordGame: React.FC = () => {
                     
                     if (!isWordInCrossword && !gameState.foundWords.includes(normalizedWord)) {
                       const timeout = setTimeout(() => {
-                        // Only show toast if it hasn't been shown before
+                        // Only show toast if it hasn't been shown before for this length
+                        const toastKey = `${wordLimits.minWordLength}LetterToastShown`;
                         if (!gameState.threeLetterToastShown) {
                           toast({
                             title: "Word Not Found",
-                            description: "I am programmed to wait three seconds after you have typed a three letter word, and will assume that is what you wanted. I will then clear your attempt and you can try again with a new word.",
+                            description: `I am programmed to wait three seconds after you have typed a ${newValue.length} letter word, and will assume that is what you wanted. I will then clear your attempt and you can try again with a new word.`,
                             duration: 4000,
                           });
                           // Reset the typed word and clear the input
