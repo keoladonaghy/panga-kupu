@@ -991,7 +991,7 @@ const HawaiianWordGame: React.FC = () => {
     }
     
     // If we've reached max length and no valid word was found, show HOKA!
-    if (newWord.length === MAX_WORD_LENGTH) {
+    if (newWord.length === getWordLimitsForLanguage(gameLanguage).maxWordLength) {
       console.log('🚨 TRIGGERING HOKA! - reached max length with no valid word');
       setGameState(prev => ({
         ...prev,
@@ -2180,8 +2180,9 @@ const HawaiianWordGame: React.FC = () => {
             <div className="flex gap-2 justify-center items-center">
               <Input
                 value={gameState.typedWord}
-                maxLength={MAX_WORD_LENGTH}
+                maxLength={getWordLimitsForLanguage(gameLanguage).maxWordLength}
                 onChange={(e) => {
+                  const wordLimits = getWordLimitsForLanguage(gameLanguage);
                   // Clear any existing timeout
                   if (threeLetterTimeout) {
                     clearTimeout(threeLetterTimeout);
@@ -2194,7 +2195,7 @@ const HawaiianWordGame: React.FC = () => {
                   const newValue = e.target.value;
                   
                   // Check if new value would exceed max length
-                  if (newValue.length > MAX_WORD_LENGTH) {
+                  if (newValue.length > wordLimits.maxWordLength) {
                     // Trigger HOKA! when exceeding length
                     setGameState(prev => ({
                       ...prev,
@@ -2251,7 +2252,7 @@ const HawaiianWordGame: React.FC = () => {
                     } else if (isWordInCrossword && gameState.foundWords.includes(normalizedWord)) {
                       // Only show "already found" if this is a complete word attempt (at max length or through explicit submission)
                       // Don't trigger while user is still potentially typing a longer word
-                      if (newValue.length === MAX_WORD_LENGTH) {
+                      if (newValue.length === wordLimits.maxWordLength) {
                         // Already found this word - show UA LOA'A MUA!
                         setGameState(prev => ({
                           ...prev,
@@ -2318,7 +2319,7 @@ const HawaiianWordGame: React.FC = () => {
                   }
                   
                   // If we've reached max length and no valid word was found, show HOKA!
-                  if (newValue.length === MAX_WORD_LENGTH) {
+                  if (newValue.length === wordLimits.maxWordLength) {
                     // Small delay to ensure the state update above is processed
                     setTimeout(() => {
                       const normalizedWord = toHawaiianUppercase(newValue.trim());
