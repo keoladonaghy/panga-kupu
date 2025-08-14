@@ -2176,7 +2176,7 @@ const HawaiianWordGame: React.FC = () => {
                   top: '50%'
                 }}
               >
-                <span className="text-black font-bold text-lg text-center leading-tight px-2">
+                <span className="text-black font-bold text-2xl text-center leading-tight px-3">
                   {gameState.circleErrorMessage}
                 </span>
               </div>
