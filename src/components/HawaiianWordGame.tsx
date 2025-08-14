@@ -985,7 +985,7 @@ const HawaiianWordGame: React.FC = () => {
       console.log(`❌ No valid word found at length ${newWord.length}, will continue checking as user types more letters`);
       
       // Add 3-second timeout for circle selection at minimum length
-      if (newWord.length >= wordLimits.minWordLength && newWord.length <= wordLimits.maxWordLength) {
+      if (newWord.length >= wordLimits.minWordLength && newWord.length < wordLimits.maxWordLength) {
         console.log(`🕐 Setting 3-second timeout for circle selection word: ${newWord} (length: ${newWord.length})`);
         const timeout = setTimeout(() => {
           console.log(`⏰ 3-second circle timeout triggered for: ${newWord}`);
@@ -1006,6 +1006,9 @@ const HawaiianWordGame: React.FC = () => {
               threeLetterToastShown: true
             }));
           } else {
+            // Clear any other timeouts first
+            clearHokaTimeout();
+            
             setGameState(prev => ({
               ...prev,
               selectedLetters: [],
@@ -1015,13 +1018,13 @@ const HawaiianWordGame: React.FC = () => {
             }));
             
             // Clear the HOKA! message after 1.5 seconds
-            setHokaTimeoutHelper(() => {
+            setHokaTimeout(setTimeout(() => {
               setGameState(prev => ({
                 ...prev,
                 showCircleError: false,
                 circleErrorMessage: ''
               }));
-            });
+            }, 1500));
           }
           setThreeLetterTimeout(null);
         }, 3000);
