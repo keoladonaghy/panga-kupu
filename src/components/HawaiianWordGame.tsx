@@ -91,7 +91,6 @@ const HawaiianWordGame: React.FC = () => {
   const [threeLetterTimeout, setThreeLetterTimeout] = useState<NodeJS.Timeout | null>(null);
   const [wordClearTimeout, setWordClearTimeout] = useState<NodeJS.Timeout | null>(null);
   const [hokaTimeout, setHokaTimeout] = useState<NodeJS.Timeout | null>(null);
-  
   const [revealMode, setRevealMode] = useState(false);
   const [buttonsDisabled, setButtonsDisabled] = useState(false);
   const [showChoiceBox, setShowChoiceBox] = useState(false);
@@ -612,9 +611,9 @@ const HawaiianWordGame: React.FC = () => {
     return Math.max(...remainingWords.map(w => w.word.length));
   }, [gameState.crosswordWords, gameState.foundWords]);
 
-  // Simple word validation - only for circle-selected words, not typed words
+  // Check if current word matches any crossword words - with auto-checking for longest word length
   const checkForCompleteWord = useCallback((word: string, isTypedWord: boolean = false) => {
-    if (!word.trim() || isTypedWord) return; // Skip typed words - they have their own mechanism
+    if (!word.trim()) return;
 
     const normalizedWord = toHawaiianUppercase(word.trim());
     const isWordInCrossword = gameState.crosswordWords.some(crosswordWord => 
@@ -622,35 +621,91 @@ const HawaiianWordGame: React.FC = () => {
       crosswordWord.word.length === normalizedWord.length
     );
 
-    if (isWordInCrossword && !gameState.foundWords.includes(normalizedWord)) {
-      // Word found! Add to found words and clear the current input
-      clearHokaTimeout(); // Clear any pending HOKA timeouts
-      const newFoundWords = [...gameState.foundWords, normalizedWord];
+    // For typed words, check if we should auto-trigger based on longest remaining word length
+    if (isTypedWord) {
+      const longestRemainingLength = getLongestRemainingWordLength();
+      const shouldAutoCheck = word.length === longestRemainingLength && longestRemainingLength > 0;
       
-      setGameState(prev => ({
-        ...prev,
-        foundWords: newFoundWords,
-        selectedLetters: [], // Clear circle selection
-        currentWord: '', // Clear circle word
-        typedWord: '', // Clear typed word
-        showError: false,
-        errorMessage: ''
-      }));
-      
-      toast({
-        title: WORD_FOUND_TOAST_TITLE,
-        description: WORD_FOUND_TOAST_DESCRIPTION(normalizedWord),
-        duration: 2500,
-      });
+      if (shouldAutoCheck) {
+        if (isWordInCrossword && !gameState.foundWords.includes(normalizedWord)) {
+          // Correct word of longest length - reveal it
+          clearHokaTimeout(); // Clear any pending HOKA timeouts
+          const newFoundWords = [...gameState.foundWords, normalizedWord];
+          
+          setGameState(prev => ({
+            ...prev,
+            foundWords: newFoundWords,
+            selectedLetters: [], // Clear circle selection
+            currentWord: '', // Clear circle word
+            typedWord: '', // Clear typed word
+            showError: false,
+            errorMessage: ''
+          }));
+          
+          toast({
+            title: WORD_FOUND_TOAST_TITLE,
+            description: WORD_FOUND_TOAST_DESCRIPTION(normalizedWord),
+            duration: 2500,
+          });
 
-      // Check if all words are found (excluding hint markers)
-      if (getActualFoundWordsCount(newFoundWords) === gameState.crosswordWords.length) {
-        setTimeout(() => {
-          setGameState(prev => ({ ...prev, showCelebration: true, isManualCelebration: false }));
-        }, 1000);
+          // Check if all words are found (excluding hint markers)
+          if (getActualFoundWordsCount(newFoundWords) === gameState.crosswordWords.length) {
+            setTimeout(() => {
+              setGameState(prev => ({ ...prev, showCelebration: true, isManualCelebration: false }));
+            }, 1000);
+          }
+        } else if (!gameState.foundWords.includes(normalizedWord)) {
+          // Incorrect word of longest length - show HOKA!
+          setGameState(prev => ({
+            ...prev,
+            typedWord: 'HOKA!',
+            showError: true,
+            errorMessage: 'HOKA!'
+          }));
+          
+          // Clear the HOKA! after 1.5 seconds
+          setHokaTimeoutHelper(() => {
+            setGameState(prev => ({
+              ...prev,
+              typedWord: '',
+              showError: false,
+              errorMessage: ''
+            }));
+          });
+        }
+      }
+    } else {
+      // For circle-selected words, check immediately
+      if (isWordInCrossword && !gameState.foundWords.includes(normalizedWord)) {
+        // Word found! Add to found words and clear the current input
+        clearHokaTimeout(); // Clear any pending HOKA timeouts
+        const newFoundWords = [...gameState.foundWords, normalizedWord];
+        
+        setGameState(prev => ({
+          ...prev,
+          foundWords: newFoundWords,
+          selectedLetters: [], // Clear circle selection
+          currentWord: '', // Clear circle word
+          typedWord: '', // Clear typed word
+          showError: false,
+          errorMessage: ''
+        }));
+        
+        toast({
+          title: WORD_FOUND_TOAST_TITLE,
+          description: WORD_FOUND_TOAST_DESCRIPTION(normalizedWord),
+          duration: 2500,
+        });
+
+        // Check if all words are found (excluding hint markers)
+        if (getActualFoundWordsCount(newFoundWords) === gameState.crosswordWords.length) {
+          setTimeout(() => {
+            setGameState(prev => ({ ...prev, showCelebration: true, isManualCelebration: false }));
+          }, 1000); // Small delay for the word to register
+        }
       }
     }
-  }, [gameState.crosswordWords, gameState.foundWords, clearHokaTimeout]);
+  }, [gameState.crosswordWords, gameState.foundWords, toast, getLongestRemainingWordLength]);
 
   const handleManualWordCheck = () => {
     // Clear any existing timeouts when manually checking
@@ -1136,7 +1191,6 @@ const HawaiianWordGame: React.FC = () => {
       });
     } else {
       // Incorrect word - show HOKA! and clear the field
-      console.log('🚨 TYPED-WORD-SUBMIT TRIGGER - Setting HOKA! for:', word);
       setGameState(prev => ({
         ...prev,
         typedWord: 'HOKA!',
@@ -2168,10 +2222,8 @@ const HawaiianWordGame: React.FC = () => {
                 value={gameState.typedWord}
                 maxLength={getWordLimitsForLanguage(gameLanguage).maxWordLength}
                 onChange={(e) => {
+                  console.log('🔍 onChange triggered, current input:', e.target.value);
                   const wordLimits = getWordLimitsForLanguage(gameLanguage);
-                  const newValue = e.target.value;
-                  
-                  console.log('🔍 onChange triggered, current input:', newValue, 'prev typedWord:', gameState.typedWord);
                   console.log('📏 Word limits:', wordLimits);
                   
                   // Clear any existing timeout
@@ -2187,6 +2239,8 @@ const HawaiianWordGame: React.FC = () => {
                     console.log('🚫 Prevented typing - HOKA! is displayed');
                     return;
                   }
+                  
+                  const newValue = e.target.value;
                   
                   // Check if new value would exceed max length
                   if (newValue.length > wordLimits.maxWordLength) {
@@ -2208,17 +2262,20 @@ const HawaiianWordGame: React.FC = () => {
                   
                   setGameState(prev => ({ ...prev, typedWord: newValue }));
                   
-                  // NEW CLEAN TRIGGER MECHANISM - SINGLE SOURCE OF TRUTH
-                  if (newValue.length >= wordLimits.minWordLength && newValue.length <= wordLimits.maxWordLength) {
+                  // Check for valid words immediately on any length change
+                  if (newValue.length > 0) {
+                    console.log('🔍 Checking for immediate word match, length:', newValue.length);
                     const normalizedWord = toHawaiianUppercase(newValue.trim());
-                    const isWordInCrossword = gameState.crosswordWords.some(crosswordWord => 
-                      toHawaiianUppercase(crosswordWord.word) === normalizedWord && 
-                      crosswordWord.word.length === normalizedWord.length
-                    );
+                    console.log('🔤 Normalized word:', normalizedWord);
+                     const isWordInCrossword = gameState.crosswordWords.some(crosswordWord => 
+                       toHawaiianUppercase(crosswordWord.word) === normalizedWord && 
+                       crosswordWord.word.length === normalizedWord.length
+                     );
                     
+                    // If it's a valid word that hasn't been found yet
                     if (isWordInCrossword && !gameState.foundWords.includes(normalizedWord)) {
                       // Valid word found - trigger success immediately
-                      clearHokaTimeout();
+                      clearHokaTimeout(); // Clear any pending HOKA timeouts
                       const newFoundWords = [...gameState.foundWords, normalizedWord];
                       
                       setGameState(prev => ({
@@ -2235,73 +2292,131 @@ const HawaiianWordGame: React.FC = () => {
                         duration: 2500,
                       });
 
+                      // Check if all words are found (excluding hint markers)
                       if (getActualFoundWordsCount(newFoundWords) === gameState.crosswordWords.length) {
                         setTimeout(() => {
                           setGameState(prev => ({ ...prev, showCelebration: true, isManualCelebration: false }));
                         }, 1000);
                       }
-                    } else if (!isWordInCrossword && !gameState.foundWords.includes(normalizedWord)) {
-                      // Invalid word - only set timeout for non-max-length words
-                      if (newValue.length < wordLimits.maxWordLength) {
-                        // 3-second timeout for non-max-length words
-                        const timeout = setTimeout(() => {
-                          // Show explanation toast only for 4-letter words (max-1) on first time
-                          const shouldShowExplanation = newValue.length === (wordLimits.maxWordLength - 1);
-                          const hasSeenExplanation = localStorage.getItem('wordDetectionExplanationShown') === 'true';
+                      
+                      return; // Stop here
+                    } else if (isWordInCrossword && gameState.foundWords.includes(normalizedWord)) {
+                      // Only show "already found" if this is a complete word attempt (at max length or through explicit submission)
+                      // Don't trigger while user is still potentially typing a longer word
+                      if (newValue.length === wordLimits.maxWordLength) {
+                        // Already found this word - show UA LOA'A MUA!
+                        setGameState(prev => ({
+                          ...prev,
+                          typedWord: 'UA LOA\'A MUA!'
+                        }));
+                        
+                        // Clear the message after 2 seconds
+                        setTimeout(() => {
+                          setGameState(prev => ({
+                            ...prev,
+                            typedWord: ''
+                          }));
+                        }, 2000);
+                        
+                        return; // Stop here
+                      }
+                    }
+                  }
+                  
+                  // Check for minimum word length detection with 3-second delay
+                  if (newValue.length >= wordLimits.minWordLength && newValue.length <= wordLimits.maxWordLength) {
+                    console.log('✅ Word length qualifies for timeout check:', newValue.length, 'min:', wordLimits.minWordLength, 'max:', wordLimits.maxWordLength);
+                    const normalizedWord = toHawaiianUppercase(newValue.trim());
+                    console.log('🔤 Normalized word for timeout check:', normalizedWord);
+                     const isWordInCrossword = gameState.crosswordWords.some(crosswordWord => 
+                       toHawaiianUppercase(crosswordWord.word) === normalizedWord && 
+                       crosswordWord.word.length === normalizedWord.length
+                     );
+                    console.log('🎯 Is word in crossword?', isWordInCrossword);
+                    console.log('📝 Already found?', gameState.foundWords.includes(normalizedWord));
+                    
+                    if (!isWordInCrossword && !gameState.foundWords.includes(normalizedWord)) {
+                      console.log(`🕐 Setting 3-second timeout for ${newValue.length}-letter word: ${normalizedWord}`);
+                      const timeout = setTimeout(() => {
+                        console.log(`⏰ 3-second timeout triggered for: ${normalizedWord}`);
+                        // Only show explanation toast for words that are max-1 length, not max length
+                        const shouldShowExplanation = newValue.length === (wordLimits.maxWordLength - 1);
+                        const hasSeenExplanation = localStorage.getItem('wordDetectionExplanationShown') === 'true';
+                        
+                        if (shouldShowExplanation && !hasSeenExplanation) {
+                          toast({
+                            title: "Word Detection Explanation",
+                            description: `I am programmed to wait three seconds after you have typed a ${newValue.length} letter word, and will assume that is what you wanted. I will then clear your attempt and you can try again with a new word.`,
+                            duration: 4000,
+                          });
+                          localStorage.setItem('wordDetectionExplanationShown', 'true');
+                          // Reset the typed word and clear the input
+                          setGameState(prev => ({
+                            ...prev,
+                            typedWord: '',
+                            threeLetterToastShown: true
+                          }));
+                        } else {
+                          // Show HOKA! behavior for max length words or after first toast has been shown
+                          setGameState(prev => ({
+                            ...prev,
+                            typedWord: 'HOKA!',
+                            showError: false,
+                            errorMessage: ''
+                          }));
                           
-                          if (shouldShowExplanation && !hasSeenExplanation) {
-                            toast({
-                              title: "Word Detection Explanation",
-                              description: `I am programmed to wait three seconds after you have typed a ${newValue.length} letter word, and will assume that is what you wanted. I will then clear your attempt and you can try again with a new word.`,
-                              duration: 4000,
-                            });
-                            localStorage.setItem('wordDetectionExplanationShown', 'true');
+                          // Clear the HOKA! after 1.5 seconds
+                          setHokaTimeoutHelper(() => {
                             setGameState(prev => ({
                               ...prev,
-                              typedWord: '',
-                              threeLetterToastShown: true
+                              typedWord: ''
                             }));
-                          } else {
-                            // Show HOKA! behavior
-                            setGameState(prev => ({
-                              ...prev,
-                              typedWord: 'HOKA!',
-                              showError: false,
-                              errorMessage: ''
-                            }));
-                            
-                            setHokaTimeoutHelper(() => {
-                              setGameState(prev => ({
-                                ...prev,
-                                typedWord: ''
-                              }));
-                            });
-                          }
-                          setThreeLetterTimeout(null);
-                        }, 3000);
-                        setThreeLetterTimeout(timeout);
-                      } else {
-                        // Max-length invalid word - immediate HOKA! with no timeout
+                          });
+                        }
+                        setThreeLetterTimeout(null);
+                      }, 3000);
+                      setThreeLetterTimeout(timeout);
+                    } else {
+                      console.log(`❌ No timeout set - word either found in crossword or already found: ${normalizedWord}`);
+                    }
+                  }
+                  
+                  // If we've reached max length and no valid word was found, show HOKA!
+                  if (newValue.length === wordLimits.maxWordLength) {
+                    // Clear any pending 3-second timeout to prevent double HOKA!
+                    if (threeLetterTimeout) {
+                      clearTimeout(threeLetterTimeout);
+                      setThreeLetterTimeout(null);
+                    }
+                    
+                    // Small delay to ensure the state update above is processed
+                    setTimeout(() => {
+                      const normalizedWord = toHawaiianUppercase(newValue.trim());
+                       const isWordInCrossword = gameState.crosswordWords.some(crosswordWord => 
+                         toHawaiianUppercase(crosswordWord.word) === normalizedWord && 
+                         crosswordWord.word.length === normalizedWord.length
+                       );
+                      
+                      if (!isWordInCrossword) {
                         setGameState(prev => ({
                           ...prev,
                           typedWord: 'HOKA!'
                         }));
                         
+                        // Clear the HOKA! after 1.5 seconds
                         setHokaTimeoutHelper(() => {
                           setGameState(prev => ({
                             ...prev,
                             typedWord: ''
                           }));
                         });
-                      }
-                    } else if (isWordInCrossword && gameState.foundWords.includes(normalizedWord)) {
-                      // Already found word - only show at max length
-                      if (newValue.length === wordLimits.maxWordLength) {
+                      } else if (gameState.foundWords.includes(normalizedWord)) {
                         setGameState(prev => ({
                           ...prev,
                           typedWord: 'UA LOA\'A MUA!'
                         }));
                         
+                        // Clear the message after 2 seconds
                         setTimeout(() => {
                           setGameState(prev => ({
                             ...prev,
@@ -2309,7 +2424,7 @@ const HawaiianWordGame: React.FC = () => {
                           }));
                         }, 2000);
                       }
-                    }
+                    }, 10);
                   }
                 }}
                 onKeyDown={(e) => {
