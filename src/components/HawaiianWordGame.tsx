@@ -2104,7 +2104,7 @@ const HawaiianWordGame: React.FC = () => {
               <button
                 onClick={() => setGameState(prev => ({ ...prev, currentWord: '' }))}
                 disabled={!gameState.currentWord || buttonsDisabled}
-                className="w-12 h-12 bg-red-500 hover:bg-red-400 disabled:bg-gray-400 
+                className="w-12 h-12 bg-purple-500 hover:bg-purple-400 disabled:bg-gray-400 
                          rounded-lg border-2 border-white/40 text-white font-bold text-sm 
                          transition-all duration-200 hover:scale-110 disabled:scale-100 disabled:cursor-not-allowed
                          flex items-center justify-center"
