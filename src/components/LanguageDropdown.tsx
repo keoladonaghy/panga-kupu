@@ -146,6 +146,13 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ className = '' }) =
               </RadioGroup>
             </div>
 
+            {/* Thank you message to Mary Boyce */}
+            <div className="text-xs text-gray-500 italic border-t border-gray-100 pt-3">
+              {interfaceLanguage === 'en' && "Mahalo to Mary Boyce for the Māori word list used in this game."}
+              {interfaceLanguage === 'haw' && "Mahalo nui iā Mary Boyce nāna ka papa hua'ōlelo e ho'ohana 'ia i kēia nane."}
+              {interfaceLanguage === 'mao' && "Ngā mihi ki a Mary Boyce nāna ka rārangi kupu e whakamahia i tēnei tanga kupu."}
+            </div>
+
             {/* Action Buttons */}
             <div className="flex gap-2 pt-4 border-t border-gray-200">
               <Button 
