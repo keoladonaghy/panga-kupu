@@ -2328,7 +2328,10 @@ const HawaiianWordGame: React.FC = () => {
                   }
                   
                   // Check for minimum word length detection with 3-second delay
-                  if (newValue.length >= wordLimits.minWordLength && newValue.length <= wordLimits.maxWordLength) {
+                  // Skip timeout setup for max-length words since they get immediate processing
+                  if (newValue.length >= wordLimits.minWordLength && 
+                      newValue.length <= wordLimits.maxWordLength &&
+                      newValue.length < wordLimits.maxWordLength) { // Don't set timeout for max length
                     console.log('✅ Word length qualifies for timeout check:', newValue.length, 'min:', wordLimits.minWordLength, 'max:', wordLimits.maxWordLength);
                     const normalizedWord = toHawaiianUppercase(newValue.trim());
                     console.log('🔤 Normalized word for timeout check:', normalizedWord);
