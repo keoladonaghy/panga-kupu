@@ -68,10 +68,9 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ className = '' }) =
         <PopoverTrigger asChild>
           <Button
             variant="ghost"
-            size="icon"
-            className="text-white hover:bg-white/20 rounded-full p-3"
+            className="text-white hover:bg-white/20 rounded-full w-12 h-12 p-0 flex items-center justify-center"
           >
-            <Globe className="h-8 w-8" />
+            <Globe className="h-10 w-10" />
           </Button>
         </PopoverTrigger>
         <PopoverContent 
