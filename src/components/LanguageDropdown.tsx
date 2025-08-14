@@ -65,13 +65,13 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ className = '' }) =
   return (
     <div className={className}>
       <Popover open={isOpen} onOpenChange={handleOpenChange}>
-        {/* Globe icon - made 50% larger than help icon */}
+        {/* Globe icon - moderately larger than help icon */}
         <PopoverTrigger asChild>
           <Button
             variant="ghost"
-            className="text-white hover:bg-white/20 rounded-full min-w-[48px] min-h-[48px] w-12 h-12 p-0 flex items-center justify-center"
+            className="text-white hover:bg-white/20 rounded-full w-9 h-9 p-0 flex items-center justify-center"
           >
-            <Globe className="h-10 w-10 min-w-[40px] min-h-[40px]" style={{width: '40px', height: '40px'}} />
+            <Globe className="h-7 w-7" />
           </Button>
         </PopoverTrigger>
         <PopoverContent 
