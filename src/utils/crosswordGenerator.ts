@@ -71,6 +71,8 @@ export class CrosswordGenerator {
   generateCrossword(): CrosswordGrid | null {
     console.log('=== CROSSWORD GENERATION STARTING ===');
     console.log('Total input words:', this.words.length);
+    console.log('Language:', this.language);
+    console.log('Word limits:', this.wordLimits);
     
     // Try different letter combinations until we get at least MAX_WORDS words AND at least 2 five-letter words
     for (let letterAttempt = 0; letterAttempt < 10; letterAttempt++) {
@@ -85,9 +87,13 @@ export class CrosswordGenerator {
       console.log('Filtered words count:', this.filteredWords.length);
       console.log('Sample filtered words:', this.filteredWords.slice(0, 10));
       
-      // Check if we have enough five-letter words specifically
+      // Check if we have enough five-letter words specifically - BUT only if max length allows it
       const fiveLetterWords = this.filteredWords.filter(word => word.length === 5);
-      console.log('Five-letter words available:', fiveLetterWords.length, fiveLetterWords.slice(0, 5));
+      const maxPossibleLength = Math.min(5, this.wordLimits.maxWordLength);
+      const longestWords = this.filteredWords.filter(word => word.length === maxPossibleLength);
+      console.log(`Five-letter words available: ${fiveLetterWords.length}`);
+      console.log(`Longest possible words (${maxPossibleLength} letters): ${longestWords.length}`);
+      console.log('Sample longest words:', longestWords.slice(0, 5));
       
       if (this.filteredWords.length < this.MAX_WORDS) {
         console.log(`WARNING: Not enough words with selected letters for ${this.MAX_WORDS}-word puzzle:`, this.selectedLetters);
@@ -95,9 +101,13 @@ export class CrosswordGenerator {
         continue; // Try different letters
       }
       
-      if (fiveLetterWords.length < 2) {
+      // Modify the five-letter requirement based on max word length
+      const requiredLongWords = this.wordLimits.maxWordLength >= 5 ? 2 : 0;
+      if (this.wordLimits.maxWordLength >= 5 && fiveLetterWords.length < requiredLongWords) {
         console.log(`WARNING: Not enough five-letter words with selected letters:`, fiveLetterWords.length);
         continue; // Try different letters
+      } else if (this.wordLimits.maxWordLength < 5) {
+        console.log(`INFO: Skipping five-letter requirement since max length is ${this.wordLimits.maxWordLength}`);
       }
       
       // Try to build crossword with current letter selection
@@ -107,21 +117,30 @@ export class CrosswordGenerator {
         }
         const result = this.buildStructuredCrossword();
         if (result && result.words.length >= this.MAX_WORDS) {
-          // Verify that we actually have at least 2 five-letter words in the result
-          const resultFiveLetterWords = result.words.filter(word => word.word.length === 5);
-          if (resultFiveLetterWords.length >= 2) {
-            console.log(`=== CROSSWORD GENERATION SUCCESS WITH ${result.words.length} WORDS (${resultFiveLetterWords.length} five-letter words) ===`);
-            return result;
+          // Verify the required long words based on language constraints
+          if (this.wordLimits.maxWordLength >= 5) {
+            const resultFiveLetterWords = result.words.filter(word => word.word.length === 5);
+            if (resultFiveLetterWords.length >= 2) {
+              console.log(`=== CROSSWORD GENERATION SUCCESS WITH ${result.words.length} WORDS (${resultFiveLetterWords.length} five-letter words) ===`);
+              return result;
+            } else {
+              console.log(`WARNING: Generated puzzle only has ${resultFiveLetterWords.length} five-letter words, continuing...`);
+            }
           } else {
-            console.log(`WARNING: Generated puzzle only has ${resultFiveLetterWords.length} five-letter words, continuing...`);
+            // For languages with shorter max length, just check we have enough words
+            console.log(`=== CROSSWORD GENERATION SUCCESS WITH ${result.words.length} WORDS (max length: ${this.wordLimits.maxWordLength}) ===`);
+            return result;
           }
         }
       }
       
-      console.log(`Letter set ${letterAttempt + 1} failed to produce ${this.MAX_WORDS}+ words with 2+ five-letter words. Trying new letters...`);
+      console.log(`Letter set ${letterAttempt + 1} failed to produce ${this.MAX_WORDS}+ words. Trying new letters...`);
     }
     
-    console.log(`=== CROSSWORD GENERATION FAILED - Could not achieve ${this.MAX_WORDS} words with 2+ five-letter words ===`);
+    const failureReason = this.wordLimits.maxWordLength >= 5 
+      ? `${this.MAX_WORDS} words with 2+ five-letter words`
+      : `${this.MAX_WORDS} words`;
+    console.log(`=== CROSSWORD GENERATION FAILED - Could not achieve ${failureReason} ===`);
     return null;
   }
 
@@ -189,25 +208,32 @@ export class CrosswordGenerator {
     const placedWords: CrosswordWord[] = [];
     const usedWords = new Set<string>();
 
-    // Step 1: Start with foundation words (ensure at least 2 five-letter words)
-    const fiveLetterWords = this.filteredWords.filter(word => word.length === 5);
-    const foundationWords = this.filteredWords.filter(word => word.length >= 4 && word.length <= this.wordLimits.maxWordLength);
+    // Step 1: Start with foundation words - adapt based on max word length
+    const maxFoundationLength = Math.min(5, this.wordLimits.maxWordLength);
+    const foundationWords = this.filteredWords.filter(word => word.length >= 4 && word.length <= maxFoundationLength);
     
-    // Check if we have at least 2 five-letter words available
-    if (fiveLetterWords.length < 2) {
-      console.log(`Not enough five-letter words available: ${fiveLetterWords.length}`);
-      return null;
-    }
+    // For languages with max length >= 5, prioritize five-letter words
+    // For languages with max length < 5, use the longest available words
+    let selectedFoundation: string[];
     
-    if (foundationWords.length < this.MIN_FOUNDATION_WORDS) {
-      console.log(`Not enough foundation words (4-${this.wordLimits.maxWordLength} letters)`);
-      return null;
+    if (this.wordLimits.maxWordLength >= 5) {
+      const fiveLetterWords = this.filteredWords.filter(word => word.length === 5);
+      if (fiveLetterWords.length < 2) {
+        console.log(`Not enough five-letter words available: ${fiveLetterWords.length}`);
+        return null;
+      }
+      selectedFoundation = [...fiveLetterWords].sort(() => Math.random() - 0.5).slice(0, 2);
+      console.log('Foundation words selected (ensuring 2 five-letter words):', selectedFoundation);
+    } else {
+      // For shorter max lengths, use the longest available words
+      const longestWords = this.filteredWords.filter(word => word.length === maxFoundationLength);
+      if (longestWords.length < 2) {
+        console.log(`Not enough ${maxFoundationLength}-letter words available: ${longestWords.length}`);
+        return null;
+      }
+      selectedFoundation = [...longestWords].sort(() => Math.random() - 0.5).slice(0, 2);
+      console.log(`Foundation words selected (ensuring 2 ${maxFoundationLength}-letter words):`, selectedFoundation);
     }
-
-    // Prioritize five-letter words for foundation - ensure we get at least 2
-    const shuffledFiveLetterWords = [...fiveLetterWords].sort(() => Math.random() - 0.5);
-    const selectedFoundation = shuffledFiveLetterWords.slice(0, 2);
-    console.log('Foundation words selected (ensuring 2 five-letter words):', selectedFoundation);
 
     // Place first foundation word horizontally in center
     const firstWord = selectedFoundation[0];
