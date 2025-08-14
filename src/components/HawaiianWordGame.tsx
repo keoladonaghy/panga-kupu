@@ -642,7 +642,7 @@ const HawaiianWordGame: React.FC = () => {
             errorMessage: 'HOKA!'
           }));
           
-          // Clear the HOKA! after 2.5 seconds
+          // Clear the HOKA! after 1.5 seconds
           setTimeout(() => {
             setGameState(prev => ({
               ...prev,
@@ -650,7 +650,7 @@ const HawaiianWordGame: React.FC = () => {
               showError: false,
               errorMessage: ''
             }));
-          }, 2500);
+          }, 1500);
         }
       }
     } else {
@@ -770,7 +770,7 @@ const HawaiianWordGame: React.FC = () => {
           circleErrorMessage: 'HOKA!'
         }));
         
-        // Clear the HOKA! and the word after 2.5 seconds
+        // Clear the HOKA! and the word after 1.5 seconds
         setTimeout(() => {
           setGameState(prev => ({
             ...prev,
@@ -778,7 +778,7 @@ const HawaiianWordGame: React.FC = () => {
             showCircleError: false,
             circleErrorMessage: ''
           }));
-        }, 2500);
+        }, 1500);
       }
     }
   };
@@ -981,14 +981,14 @@ const HawaiianWordGame: React.FC = () => {
               circleErrorMessage: 'HOKA!'
             }));
             
-            // Clear the HOKA! message after 2.5 seconds
+            // Clear the HOKA! message after 1.5 seconds
             setTimeout(() => {
               setGameState(prev => ({
                 ...prev,
                 showCircleError: false,
                 circleErrorMessage: ''
               }));
-            }, 2500);
+            }, 1500);
           }
           setThreeLetterTimeout(null);
         }, 3000);
@@ -1008,7 +1008,7 @@ const HawaiianWordGame: React.FC = () => {
         circleErrorMessage: 'HOKA!'
       }));
       
-      // Clear the HOKA! message and word after 2.5 seconds
+      // Clear the HOKA! message and word after 1.5 seconds
       setTimeout(() => {
         setGameState(prev => ({
           ...prev,
@@ -1016,7 +1016,7 @@ const HawaiianWordGame: React.FC = () => {
           showCircleError: false,
           circleErrorMessage: ''
         }));
-      }, 2500);
+      }, 1500);
     }
   };
 
@@ -1164,13 +1164,13 @@ const HawaiianWordGame: React.FC = () => {
         errorMessage: ''
       }));
       
-      // Clear the HOKA! after 2.5 seconds
+      // Clear the HOKA! after 1.5 seconds
       setTimeout(() => {
         setGameState(prev => ({
           ...prev,
           typedWord: ''
         }));
-      }, 2500);
+      }, 1500);
     }
   };
 
@@ -2215,13 +2215,13 @@ const HawaiianWordGame: React.FC = () => {
                       typedWord: 'HOKA!'
                     }));
                     
-                    // Clear the HOKA! after 2.5 seconds
+                    // Clear the HOKA! after 1.5 seconds
                     setTimeout(() => {
                       setGameState(prev => ({
                         ...prev,
                         typedWord: ''
                       }));
-                    }, 2500);
+                    }, 1500);
                     return;
                   }
                   
@@ -2328,13 +2328,13 @@ const HawaiianWordGame: React.FC = () => {
                             errorMessage: ''
                           }));
                           
-                          // Clear the HOKA! after 2.5 seconds
+                          // Clear the HOKA! after 1.5 seconds
                           setTimeout(() => {
                             setGameState(prev => ({
                               ...prev,
                               typedWord: ''
                             }));
-                          }, 2500);
+                          }, 1500);
                         }
                         setThreeLetterTimeout(null);
                       }, 3000);
@@ -2360,13 +2360,13 @@ const HawaiianWordGame: React.FC = () => {
                           typedWord: 'HOKA!'
                         }));
                         
-                        // Clear the HOKA! after 2.5 seconds
+                        // Clear the HOKA! after 1.5 seconds
                         setTimeout(() => {
                           setGameState(prev => ({
                             ...prev,
                             typedWord: ''
                           }));
-                        }, 2500);
+                        }, 1500);
                       } else if (gameState.foundWords.includes(normalizedWord)) {
                         setGameState(prev => ({
                           ...prev,
