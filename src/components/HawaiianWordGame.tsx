@@ -957,12 +957,15 @@ const HawaiianWordGame: React.FC = () => {
         const timeout = setTimeout(() => {
           console.log(`⏰ 3-second circle timeout triggered for: ${newWord}`);
           // Show HOKA! for invalid words after 3 seconds at minimum length
-          if (!gameState.threeLetterToastShown) {
+          const hasSeenExplanation = localStorage.getItem('wordDetectionExplanationShown') === 'true';
+          
+          if (!hasSeenExplanation) {
             toast({
-              title: "Word Not Found",
+              title: "Word Detection Explanation",
               description: `I am programmed to wait three seconds after you have selected a ${newWord.length} letter word, and will assume that is what you wanted. I will then clear your attempt and you can try again with a new word.`,
               duration: 4000,
             });
+            localStorage.setItem('wordDetectionExplanationShown', 'true');
             setGameState(prev => ({
               ...prev,
               currentWord: '',
@@ -2300,13 +2303,16 @@ const HawaiianWordGame: React.FC = () => {
                       console.log(`🕐 Setting 3-second timeout for ${newValue.length}-letter word: ${normalizedWord}`);
                       const timeout = setTimeout(() => {
                         console.log(`⏰ 3-second timeout triggered for: ${normalizedWord}`);
-                        // Only show toast if it hasn't been shown before for this length
-                        if (!gameState.threeLetterToastShown) {
+                        // Only show explanation toast once per browser using localStorage
+                        const hasSeenExplanation = localStorage.getItem('wordDetectionExplanationShown') === 'true';
+                        
+                        if (!hasSeenExplanation) {
                           toast({
-                            title: "Word Not Found",
+                            title: "Word Detection Explanation",
                             description: `I am programmed to wait three seconds after you have typed a ${newValue.length} letter word, and will assume that is what you wanted. I will then clear your attempt and you can try again with a new word.`,
                             duration: 4000,
                           });
+                          localStorage.setItem('wordDetectionExplanationShown', 'true');
                           // Reset the typed word and clear the input
                           setGameState(prev => ({
                             ...prev,
