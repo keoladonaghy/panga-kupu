@@ -46,6 +46,8 @@ interface GameState {
   lastHintedLetterIndex: number;
   foundThreeLetterWords: string[]; // Track found 3-letter words to avoid re-triggering
   threeLetterToastShown: boolean; // Track if the three-letter timeout toast has been shown
+  showSuccessNotification: boolean;
+  successMessage: string;
 }
 
 // Toast message constants
@@ -75,7 +77,9 @@ const HawaiianWordGame: React.FC = () => {
     lastHintedWord: undefined,
     lastHintedLetterIndex: -1,
     foundThreeLetterWords: [],
-    threeLetterToastShown: false
+    threeLetterToastShown: false,
+    showSuccessNotification: false,
+    successMessage: ''
   });
   
   // Debug hint attempts initialization
@@ -492,7 +496,9 @@ const HawaiianWordGame: React.FC = () => {
       lastHintedWord: undefined,
       lastHintedLetterIndex: -1,
       foundThreeLetterWords: [], // Reset the exclusion list
-      threeLetterToastShown: false
+      threeLetterToastShown: false,
+      showSuccessNotification: false,
+      successMessage: ''
     });
     setLoading(true);
     loadHawaiianWords(true);
@@ -640,14 +646,19 @@ const HawaiianWordGame: React.FC = () => {
             currentWord: '', // Clear circle word
             typedWord: '', // Clear typed word
             showError: false,
-            errorMessage: ''
+            errorMessage: '',
+            showSuccessNotification: true,
+            successMessage: 'UA LOA\'A NO!'
           }));
           
-          toast({
-            title: WORD_FOUND_TOAST_TITLE,
-            description: WORD_FOUND_TOAST_DESCRIPTION(normalizedWord),
-            duration: 2500,
-          });
+          // Auto-hide success notification after 2.5 seconds
+          setTimeout(() => {
+            setGameState(prev => ({
+              ...prev,
+              showSuccessNotification: false,
+              successMessage: ''
+            }));
+          }, 2500);
 
           // Check if all words are found (excluding hint markers)
           if (getActualFoundWordsCount(newFoundWords) === gameState.crosswordWords.length) {
@@ -689,14 +700,19 @@ const HawaiianWordGame: React.FC = () => {
           currentWord: '', // Clear circle word
           typedWord: '', // Clear typed word
           showError: false,
-          errorMessage: ''
+          errorMessage: '',
+          showSuccessNotification: true,
+          successMessage: 'UA LOA\'A NO!'
         }));
         
-        toast({
-          title: WORD_FOUND_TOAST_TITLE,
-          description: WORD_FOUND_TOAST_DESCRIPTION(normalizedWord),
-          duration: 2500,
-        });
+        // Auto-hide success notification after 2.5 seconds
+        setTimeout(() => {
+          setGameState(prev => ({
+            ...prev,
+            showSuccessNotification: false,
+            successMessage: ''
+          }));
+        }, 2500);
 
         // Check if all words are found (excluding hint markers)
         if (getActualFoundWordsCount(newFoundWords) === gameState.crosswordWords.length) {
@@ -773,11 +789,20 @@ const HawaiianWordGame: React.FC = () => {
         }, 3000);
         setWordClearTimeout(clearTimeout);
         
-        toast({
-          title: WORD_FOUND_TOAST_TITLE,
-          description: WORD_FOUND_TOAST_DESCRIPTION(validWord),
-          duration: 2500,
-        });
+        setGameState(prev => ({
+          ...prev,
+          showSuccessNotification: true,
+          successMessage: 'UA LOA\'A NO!'
+        }));
+        
+        // Auto-hide success notification after 2.5 seconds
+        setTimeout(() => {
+          setGameState(prev => ({
+            ...prev,
+            showSuccessNotification: false,
+            successMessage: ''
+          }));
+        }, 2500);
 
         // Check if all words are found
         if (getActualFoundWordsCount(newFoundWords) === gameState.crosswordWords.length) {
@@ -909,11 +934,20 @@ const HawaiianWordGame: React.FC = () => {
         }, 3000);
         setWordClearTimeout(clearTimeout);
         
-        toast({
-          title: WORD_FOUND_TOAST_TITLE,
-          description: WORD_FOUND_TOAST_DESCRIPTION(validWord),
-          duration: 2500,
-        });
+        setGameState(prev => ({
+          ...prev,
+          showSuccessNotification: true,
+          successMessage: 'UA LOA\'A NO!'
+        }));
+        
+        // Auto-hide success notification after 2.5 seconds
+        setTimeout(() => {
+          setGameState(prev => ({
+            ...prev,
+            showSuccessNotification: false,
+            successMessage: ''
+          }));
+        }, 2500);
 
         // Check if all words are found (excluding hint markers)
         if (getActualFoundWordsCount(newFoundWords) === gameState.crosswordWords.length) {
@@ -1088,14 +1122,19 @@ const HawaiianWordGame: React.FC = () => {
         selectedLetters: [],
         currentWord: '',
         showError: false,
-        errorMessage: ''
+        errorMessage: '',
+        showSuccessNotification: true,
+        successMessage: 'UA LOA\'A NO!'
       }));
       
-      toast({
-        title: WORD_FOUND_TOAST_TITLE,
-        description: WORD_FOUND_TOAST_DESCRIPTION(word),
-        duration: 2500,
-      });
+      // Auto-hide success notification after 2.5 seconds
+      setTimeout(() => {
+        setGameState(prev => ({
+          ...prev,
+          showSuccessNotification: false,
+          successMessage: ''
+        }));
+      }, 2500);
 
       // Check if all words are found (excluding hint markers)
       if (getActualFoundWordsCount(newFoundWords) === gameState.crosswordWords.length) {
@@ -1163,14 +1202,19 @@ const HawaiianWordGame: React.FC = () => {
         foundWords: newFoundWords,
         typedWord: '',
         showError: false,
-        errorMessage: ''
+        errorMessage: '',
+        showSuccessNotification: true,
+        successMessage: 'UA LOA\'A NO!'
       }));
       
-      toast({
-        title: WORD_FOUND_TOAST_TITLE,
-        description: WORD_FOUND_TOAST_DESCRIPTION(word),
-        duration: 2500,
-      });
+      // Auto-hide success notification after 2.5 seconds
+      setTimeout(() => {
+        setGameState(prev => ({
+          ...prev,
+          showSuccessNotification: false,
+          successMessage: ''
+        }));
+      }, 2500);
 
       // Check if all words are found (excluding hint markers)
       const actualFoundCount = getActualFoundWordsCount(newFoundWords);
@@ -1704,7 +1748,9 @@ const HawaiianWordGame: React.FC = () => {
       lastHintedWord: undefined,
       lastHintedLetterIndex: -1,
       foundThreeLetterWords: [],
-      threeLetterToastShown: false
+      threeLetterToastShown: false,
+      showSuccessNotification: false,
+      successMessage: ''
     });
     setLoading(true);
     // Reload words with random selection
@@ -1762,7 +1808,9 @@ const HawaiianWordGame: React.FC = () => {
       lastHintedWord: undefined,
       lastHintedLetterIndex: -1,
       foundThreeLetterWords: [],
-      threeLetterToastShown: false
+      threeLetterToastShown: false,
+      showSuccessNotification: false,
+      successMessage: ''
     });
     setLoading(true);
     loadHawaiianWords(true, true); // Use random seed + force test words
@@ -1893,6 +1941,17 @@ const HawaiianWordGame: React.FC = () => {
               <LanguageDropdown />
             </div>
           </div>
+          
+          {/* Success notification box - centered on screen */}
+          <NotificationBox
+            message={gameState.successMessage}
+            isVisible={gameState.showSuccessNotification}
+            position={{
+              left: '50%',
+              top: '20%'
+            }}
+            variant="success"
+          />
           
           {/* Collapsible Debugging Panel - Hidden */}
           <div className="hidden">
@@ -2304,14 +2363,19 @@ const HawaiianWordGame: React.FC = () => {
                         foundWords: newFoundWords,
                         typedWord: '',
                         showError: false,
-                        errorMessage: ''
+                        errorMessage: '',
+                        showSuccessNotification: true,
+                        successMessage: 'UA LOA\'A NO!'
                       }));
                       
-                      toast({
-                        title: WORD_FOUND_TOAST_TITLE,
-                        description: WORD_FOUND_TOAST_DESCRIPTION(normalizedWord),
-                        duration: 2500,
-                      });
+                      // Auto-hide success notification after 2.5 seconds
+                      setTimeout(() => {
+                        setGameState(prev => ({
+                          ...prev,
+                          showSuccessNotification: false,
+                          successMessage: ''
+                        }));
+                      }, 2500);
 
                       // Check if all words are found (excluding hint markers)
                       if (getActualFoundWordsCount(newFoundWords) === gameState.crosswordWords.length) {
