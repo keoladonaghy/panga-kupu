@@ -622,9 +622,13 @@ const HawaiianWordGame: React.FC = () => {
     );
 
     // For typed words, check if we should auto-trigger based on longest remaining word length
+    // Skip auto-check for max-length words since they get immediate processing
     if (isTypedWord) {
+      const wordLimits = getWordLimitsForLanguage(gameLanguage);
       const longestRemainingLength = getLongestRemainingWordLength();
-      const shouldAutoCheck = word.length === longestRemainingLength && longestRemainingLength > 0;
+      const shouldAutoCheck = word.length === longestRemainingLength && 
+                             longestRemainingLength > 0 && 
+                             word.length < wordLimits.maxWordLength; // Skip max-length words
       
       if (shouldAutoCheck) {
         if (isWordInCrossword && !gameState.foundWords.includes(normalizedWord)) {
