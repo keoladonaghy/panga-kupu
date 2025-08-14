@@ -2235,7 +2235,7 @@ const HawaiianWordGame: React.FC = () => {
                   }
                   
                   // Check for minimum word length detection with 3-second delay
-                  if (newValue.length >= wordLimits.minWordLength && newValue.length < wordLimits.maxWordLength) {
+                  if (newValue.length >= wordLimits.minWordLength && newValue.length <= wordLimits.maxWordLength) {
                     const normalizedWord = toHawaiianUppercase(newValue.trim());
                      const isWordInCrossword = gameState.crosswordWords.some(crosswordWord => 
                        toHawaiianUppercase(crosswordWord.word) === normalizedWord && 
@@ -2243,9 +2243,10 @@ const HawaiianWordGame: React.FC = () => {
                      );
                     
                     if (!isWordInCrossword && !gameState.foundWords.includes(normalizedWord)) {
+                      console.log(`🕐 Setting 3-second timeout for ${newValue.length}-letter word: ${normalizedWord}`);
                       const timeout = setTimeout(() => {
+                        console.log(`⏰ 3-second timeout triggered for: ${normalizedWord}`);
                         // Only show toast if it hasn't been shown before for this length
-                        const toastKey = `${wordLimits.minWordLength}LetterToastShown`;
                         if (!gameState.threeLetterToastShown) {
                           toast({
                             title: "Word Not Found",
@@ -2278,6 +2279,8 @@ const HawaiianWordGame: React.FC = () => {
                         setThreeLetterTimeout(null);
                       }, 3000);
                       setThreeLetterTimeout(timeout);
+                    } else {
+                      console.log(`❌ No timeout set - word either found in crossword or already found: ${normalizedWord}`);
                     }
                   }
                   
