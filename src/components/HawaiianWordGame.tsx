@@ -660,6 +660,7 @@ const HawaiianWordGame: React.FC = () => {
           }
         } else if (!gameState.foundWords.includes(normalizedWord)) {
           // Incorrect word of longest length - show HOKA!
+          console.log('🚨 AUTO-CHECK TRIGGER - Setting HOKA! for longest word:', normalizedWord);
           setGameState(prev => ({
             ...prev,
             typedWord: 'HOKA!',
@@ -669,6 +670,7 @@ const HawaiianWordGame: React.FC = () => {
           
           // Clear the HOKA! after 1.5 seconds
           setHokaTimeoutHelper(() => {
+            console.log('🚨 AUTO-CHECK TRIGGER - Clearing HOKA! for:', normalizedWord);
             setGameState(prev => ({
               ...prev,
               typedWord: '',
@@ -2365,6 +2367,7 @@ const HawaiianWordGame: React.FC = () => {
                           }));
                         } else {
                           // Show HOKA! behavior for max length words or after first toast has been shown
+                          console.log('🚨 3-SECOND TIMEOUT TRIGGER - Setting HOKA! for:', normalizedWord);
                           setGameState(prev => ({
                             ...prev,
                             typedWord: 'HOKA!',
@@ -2374,6 +2377,7 @@ const HawaiianWordGame: React.FC = () => {
                           
                           // Clear the HOKA! after 1.5 seconds
                           setHokaTimeoutHelper(() => {
+                            console.log('🚨 3-SECOND TIMEOUT TRIGGER - Clearing HOKA! for:', normalizedWord);
                             setGameState(prev => ({
                               ...prev,
                               typedWord: ''
@@ -2405,6 +2409,7 @@ const HawaiianWordGame: React.FC = () => {
                        );
                       
                       if (!isWordInCrossword) {
+                        console.log('🚨 MAX-LENGTH IMMEDIATE TRIGGER - Setting HOKA! for invalid word:', normalizedWord);
                         setGameState(prev => ({
                           ...prev,
                           typedWord: 'HOKA!'
@@ -2412,6 +2417,7 @@ const HawaiianWordGame: React.FC = () => {
                         
                         // Clear the HOKA! after 1.5 seconds
                         setHokaTimeoutHelper(() => {
+                          console.log('🚨 MAX-LENGTH IMMEDIATE TRIGGER - Clearing HOKA! for:', normalizedWord);
                           setGameState(prev => ({
                             ...prev,
                             typedWord: ''
