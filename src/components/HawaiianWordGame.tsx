@@ -2168,7 +2168,7 @@ const HawaiianWordGame: React.FC = () => {
             {/* HOKA! Warning centered over circle - only for circle errors */}
             {gameState.showCircleError && (
               <div
-                className="absolute w-28 h-14 bg-yellow-400 border-2 border-yellow-500 rounded-lg
+                className="absolute w-48 h-24 bg-yellow-400 border-2 border-yellow-500 rounded-lg
                          flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2
                          animate-scale-in z-10 shadow-lg"
                 style={{
@@ -2176,7 +2176,7 @@ const HawaiianWordGame: React.FC = () => {
                   top: '50%'
                 }}
               >
-                <span className="text-black font-bold text-xs text-center leading-tight px-1">
+                <span className="text-black font-bold text-lg text-center leading-tight px-2">
                   {gameState.circleErrorMessage}
                 </span>
               </div>
