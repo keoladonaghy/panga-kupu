@@ -28,6 +28,7 @@ export class CrosswordGenerator {
   private maxAttempts: number;
   private selectedLetters: string[] = [];
   private filteredWords: string[] = [];
+  private language: 'haw' | 'mao' | 'en'; // Add language parameter
   private readonly MAX_WORDS = 8; // Centralized word count limit
   private readonly MIN_FOUNDATION_WORDS = 2; // Minimum foundation words needed
   private readonly MAX_MEDIUM_WORDS = 7; // Maximum medium words to add
@@ -43,7 +44,7 @@ export class CrosswordGenerator {
   private readonly MAX_MEDIUM_LENGTH = 5; // Maximum letters for medium words
   private readonly SHORT_WORD_LENGTH = 3; // Exact length for short words
 
-  constructor(words: string[], gridSize = 12, maxAttempts = 5000) {
+  constructor(words: string[], gridSize: number = 12, language: 'haw' | 'mao' | 'en' = 'haw') {
     // Normalize and validate words before processing - remove 'okina characters
     const normalizedWords = words.map(word => {
       // Remove all 'okina character variants
@@ -62,7 +63,8 @@ export class CrosswordGenerator {
     console.log('Processed words for crossword:', normalizedWords.length);
     this.words = normalizedWords;
     this.gridSize = gridSize;
-    this.maxAttempts = maxAttempts;
+    this.language = language;
+    this.maxAttempts = 1000;
   }
 
   generateCrossword(): CrosswordGrid | null {
@@ -123,10 +125,21 @@ export class CrosswordGenerator {
   }
 
   private selectRandomLetters(): void {
-    // Māori alphabet consists of: a, e, i, o, u (vowels), ā, ē, ī, ō, ū (vowels with kahakō), h, k, m, n, ng, p, r, t, w, wh (consonants)
-    const vowels = ['a', 'e', 'i', 'o', 'u'];
-    const vowelsWithKahako = ['ā', 'ē', 'ī', 'ō', 'ū'];
-    const consonants = ['h', 'k', 'm', 'n', 'ng', 'p', 'r', 't', 'w', 'wh'];
+    let vowels: string[];
+    let vowelsWithKahako: string[];
+    let consonants: string[];
+    
+    if (this.language === 'haw') {
+      // Hawaiian alphabet consists of: a, e, i, o, u (vowels), ā, ē, ī, ō, ū (vowels with kahakō), h, k, l, m, n, p, w, ʻ (consonants + ʻokina)
+      vowels = ['a', 'e', 'i', 'o', 'u'];
+      vowelsWithKahako = ['ā', 'ē', 'ī', 'ō', 'ū'];
+      consonants = ['h', 'k', 'l', 'm', 'n', 'p', 'w', 'ʻ'];
+    } else {
+      // Māori alphabet consists of: a, e, i, o, u (vowels), ā, ē, ī, ō, ū (vowels with kahakō), h, k, m, n, ng, p, r, t, w, wh (consonants)
+      vowels = ['a', 'e', 'i', 'o', 'u'];
+      vowelsWithKahako = ['ā', 'ē', 'ī', 'ō', 'ū'];
+      consonants = ['h', 'k', 'm', 'n', 'ng', 'p', 'r', 't', 'w', 'wh'];
+    }
     
     let selectedLetters: string[] = [];
     
@@ -148,7 +161,7 @@ export class CrosswordGenerator {
     
     this.selectedLetters = selectedLetters;
     
-    console.log(`Selected exactly ${this.LETTERS_PER_PUZZLE} letters for crossword:`, this.selectedLetters);
+    console.log(`Selected exactly ${this.LETTERS_PER_PUZZLE} letters for ${this.language} crossword:`, this.selectedLetters);
     console.log('Kahakō vowel selected:', kahakoVowel || 'none');
   }
 

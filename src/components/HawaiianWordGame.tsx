@@ -203,7 +203,7 @@ const HawaiianWordGame: React.FC = () => {
   const generateCrosswordLayout = useCallback((allWords: string[]) => {
     console.log('generateCrosswordLayout called with', allWords.length, 'words');
     console.log('Starting crossword generation with', allWords.length, 'total words');
-    const generator = new CrosswordGenerator(allWords, 12);
+    const generator = new CrosswordGenerator(allWords, 12, gameLanguage);
     const crosswordResult = generator.generateCrossword();
     
     console.log('Crossword generation result:', crosswordResult);
@@ -234,7 +234,7 @@ const HawaiianWordGame: React.FC = () => {
       const moreWords = allWords.slice(0, Math.min(50, allWords.length));
       console.log('Retrying with', moreWords.length, 'words');
       
-      const retryGenerator = new CrosswordGenerator(moreWords, 12);
+      const retryGenerator = new CrosswordGenerator(moreWords, 12, gameLanguage);
       const retryResult = retryGenerator.generateCrossword();
       
       if (retryResult) {
@@ -245,7 +245,7 @@ const HawaiianWordGame: React.FC = () => {
         setGrid(grid);
         setGameState(prev => ({
           ...prev,
-          availableLetters: selectedLetters || ['a', 'e', 'i', 'o', 'u', 'h', 'k'], // Use proper Māori letters as fallback
+          availableLetters: selectedLetters || (gameLanguage === 'haw' ? ['a', 'e', 'i', 'o', 'u', 'h', 'k'] : ['a', 'e', 'i', 'o', 'u', 'h', 'k']), // Use appropriate fallback
           crosswordWords,
           availableWords
         }));
@@ -257,7 +257,7 @@ const HawaiianWordGame: React.FC = () => {
         setGrid(newGrid);
         setGameState(prev => ({
           ...prev,
-          availableLetters: ['a', 'e', 'i', 'o', 'u', 'h', 'k'], // Use proper Māori letters as fallback
+          availableLetters: gameLanguage === 'haw' ? ['a', 'e', 'i', 'o', 'u', 'h', 'k'] : ['a', 'e', 'i', 'o', 'u', 'h', 'k'], // Use appropriate fallback
           crosswordWords: [],
           availableWords: fallbackWords.map(word => toHawaiianUppercase(word))
         }));
@@ -532,12 +532,12 @@ const HawaiianWordGame: React.FC = () => {
     }
   }, [gameState.showCelebration, gameState.isManualCelebration, handleCelebrationComplete]);
 
-  // Initialize game
+  // Initialize game and reload when game language changes
   useEffect(() => {
     console.log('Initializing game - loading words from public file...');
     loadHawaiianWords();
     // Progress saving disabled - game starts fresh each time
-  }, [loadHawaiianWords]); // Depend on loadHawaiianWords
+  }, [loadHawaiianWords, gameLanguage]); // Add gameLanguage dependency
 
 
 
