@@ -2382,6 +2382,12 @@ const HawaiianWordGame: React.FC = () => {
                   
                   // If we've reached max length and no valid word was found, show HOKA!
                   if (newValue.length === wordLimits.maxWordLength) {
+                    // Clear any pending 3-second timeout to prevent double HOKA!
+                    if (threeLetterTimeout) {
+                      clearTimeout(threeLetterTimeout);
+                      setThreeLetterTimeout(null);
+                    }
+                    
                     // Small delay to ensure the state update above is processed
                     setTimeout(() => {
                       const normalizedWord = toHawaiianUppercase(newValue.trim());
