@@ -1201,6 +1201,7 @@ const HawaiianWordGame: React.FC = () => {
       });
     } else {
       // Incorrect word - show HOKA! and clear the field
+      console.log('🚨 TYPED-WORD-SUBMIT TRIGGER - Setting HOKA! for:', word);
       setGameState(prev => ({
         ...prev,
         typedWord: 'HOKA!',
@@ -2232,7 +2233,7 @@ const HawaiianWordGame: React.FC = () => {
                 value={gameState.typedWord}
                 maxLength={getWordLimitsForLanguage(gameLanguage).maxWordLength}
                 onChange={(e) => {
-                  console.log('🔍 onChange triggered, current input:', e.target.value);
+                  console.log('🔍 onChange triggered, current input:', e.target.value, 'prev typedWord:', gameState.typedWord);
                   const wordLimits = getWordLimitsForLanguage(gameLanguage);
                   console.log('📏 Word limits:', wordLimits);
                   
@@ -2396,52 +2397,50 @@ const HawaiianWordGame: React.FC = () => {
                     }
                   }
                   
-                  // If we've reached max length and no valid word was found, show HOKA!
-                  if (newValue.length === wordLimits.maxWordLength) {
-                    // Clear any pending 3-second timeout to prevent double HOKA!
-                    if (threeLetterTimeout) {
-                      clearTimeout(threeLetterTimeout);
-                      setThreeLetterTimeout(null);
-                    }
-                    
-                    // Small delay to ensure the state update above is processed
-                    setTimeout(() => {
-                      const normalizedWord = toHawaiianUppercase(newValue.trim());
-                       const isWordInCrossword = gameState.crosswordWords.some(crosswordWord => 
-                         toHawaiianUppercase(crosswordWord.word) === normalizedWord && 
-                         crosswordWord.word.length === normalizedWord.length
-                       );
-                      
-                      if (!isWordInCrossword) {
-                        console.log('🚨 MAX-LENGTH IMMEDIATE TRIGGER - Setting HOKA! for invalid word:', normalizedWord);
-                        setGameState(prev => ({
-                          ...prev,
-                          typedWord: 'HOKA!'
-                        }));
-                        
-                        // Clear the HOKA! after 1.5 seconds
-                        setHokaTimeoutHelper(() => {
-                          console.log('🚨 MAX-LENGTH IMMEDIATE TRIGGER - Clearing HOKA! for:', normalizedWord);
-                          setGameState(prev => ({
-                            ...prev,
-                            typedWord: ''
-                          }));
-                        });
-                      } else if (gameState.foundWords.includes(normalizedWord)) {
-                        setGameState(prev => ({
-                          ...prev,
-                          typedWord: 'UA LOA\'A MUA!'
-                        }));
-                        
-                        // Clear the message after 2 seconds
-                        setTimeout(() => {
-                          setGameState(prev => ({
-                            ...prev,
-                            typedWord: ''
-                          }));
-                        }, 2000);
-                      }
-                    }, 10);
+                   // If we've reached max length and no valid word was found, show HOKA!
+                   if (newValue.length === wordLimits.maxWordLength) {
+                     // Clear any pending 3-second timeout to prevent double HOKA!
+                     if (threeLetterTimeout) {
+                       clearTimeout(threeLetterTimeout);
+                       setThreeLetterTimeout(null);
+                     }
+                     
+                     // Immediate check without setTimeout to prevent race conditions
+                     const normalizedWord = toHawaiianUppercase(newValue.trim());
+                      const isWordInCrossword = gameState.crosswordWords.some(crosswordWord => 
+                        toHawaiianUppercase(crosswordWord.word) === normalizedWord && 
+                        crosswordWord.word.length === normalizedWord.length
+                      );
+                     
+                     if (!isWordInCrossword) {
+                       console.log('🚨 MAX-LENGTH IMMEDIATE TRIGGER - Setting HOKA! for invalid word:', normalizedWord);
+                       setGameState(prev => ({
+                         ...prev,
+                         typedWord: 'HOKA!'
+                       }));
+                       
+                       // Clear the HOKA! after 1.5 seconds
+                       setHokaTimeoutHelper(() => {
+                         console.log('🚨 MAX-LENGTH IMMEDIATE TRIGGER - Clearing HOKA! for:', normalizedWord);
+                         setGameState(prev => ({
+                           ...prev,
+                           typedWord: ''
+                         }));
+                       });
+                     } else if (gameState.foundWords.includes(normalizedWord)) {
+                       setGameState(prev => ({
+                         ...prev,
+                         typedWord: 'UA LOA\'A MUA!'
+                       }));
+                       
+                       // Clear the message after 2 seconds
+                       setTimeout(() => {
+                         setGameState(prev => ({
+                           ...prev,
+                           typedWord: ''
+                         }));
+                       }, 2000);
+                     }
                   }
                 }}
                 onKeyDown={(e) => {
