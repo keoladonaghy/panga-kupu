@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { NotificationBox } from './NotificationBox';
 import { Lightbulb, Upload, RotateCcw, ChevronDown, ChevronRight, Delete, HelpCircle, X, RefreshCcw, CornerDownLeft, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -2165,22 +2166,15 @@ const HawaiianWordGame: React.FC = () => {
               <Delete className="w-6 h-6" />
             </button>
             
-            {/* HOKA! Warning centered over circle - only for circle errors */}
-            {gameState.showCircleError && (
-              <div
-                className="absolute w-48 h-24 bg-yellow-400 border-2 border-yellow-500 rounded-lg
-                         flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2
-                         animate-scale-in z-10 shadow-lg"
-                style={{
-                  left: '50%',
-                  top: '50%'
-                }}
-              >
-                <span className="text-black font-bold text-2xl text-center leading-tight px-3">
-                  {gameState.circleErrorMessage}
-                </span>
-              </div>
-            )}
+            {/* Notification box centered over circle */}
+            <NotificationBox
+              message={gameState.circleErrorMessage}
+              isVisible={gameState.showCircleError}
+              position={{
+                left: '50%',
+                top: '50%'
+              }}
+            />
             
             {gameState.availableLetters.map((letter, index) => {
               console.log(`🔤 Rendering letter ${index}: "${letter}"`);
@@ -2229,9 +2223,18 @@ const HawaiianWordGame: React.FC = () => {
 
         {/* Type Word Input - New Feature */}
         <div className="text-center mb-6 hidden">
-          <div className="bg-white/20 rounded-lg p-4 backdrop-blur-sm inline-block">
+          <div className="bg-white/20 rounded-lg p-4 backdrop-blur-sm inline-block relative">
             <div className="text-white mb-3 text-sm sm:text-base">Or type a word directly:</div>
             <div className="flex gap-2 justify-center items-center">
+              {/* Notification box overlay for typed input area */}
+              <NotificationBox
+                message={gameState.typedWord === 'HOKA!' ? 'HOKA!' : gameState.typedWord === 'UA LOA\'A MUA!' ? 'UA LOA\'A MUA!' : ''}
+                isVisible={gameState.typedWord === 'HOKA!' || gameState.typedWord === 'UA LOA\'A MUA!'}
+                position={{
+                  left: '50%',
+                  top: '50%'
+                }}
+              />
               <Input
                 value={gameState.typedWord}
                 maxLength={getWordLimitsForLanguage(gameLanguage).maxWordLength}
