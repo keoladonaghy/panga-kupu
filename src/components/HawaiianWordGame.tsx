@@ -500,14 +500,11 @@ const HawaiianWordGame: React.FC = () => {
   // Cleanup timeouts on unmount
   useEffect(() => {
     return () => {
-      if (threeLetterTimeout) {
-        clearTimeout(threeLetterTimeout);
-      }
       if (wordClearTimeout) {
         clearTimeout(wordClearTimeout);
       }
     };
-  }, [threeLetterTimeout, wordClearTimeout]);
+  }, [wordClearTimeout]);
 
   // Handle celebration animation and auto-restart
   useEffect(() => {
@@ -818,7 +815,9 @@ const HawaiianWordGame: React.FC = () => {
     }));
     
     // Check for valid words at minimum length and above
-    if (newWord.length >= MIN_WORD_LENGTH) {
+    // Check if word meets minimum length requirement for this language
+    const wordLimits = getWordLimitsForLanguage(gameLanguage);
+    if (newWord.length >= wordLimits.minWordLength) {
       console.log('🔍 Checking word validity at length', newWord.length, ':', newWord);
       
       const normalizedWord = toHawaiianUppercase(newWord.trim());
@@ -865,7 +864,8 @@ const HawaiianWordGame: React.FC = () => {
           lastHintedLetterIndex: -1
         }));
         
-        // Wait 3 seconds before clearing the current word
+        // Language-specific 3-second delay before clearing the current word
+        console.log(`⏱️ Setting 3-second delay before clearing word (found at length ${newWord.length})`);
         const clearTimeout = setTimeout(() => {
           setGameState(prev => ({
             ...prev,
@@ -948,50 +948,32 @@ const HawaiianWordGame: React.FC = () => {
         return; // Stop here
       }
       
-      // If it's exactly 3 letters and not found, start the timeout
-      if (newWord.length === 3) {
-        const timeout = setTimeout(() => {
-          // Only show toast if it hasn't been shown before
-          if (!gameState.threeLetterToastShown) {
-            toast({
-              title: "Word Not Found",
-              description: "I am programmed to wait three seconds after you have typed a three letter word, and will assume that is what you wanted. I will then clear your attempt and you can try again with a new word.",
-              duration: 4000,
-            });
-            // Reset the current word attempt and selected letters
-            setGameState(prev => ({
-              ...prev,
-              selectedLetters: [],
-              currentWord: '',
-              threeLetterToastShown: true
-            }));
-          } else {
-            // Show HOKA! behavior after first toast has been shown
-            setGameState(prev => ({
-              ...prev,
-              selectedLetters: [],
-              showCircleError: true,
-              circleErrorMessage: 'HOKA!'
-            }));
-            
-            // Clear the HOKA! and word after 2 seconds
-            setTimeout(() => {
-              setGameState(prev => ({
-                ...prev,
-                currentWord: '',
-                showCircleError: false,
-                circleErrorMessage: ''
-              }));
-            }, 2000);
-          }
-          setThreeLetterTimeout(null);
-        }, 3000);
-        setThreeLetterTimeout(timeout);
-      }
+      // Continue checking for words if no match found at current length
+      console.log(`❌ No valid word found at length ${newWord.length}, will continue checking as user types more letters`);
+    } else {
+      console.log(`⏳ Word too short (${newWord.length} < ${wordLimits.minWordLength}), waiting for more letters...`);
     }
     
     // If we've reached max length and no valid word was found, show HOKA!
-    if (newWord.length === getWordLimitsForLanguage(gameLanguage).maxWordLength) {
+    if (newWord.length === wordLimits.maxWordLength) {
+      console.log(`🚨 REACHED MAX LENGTH (${wordLimits.maxWordLength}) - No valid word found, triggering HOKA!`);
+      setGameState(prev => ({
+        ...prev,
+        selectedLetters: [],
+        showCircleError: true,
+        circleErrorMessage: 'HOKA!'
+      }));
+      
+      // Clear the HOKA! message and word after 2 seconds
+      setTimeout(() => {
+        setGameState(prev => ({
+          ...prev,
+          currentWord: '',
+          showCircleError: false,
+          circleErrorMessage: ''
+        }));
+      }, 2000);
+    }
       console.log('🚨 TRIGGERING HOKA! - reached max length with no valid word');
       setGameState(prev => ({
         ...prev,
@@ -1010,7 +992,7 @@ const HawaiianWordGame: React.FC = () => {
         }));
       }, 2000);
     }
-  };
+  }, [gameState, toast, toHawaiianUppercase, wordClearTimeout, gameLanguage]);
 
   const handleWordSubmit = () => {
     const word = toHawaiianUppercase(gameState.currentWord.trim());
