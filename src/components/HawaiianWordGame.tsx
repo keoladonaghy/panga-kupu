@@ -561,6 +561,7 @@ const HawaiianWordGame: React.FC = () => {
       clearTimeout(threeLetterTimeout);
       setThreeLetterTimeout(null);
     }
+    clearHokaTimeout();
     
     setGameState(prev => ({
       ...prev,
@@ -628,6 +629,7 @@ const HawaiianWordGame: React.FC = () => {
       if (shouldAutoCheck) {
         if (isWordInCrossword && !gameState.foundWords.includes(normalizedWord)) {
           // Correct word of longest length - reveal it
+          clearHokaTimeout(); // Clear any pending HOKA timeouts
           const newFoundWords = [...gameState.foundWords, normalizedWord];
           
           setGameState(prev => ({
@@ -676,6 +678,7 @@ const HawaiianWordGame: React.FC = () => {
       // For circle-selected words, check immediately
       if (isWordInCrossword && !gameState.foundWords.includes(normalizedWord)) {
         // Word found! Add to found words and clear the current input
+        clearHokaTimeout(); // Clear any pending HOKA timeouts
         const newFoundWords = [...gameState.foundWords, normalizedWord];
         
         setGameState(prev => ({
@@ -747,6 +750,7 @@ const HawaiianWordGame: React.FC = () => {
           [...gameState.foundThreeLetterWords, validWord] : 
           gameState.foundThreeLetterWords;
         
+        clearHokaTimeout(); // Clear any pending HOKA timeouts
         setGameState(prev => ({
           ...prev,
           foundWords: newFoundWords,
@@ -825,9 +829,10 @@ const HawaiianWordGame: React.FC = () => {
     console.log('MIN_WORD_LENGTH:', MIN_WORD_LENGTH);
     console.log('MAX_WORD_LENGTH:', MAX_WORD_LENGTH);
     
-    // Prevent clicking beyond max length
-    if (currentLength >= MAX_WORD_LENGTH) {
-      console.log('🚫 BLOCKED - already at max length, cannot add more letters');
+    // Prevent clicking beyond max length - use dynamic word limits
+    const currentWordLimits = getWordLimitsForLanguage(gameLanguage);
+    if (currentLength >= currentWordLimits.maxWordLength) {
+      console.log(`🚫 BLOCKED - already at max length (${currentWordLimits.maxWordLength}), cannot add more letters`);
       return;
     }
     
@@ -878,6 +883,7 @@ const HawaiianWordGame: React.FC = () => {
           [...gameState.foundThreeLetterWords, validWord] : 
           gameState.foundThreeLetterWords;
         
+        clearHokaTimeout(); // Clear any pending HOKA timeouts
         setGameState(prev => ({
           ...prev,
           foundWords: newFoundWords,
@@ -1058,6 +1064,7 @@ const HawaiianWordGame: React.FC = () => {
 
     if (isWordInCrossword && !gameState.foundWords.includes(word)) {
       // Word found! Add to found words and clear current word
+      clearHokaTimeout(); // Clear any pending HOKA timeouts
       const newFoundWords = [...gameState.foundWords, word];
       
       setGameState(prev => ({
@@ -1132,6 +1139,7 @@ const HawaiianWordGame: React.FC = () => {
 
     if (matchingCrosswordWords.length > 0 && !isWordFound(word, word.length)) {
       // Word found! Add to found words with length suffix for consistency
+      clearHokaTimeout(); // Clear any pending HOKA timeouts
       const wordWithLength = `${word}_${word.length}`;
       const newFoundWords = [...gameState.foundWords, wordWithLength];
       
@@ -2267,6 +2275,7 @@ const HawaiianWordGame: React.FC = () => {
                     // If it's a valid word that hasn't been found yet
                     if (isWordInCrossword && !gameState.foundWords.includes(normalizedWord)) {
                       // Valid word found - trigger success immediately
+                      clearHokaTimeout(); // Clear any pending HOKA timeouts
                       const newFoundWords = [...gameState.foundWords, normalizedWord];
                       
                       setGameState(prev => ({
