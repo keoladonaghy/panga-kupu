@@ -1863,7 +1863,7 @@ const HawaiianWordGame: React.FC = () => {
             </div>
             <div className="flex items-center">
               <h1 className="text-lg sm:text-2xl font-bold text-white shadow-puzzle">
-                &nbsp;{t('welcome.title')}&nbsp;
+                &nbsp;{gameLanguage === 'haw' ? 'Nane Huaʻōlelo' : gameLanguage === 'mao' ? 'Panga Kupu' : 'Hawaiian Word Puzzle'}&nbsp;
               </h1>
               <Button
                 variant="ghost"
