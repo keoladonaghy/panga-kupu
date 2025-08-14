@@ -1041,22 +1041,25 @@ const HawaiianWordGame: React.FC = () => {
         setThreeLetterTimeout(null);
       }
       
+      // Clear any pending HOKA timeouts to prevent overlap
+      clearHokaTimeout();
+      
       setGameState(prev => ({
         ...prev,
         selectedLetters: [],
+        currentWord: '',  // Clear immediately, don't wait
         showCircleError: true,
         circleErrorMessage: 'HOKA!'
       }));
       
-      // Clear the HOKA! message and word after 1.5 seconds
-      setHokaTimeoutHelper(() => {
+      // Clear the HOKA! message after 1.5 seconds - single timeout only
+      setHokaTimeout(setTimeout(() => {
         setGameState(prev => ({
           ...prev,
-          currentWord: '',
           showCircleError: false,
           circleErrorMessage: ''
         }));
-      });
+      }, 1500));
     }
   };
 
