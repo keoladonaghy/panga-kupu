@@ -2244,6 +2244,7 @@ const HawaiianWordGame: React.FC = () => {
                   
                   // Check if new value would exceed max length
                   if (newValue.length > wordLimits.maxWordLength) {
+                    console.log('🔍 DEBUG: HOKA trigger #1 - Input exceeds max length', { newValueLength: newValue.length, maxLength: wordLimits.maxWordLength, timestamp: Date.now() });
                     // Trigger HOKA! when exceeding length
                     setGameState(prev => ({
                       ...prev,
@@ -2357,6 +2358,7 @@ const HawaiianWordGame: React.FC = () => {
                             threeLetterToastShown: true
                           }));
                         } else {
+                          console.log('🔍 DEBUG: HOKA trigger #2 - 3-second timeout for invalid word', { timestamp: Date.now() });
                           // Show HOKA! behavior for max length words or after first toast has been shown
                           setGameState(prev => ({
                             ...prev,
@@ -2398,6 +2400,7 @@ const HawaiianWordGame: React.FC = () => {
                        );
                       
                       if (!isWordInCrossword) {
+                        console.log('🔍 DEBUG: HOKA trigger #3 - Max length invalid word immediate check', { normalizedWord, timestamp: Date.now() });
                         setGameState(prev => ({
                           ...prev,
                           typedWord: 'HOKA!'
