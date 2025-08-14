@@ -1948,9 +1948,11 @@ const HawaiianWordGame: React.FC = () => {
             isVisible={gameState.showSuccessNotification}
             position={{
               left: '50%',
-              top: '20%'
+              top: '50%'
             }}
-            variant="success"
+            bgColor="bg-green-800"
+            borderColor="border-green-700"
+            textColor="text-white"
           />
           
           {/* Collapsible Debugging Panel - Hidden */}
@@ -2233,6 +2235,9 @@ const HawaiianWordGame: React.FC = () => {
                 left: '50%',
                 top: '50%'
               }}
+              bgColor="bg-yellow-400"
+              borderColor="border-yellow-500"
+              textColor="text-black"
             />
             
             {gameState.availableLetters.map((letter, index) => {
@@ -2293,6 +2298,9 @@ const HawaiianWordGame: React.FC = () => {
                   left: '50%',
                   top: '50%'
                 }}
+                bgColor="bg-yellow-400"
+                borderColor="border-yellow-500"
+                textColor="text-black"
               />
               <Input
                 value={gameState.typedWord}
