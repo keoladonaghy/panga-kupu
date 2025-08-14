@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogOverlay } from '@/components/ui/dialog';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useTranslation } from '@/hooks/useTranslation';
-import LanguageSwitcher from './LanguageSwitcher';
+import LanguageDropdown from './LanguageDropdown';
 
 interface WelcomeScreenProps {
   onStart: () => void;
@@ -32,9 +32,9 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
           </Button>
         </div>
 
-        {/* Language Switcher */}
+        {/* Language Dropdown */}
         <div className="absolute top-4 right-4">
-          <LanguageSwitcher variant="compact" />
+          <LanguageDropdown />
         </div>
 
         {/* Start Game Button */}
@@ -52,7 +52,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
         <DialogContent className="max-w-4xl w-full h-[90vh] p-0 bg-white">
           {/* Header with Close Button and Language Toggle */}
           <div className="flex items-center justify-between p-4 border-b bg-gray-50">
-            <LanguageSwitcher />
+            <LanguageDropdown />
 
             <Button
               variant="ghost"

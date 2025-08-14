@@ -25,14 +25,14 @@ const getNestedValue = (obj: any, path: string): string => {
 };
 
 export const useTranslation = () => {
-  const { currentLanguage, setLanguage, availableLanguages } = useLanguageContext();
+  const { interfaceLanguage, currentLanguage, setLanguage, availableLanguages } = useLanguageContext();
 
   const t = (key: string): string => {
-    const translation = translations[currentLanguage];
+    const translation = translations[interfaceLanguage];
     const value = getNestedValue(translation, key);
     
     // Fallback to English if translation not found
-    if (value === undefined && currentLanguage !== 'en') {
+    if (value === undefined && interfaceLanguage !== 'en') {
       const fallbackValue = getNestedValue(translations.en, key);
       return fallbackValue || key;
     }

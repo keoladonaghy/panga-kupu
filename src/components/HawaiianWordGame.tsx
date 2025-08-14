@@ -9,11 +9,12 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { useToast } from '@/hooks/use-toast';
 import { useTranslation } from '@/hooks/useTranslation';
+import { useLanguageContext } from '@/contexts/LanguageContext';
 import { CrosswordGenerator, CrosswordWord } from '@/utils/crosswordGenerator';
 import { hawaiianWords } from '@/data/hawaiianWords';
 import { maoriWords } from '@/data/maoriWords';
 import WordListUploader from './WordListUploader';
-import LanguageSwitcher from './LanguageSwitcher';
+import LanguageDropdown from './LanguageDropdown';
 
 // Constants
 const MIN_WORD_LENGTH = 3; // Minimum character limit for valid words
@@ -50,6 +51,7 @@ const WORD_FOUND_TOAST_DESCRIPTION = (word: string) => `Ua koho pono 'oe iā ${w
 const HawaiianWordGame: React.FC = () => {
   const [showInstructions, setShowInstructions] = useState(false);
   const { t, currentLanguage } = useTranslation();
+  const { gameLanguage } = useLanguageContext();
   const [gameState, setGameState] = useState<GameState>({
     foundWords: [],
     hintsUsed: 0,
@@ -308,11 +310,11 @@ const HawaiianWordGame: React.FC = () => {
     console.log('loadHawaiianWords called with useRandomSeed:', useRandomSeed, 'forceTestWords:', forceTestWords);
     
     try {
-      // Choose file based on current language
-      const fileName = currentLanguage === 'mao' ? '/KupuMaori.txt' : '/HawaiianWords.txt';
+      // Choose file based on game language
+      const fileName = gameLanguage === 'mao' ? '/KupuMaori.txt' : '/HawaiianWords.txt';
       const response = await fetch(fileName);
       if (!response.ok) {
-        throw new Error(`Failed to fetch ${currentLanguage === 'mao' ? 'Māori' : 'Hawaiian'} words file`);
+        throw new Error(`Failed to fetch ${gameLanguage === 'mao' ? 'Māori' : 'Hawaiian'} words file`);
       }
       
       const text = await response.text();
@@ -1825,7 +1827,7 @@ const HawaiianWordGame: React.FC = () => {
               </Button>
             </div>
             <div className="flex items-center">
-              <LanguageSwitcher variant="compact" />
+              <LanguageDropdown />
             </div>
           </div>
           
@@ -2530,7 +2532,7 @@ const HawaiianWordGame: React.FC = () => {
         <DialogContent className="max-w-4xl w-full h-[90vh] p-0 bg-white">
           {/* Header with Close Button and Language Toggle */}
           <div className="flex items-center justify-between p-4 border-b bg-gray-50">
-            <LanguageSwitcher />
+            <LanguageDropdown />
 
             <Button
               variant="ghost"
