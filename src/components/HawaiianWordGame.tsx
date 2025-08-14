@@ -648,7 +648,7 @@ const HawaiianWordGame: React.FC = () => {
             showError: false,
             errorMessage: '',
             showSuccessNotification: true,
-            successMessage: 'UA LOA\'A NO!'
+            successMessage: 'UA LOA\'A NŌ!'
           }));
           
           // Auto-hide success notification after 2.5 seconds
@@ -702,7 +702,7 @@ const HawaiianWordGame: React.FC = () => {
           showError: false,
           errorMessage: '',
           showSuccessNotification: true,
-          successMessage: 'UA LOA\'A NO!'
+          successMessage: 'UA LOA\'A NŌ!'
         }));
         
         // Auto-hide success notification after 2.5 seconds
@@ -792,7 +792,7 @@ const HawaiianWordGame: React.FC = () => {
         setGameState(prev => ({
           ...prev,
           showSuccessNotification: true,
-          successMessage: 'UA LOA\'A NO!'
+          successMessage: 'UA LOA\'A NŌ!'
         }));
         
         // Auto-hide success notification after 2.5 seconds
@@ -937,7 +937,7 @@ const HawaiianWordGame: React.FC = () => {
         setGameState(prev => ({
           ...prev,
           showSuccessNotification: true,
-          successMessage: 'UA LOA\'A NO!'
+          successMessage: 'UA LOA\'A NŌ!'
         }));
         
         // Auto-hide success notification after 2.5 seconds
@@ -1124,7 +1124,7 @@ const HawaiianWordGame: React.FC = () => {
         showError: false,
         errorMessage: '',
         showSuccessNotification: true,
-        successMessage: 'UA LOA\'A NO!'
+        successMessage: 'UA LOA\'A NŌ!'
       }));
       
       // Auto-hide success notification after 2.5 seconds
@@ -1204,7 +1204,7 @@ const HawaiianWordGame: React.FC = () => {
         showError: false,
         errorMessage: '',
         showSuccessNotification: true,
-        successMessage: 'UA LOA\'A NO!'
+        successMessage: 'UA LOA\'A NŌ!'
       }));
       
       // Auto-hide success notification after 2.5 seconds
@@ -2365,7 +2365,7 @@ const HawaiianWordGame: React.FC = () => {
                         showError: false,
                         errorMessage: '',
                         showSuccessNotification: true,
-                        successMessage: 'UA LOA\'A NO!'
+                        successMessage: 'UA LOA\'A NŌ!'
                       }));
                       
                       // Auto-hide success notification after 2.5 seconds
