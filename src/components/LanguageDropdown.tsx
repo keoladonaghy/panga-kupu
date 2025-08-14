@@ -71,7 +71,7 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ className = '' }) =
             size="icon"
             className="text-white hover:bg-white/20 rounded-full"
           >
-            <Globe className="h-5 w-5" />
+            <Globe className="h-8 w-8" />
           </Button>
         </PopoverTrigger>
         <PopoverContent 
