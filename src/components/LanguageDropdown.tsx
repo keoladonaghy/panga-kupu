@@ -69,7 +69,7 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ className = '' }) =
           <Button
             variant="ghost"
             size="icon"
-            className="text-white hover:bg-white/20 rounded-full"
+            className="text-white hover:bg-white/20 rounded-full p-3"
           >
             <Globe className="h-8 w-8" />
           </Button>
