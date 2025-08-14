@@ -2168,8 +2168,10 @@ const HawaiianWordGame: React.FC = () => {
                 value={gameState.typedWord}
                 maxLength={getWordLimitsForLanguage(gameLanguage).maxWordLength}
                 onChange={(e) => {
-                  console.log('🔍 onChange triggered, current input:', e.target.value, 'prev typedWord:', gameState.typedWord);
-                  console.log('🔍 onChange triggered, current input:', e.target.value, 'prev typedWord:', gameState.typedWord);
+                  const wordLimits = getWordLimitsForLanguage(gameLanguage);
+                  const newValue = e.target.value;
+                  
+                  console.log('🔍 onChange triggered, current input:', newValue, 'prev typedWord:', gameState.typedWord);
                   console.log('📏 Word limits:', wordLimits);
                   
                   // Clear any existing timeout
@@ -2185,10 +2187,6 @@ const HawaiianWordGame: React.FC = () => {
                     console.log('🚫 Prevented typing - HOKA! is displayed');
                     return;
                   }
-                  
-                  
-                  const wordLimits = getWordLimitsForLanguage(gameLanguage);
-                  const newValue = e.target.value;
                   
                   // Check if new value would exceed max length
                   if (newValue.length > wordLimits.maxWordLength) {
