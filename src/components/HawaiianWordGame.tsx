@@ -267,7 +267,7 @@ const HawaiianWordGame: React.FC = () => {
         }));
       }
     }
-  }, []);
+  }, [gameLanguage]);
 
   // Function to properly uppercase Māori words while preserving diacritical marks
   const toHawaiianUppercase = (word: string): string => {
@@ -458,7 +458,7 @@ const HawaiianWordGame: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [toast, generateCrosswordLayout]);
+  }, [toast, generateCrosswordLayout, gameLanguage]);
 
   // Handle celebration completion and new puzzle generation
   const handleCelebrationComplete = useCallback(() => {
@@ -542,14 +542,6 @@ const HawaiianWordGame: React.FC = () => {
     loadHawaiianWords();
     // Progress saving disabled - game starts fresh each time
   }, [loadHawaiianWords, gameLanguage]); // Add gameLanguage dependency
-
-
-
-
-
-
-  // Progress saving disabled - no localStorage persistence
-
 
   const handleBackspaceClick = useCallback(() => {
     // Clear any existing timeout when user deletes letters
@@ -974,25 +966,7 @@ const HawaiianWordGame: React.FC = () => {
         }));
       }, 2000);
     }
-      console.log('🚨 TRIGGERING HOKA! - reached max length with no valid word');
-      setGameState(prev => ({
-        ...prev,
-        selectedLetters: [],
-        showCircleError: true,
-        circleErrorMessage: 'HOKA!'
-      }));
-      
-      // Clear the HOKA! and word after 2 seconds
-      setTimeout(() => {
-        setGameState(prev => ({
-          ...prev,
-          currentWord: '',
-          showCircleError: false,
-          circleErrorMessage: ''
-        }));
-      }, 2000);
-    }
-  }, [gameState, toast, toHawaiianUppercase, wordClearTimeout, gameLanguage]);
+  };
 
   const handleWordSubmit = () => {
     const word = toHawaiianUppercase(gameState.currentWord.trim());
@@ -1692,8 +1666,6 @@ const HawaiianWordGame: React.FC = () => {
     setLoading(true);
     loadHawaiianWords(true, true); // Use random seed + force test words
   };
-
-
 
   if (loading) {
     return (
