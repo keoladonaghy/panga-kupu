@@ -66,7 +66,9 @@ export default {
 					gold: 'hsl(var(--hawaiian-gold))',
 					red: 'hsl(var(--hawaiian-red))',
 					'deep-gold': 'hsl(var(--hawaiian-deep-gold))',
-					'deep-red': 'hsl(var(--hawaiian-deep-red))'
+					'deep-red': 'hsl(var(--hawaiian-deep-red))',
+					purple: 'hsl(var(--hawaiian-purple))',
+					'purple-hover': 'hsl(var(--hawaiian-purple-hover))'
 				}
 			},
 			backgroundImage: {

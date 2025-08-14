@@ -71,6 +71,8 @@ All colors MUST be HSL.
     --hawaiian-red: 355 85% 55%;
     --hawaiian-deep-gold: 35 75% 45%;
     --hawaiian-deep-red: 345 75% 40%;
+    --hawaiian-purple: 270 75% 55%;
+    --hawaiian-purple-hover: 270 75% 50%;
     
     /* Game Gradients */
     --gradient-hawaiian: linear-gradient(135deg, hsl(var(--hawaiian-gold)), hsl(var(--hawaiian-red)));
