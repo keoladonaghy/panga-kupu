@@ -950,6 +950,47 @@ const HawaiianWordGame: React.FC = () => {
       
       // Continue checking for words if no match found at current length
       console.log(`❌ No valid word found at length ${newWord.length}, will continue checking as user types more letters`);
+      
+      // Add 3-second timeout for circle selection at minimum length
+      if (newWord.length >= wordLimits.minWordLength && newWord.length <= wordLimits.maxWordLength) {
+        console.log(`🕐 Setting 3-second timeout for circle selection word: ${newWord} (length: ${newWord.length})`);
+        const timeout = setTimeout(() => {
+          console.log(`⏰ 3-second circle timeout triggered for: ${newWord}`);
+          // Show HOKA! for invalid words after 3 seconds at minimum length
+          if (!gameState.threeLetterToastShown) {
+            toast({
+              title: "Word Not Found",
+              description: `I am programmed to wait three seconds after you have selected a ${newWord.length} letter word, and will assume that is what you wanted. I will then clear your attempt and you can try again with a new word.`,
+              duration: 4000,
+            });
+            setGameState(prev => ({
+              ...prev,
+              currentWord: '',
+              selectedLetters: [],
+              threeLetterToastShown: true
+            }));
+          } else {
+            setGameState(prev => ({
+              ...prev,
+              selectedLetters: [],
+              currentWord: '',
+              showCircleError: true,
+              circleErrorMessage: 'HOKA!'
+            }));
+            
+            // Clear the HOKA! message after 2 seconds
+            setTimeout(() => {
+              setGameState(prev => ({
+                ...prev,
+                showCircleError: false,
+                circleErrorMessage: ''
+              }));
+            }, 2000);
+          }
+          setThreeLetterTimeout(null);
+        }, 3000);
+        setThreeLetterTimeout(timeout);
+      }
     } else {
       console.log(`⏳ Word too short (${newWord.length} < ${wordLimits.minWordLength}), waiting for more letters...`);
     }
