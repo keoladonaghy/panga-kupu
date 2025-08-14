@@ -16,6 +16,7 @@ import { maoriWords } from '@/data/maoriWords';
 import WordListUploader from './WordListUploader';
 import LanguageDropdown from './LanguageDropdown';
 
+// Updated language dropdown implementation
 // Constants
 const MIN_WORD_LENGTH = 3; // Minimum character limit for valid words
 const MAX_WORD_LENGTH = 5; // Maximum character limit for typed words
