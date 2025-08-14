@@ -91,7 +91,7 @@ const HawaiianWordGame: React.FC = () => {
   const [threeLetterTimeout, setThreeLetterTimeout] = useState<NodeJS.Timeout | null>(null);
   const [wordClearTimeout, setWordClearTimeout] = useState<NodeJS.Timeout | null>(null);
   const [hokaTimeout, setHokaTimeout] = useState<NodeJS.Timeout | null>(null);
-  const [processingMaxLength, setProcessingMaxLength] = useState(false);
+  
   const [revealMode, setRevealMode] = useState(false);
   const [buttonsDisabled, setButtonsDisabled] = useState(false);
   const [showChoiceBox, setShowChoiceBox] = useState(false);
@@ -651,14 +651,6 @@ const HawaiianWordGame: React.FC = () => {
       }
     }
   }, [gameState.crosswordWords, gameState.foundWords, clearHokaTimeout]);
-  // Get the longest remaining word length
-  const getLongestRemainingWordLength = useCallback(() => {
-    const remainingWords = gameState.crosswordWords.filter(crosswordWord => 
-      !isWordFound(crosswordWord.word)
-    );
-    
-    if (remainingWords.length === 0) return 0;
-    return Math.max(...remainingWords.map(w => w.word.length));
 
   const handleManualWordCheck = () => {
     // Clear any existing timeouts when manually checking
@@ -2177,7 +2169,7 @@ const HawaiianWordGame: React.FC = () => {
                 maxLength={getWordLimitsForLanguage(gameLanguage).maxWordLength}
                 onChange={(e) => {
                   console.log('🔍 onChange triggered, current input:', e.target.value, 'prev typedWord:', gameState.typedWord);
-                  const wordLimits = getWordLimitsForLanguage(gameLanguage);
+                  console.log('🔍 onChange triggered, current input:', e.target.value, 'prev typedWord:', gameState.typedWord);
                   console.log('📏 Word limits:', wordLimits);
                   
                   // Clear any existing timeout
@@ -2194,19 +2186,9 @@ const HawaiianWordGame: React.FC = () => {
                     return;
                   }
                   
-                  const newValue = e.target.value;
+                  
                   const wordLimits = getWordLimitsForLanguage(gameLanguage);
-                  
-                  // Prevent all processing if we're already handling a max-length word
-                  if (processingMaxLength) {
-                    return;
-                  }
-                  
-                  // Set flag when reaching max length to prevent double processing
-                  if (newValue.length === wordLimits.maxWordLength) {
-                    setProcessingMaxLength(true);
-                    setTimeout(() => setProcessingMaxLength(false), 2000); // Reset after 2 seconds
-                  }
+                  const newValue = e.target.value;
                   
                   // Check if new value would exceed max length
                   if (newValue.length > wordLimits.maxWordLength) {
