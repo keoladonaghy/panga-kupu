@@ -90,6 +90,7 @@ const HawaiianWordGame: React.FC = () => {
   const [displayWords, setDisplayWords] = useState<string[]>([]);
   const [threeLetterTimeout, setThreeLetterTimeout] = useState<NodeJS.Timeout | null>(null);
   const [wordClearTimeout, setWordClearTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [hokaTimeout, setHokaTimeout] = useState<NodeJS.Timeout | null>(null);
   const [revealMode, setRevealMode] = useState(false);
   const [buttonsDisabled, setButtonsDisabled] = useState(false);
   const [showChoiceBox, setShowChoiceBox] = useState(false);
@@ -511,8 +512,11 @@ const HawaiianWordGame: React.FC = () => {
       if (wordClearTimeout) {
         clearTimeout(wordClearTimeout);
       }
+      if (hokaTimeout) {
+        clearTimeout(hokaTimeout);
+      }
     };
-  }, [wordClearTimeout]);
+  }, [wordClearTimeout, hokaTimeout]);
 
   // Handle celebration animation and auto-restart
   useEffect(() => {
@@ -581,6 +585,21 @@ const HawaiianWordGame: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleBackspaceClick]);
 
+  // Helper function to clear existing HOKA timeout
+  const clearHokaTimeout = useCallback(() => {
+    if (hokaTimeout) {
+      clearTimeout(hokaTimeout);
+      setHokaTimeout(null);
+    }
+  }, [hokaTimeout]);
+
+  // Helper function to set HOKA timeout
+  const setHokaTimeoutHelper = useCallback((callback: () => void, delay: number = 1500) => {
+    clearHokaTimeout();
+    const timeout = setTimeout(callback, delay);
+    setHokaTimeout(timeout);
+  }, [clearHokaTimeout]);
+
   // Get the longest remaining word length
   const getLongestRemainingWordLength = useCallback(() => {
     const remainingWords = gameState.crosswordWords.filter(crosswordWord => 
@@ -643,14 +662,14 @@ const HawaiianWordGame: React.FC = () => {
           }));
           
           // Clear the HOKA! after 1.5 seconds
-          setTimeout(() => {
+          setHokaTimeoutHelper(() => {
             setGameState(prev => ({
               ...prev,
               typedWord: '',
               showError: false,
               errorMessage: ''
             }));
-          }, 1500);
+          });
         }
       }
     } else {
@@ -695,6 +714,7 @@ const HawaiianWordGame: React.FC = () => {
       clearTimeout(wordClearTimeout);
       setWordClearTimeout(null);
     }
+    clearHokaTimeout();
     
     const currentWord = gameState.currentWord;
     if (currentWord.length >= MIN_WORD_LENGTH) {
@@ -771,14 +791,14 @@ const HawaiianWordGame: React.FC = () => {
         }));
         
         // Clear the HOKA! and the word after 1.5 seconds
-        setTimeout(() => {
+        setHokaTimeoutHelper(() => {
           setGameState(prev => ({
             ...prev,
             currentWord: '',
             showCircleError: false,
             circleErrorMessage: ''
           }));
-        }, 1500);
+        });
       }
     }
   };
@@ -794,6 +814,7 @@ const HawaiianWordGame: React.FC = () => {
       clearTimeout(threeLetterTimeout);
       setThreeLetterTimeout(null);
     }
+    clearHokaTimeout();
     
     const currentLength = gameState.currentWord.length;
     
@@ -987,13 +1008,13 @@ const HawaiianWordGame: React.FC = () => {
             }));
             
             // Clear the HOKA! message after 1.5 seconds
-            setTimeout(() => {
+            setHokaTimeoutHelper(() => {
               setGameState(prev => ({
                 ...prev,
                 showCircleError: false,
                 circleErrorMessage: ''
               }));
-            }, 1500);
+            });
           }
           setThreeLetterTimeout(null);
         }, 3000);
@@ -1014,14 +1035,14 @@ const HawaiianWordGame: React.FC = () => {
       }));
       
       // Clear the HOKA! message and word after 1.5 seconds
-      setTimeout(() => {
+      setHokaTimeoutHelper(() => {
         setGameState(prev => ({
           ...prev,
           currentWord: '',
           showCircleError: false,
           circleErrorMessage: ''
         }));
-      }, 1500);
+      });
     }
   };
 
@@ -1170,12 +1191,12 @@ const HawaiianWordGame: React.FC = () => {
       }));
       
       // Clear the HOKA! after 1.5 seconds
-      setTimeout(() => {
+      setHokaTimeoutHelper(() => {
         setGameState(prev => ({
           ...prev,
           typedWord: ''
         }));
-      }, 1500);
+      });
     }
   };
 
@@ -2203,6 +2224,7 @@ const HawaiianWordGame: React.FC = () => {
                     clearTimeout(threeLetterTimeout);
                     setThreeLetterTimeout(null);
                   }
+                  clearHokaTimeout();
                   
                   // Prevent typing if HOKA! is currently displayed
                   if (gameState.typedWord === 'HOKA!') {
@@ -2221,12 +2243,12 @@ const HawaiianWordGame: React.FC = () => {
                     }));
                     
                     // Clear the HOKA! after 1.5 seconds
-                    setTimeout(() => {
+                    setHokaTimeoutHelper(() => {
                       setGameState(prev => ({
                         ...prev,
                         typedWord: ''
                       }));
-                    }, 1500);
+                    });
                     return;
                   }
                   
@@ -2334,12 +2356,12 @@ const HawaiianWordGame: React.FC = () => {
                           }));
                           
                           // Clear the HOKA! after 1.5 seconds
-                          setTimeout(() => {
+                          setHokaTimeoutHelper(() => {
                             setGameState(prev => ({
                               ...prev,
                               typedWord: ''
                             }));
-                          }, 1500);
+                          });
                         }
                         setThreeLetterTimeout(null);
                       }, 3000);
@@ -2366,12 +2388,12 @@ const HawaiianWordGame: React.FC = () => {
                         }));
                         
                         // Clear the HOKA! after 1.5 seconds
-                        setTimeout(() => {
+                        setHokaTimeoutHelper(() => {
                           setGameState(prev => ({
                             ...prev,
                             typedWord: ''
                           }));
-                        }, 1500);
+                        });
                       } else if (gameState.foundWords.includes(normalizedWord)) {
                         setGameState(prev => ({
                           ...prev,
