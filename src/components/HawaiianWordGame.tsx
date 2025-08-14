@@ -269,7 +269,7 @@ const HawaiianWordGame: React.FC = () => {
     }
   }, [gameLanguage]);
 
-  // Function to properly uppercase Māori words while preserving diacritical marks
+  // Function to properly uppercase Hawaiian/Māori words while preserving diacritical marks and 'okina
   const toHawaiianUppercase = (word: string): string => {
     const result = word
       .replace(/ā/g, 'Ā')
@@ -277,13 +277,12 @@ const HawaiianWordGame: React.FC = () => {
       .replace(/ī/g, 'Ī')
       .replace(/ō/g, 'Ō')
       .replace(/ū/g, 'Ū')
-      // Remove all 'okina character variants
-      .replace(/'/g, '') // Remove straight quotes
-      .replace(/ʻ/g, '') // Remove 'okina
-      .replace(/`/g, '') // Remove backticks
-      .replace(/'/g, '') // Remove right single quotes
-      .replace(/'/g, '') // Remove left single quotes
-      .toUpperCase(); // This will handle regular letters
+      // Normalize quotes to proper 'okina for Hawaiian, remove for others
+      .replace(/'/g, gameLanguage === 'haw' ? 'ʻ' : '') // Convert or remove straight quotes
+      .replace(/`/g, gameLanguage === 'haw' ? 'ʻ' : '') // Convert or remove backticks
+      .replace(/'/g, gameLanguage === 'haw' ? 'ʻ' : '') // Convert or remove right single quotes
+      .replace(/'/g, gameLanguage === 'haw' ? 'ʻ' : '') // Convert or remove left single quotes
+      .toUpperCase(); // This will handle regular letters but preserve 'okina
     
     return result;
   };
@@ -339,19 +338,28 @@ const HawaiianWordGame: React.FC = () => {
       const wordLimits = getWordLimitsForLanguage(gameLanguage);
       const filteredWords = wordsToUse
         .map(word => {
-          // Remove all 'okina character variants
-          return word
-            .replace(/'/g, '') // Remove straight quotes
-            .replace(/ʻ/g, '') // Remove 'okina
-            .replace(/`/g, '') // Remove backticks
-            .replace(/'/g, '') // Remove right single quotes
-            .replace(/'/g, '') // Remove left single quotes
+          // Normalize quotes to proper 'okina for Hawaiian, remove for others
+          if (gameLanguage === 'haw') {
+            return word
+              .replace(/'/g, 'ʻ') // Convert straight quotes to 'okina
+              .replace(/`/g, 'ʻ') // Convert backticks to 'okina
+              .replace(/'/g, 'ʻ') // Convert right single quotes to 'okina
+              .replace(/'/g, 'ʻ') // Convert left single quotes to 'okina
+          } else {
+            return word
+              .replace(/'/g, '') // Remove straight quotes
+              .replace(/ʻ/g, '') // Remove 'okina
+              .replace(/`/g, '') // Remove backticks
+              .replace(/'/g, '') // Remove right single quotes
+              .replace(/'/g, '') // Remove left single quotes
+          }
         })
         .filter(word => word.length >= wordLimits.minWordLength && word.length <= wordLimits.maxWordLength && word.length > 0)
         .filter((word, index, arr) => arr.indexOf(word) === index); // Remove duplicates
         
       console.log(`Words after length filter (${wordLimits.minWordLength}-${wordLimits.maxWordLength} letters):`, filteredWords.length);
-      console.log('Sample filtered words:', filteredWords.slice(0, 10));
+      console.log('Sample filtered words (with ʻokina preserved for Hawaiian):', filteredWords.slice(0, 10));
+      console.log('Words with ʻokina:', filteredWords.filter(w => w.includes('ʻ')).slice(0, 5));
       console.log('Words after length filter:', filteredWords.length);
       console.log('Sample words with okina:', filteredWords.filter(w => w.includes("'") || w.includes("'") || w.includes("ʻ")).slice(0, 10));
       

@@ -49,18 +49,28 @@ export class CrosswordGenerator {
     // Log the word limits being used for this language
     console.log(`Using word limits for ${language}:`, this.wordLimits);
     
-    // Normalize and validate words before processing - remove 'okina characters
+    // Normalize and validate words - preserve 'okina for Hawaiian, remove for others
     const normalizedWords = words.map(word => {
-      // Remove all 'okina character variants
-      let normalized = word
-        .replace(/'/g, '') // Remove straight quotes
-        .replace(/ʻ/g, '') // Remove 'okina
-        .replace(/`/g, '') // Remove backticks
-        .replace(/'/g, '') // Remove right single quotes
-        .replace(/'/g, '') // Remove left single quotes
-        .trim();
+      let normalized = word.trim();
       
-      console.log(`Word normalization: "${word}" -> "${normalized}"`);
+      if (this.language !== 'haw') {
+        // For non-Hawaiian languages, remove 'okina character variants
+        normalized = normalized
+          .replace(/'/g, '') // Remove straight quotes
+          .replace(/ʻ/g, '') // Remove 'okina
+          .replace(/`/g, '') // Remove backticks
+          .replace(/'/g, '') // Remove right single quotes
+          .replace(/'/g, '') // Remove left single quotes
+      } else {
+        // For Hawaiian, only normalize other quote variants to proper 'okina
+        normalized = normalized
+          .replace(/'/g, 'ʻ') // Convert straight quotes to 'okina
+          .replace(/`/g, 'ʻ') // Convert backticks to 'okina
+          .replace(/'/g, 'ʻ') // Convert right single quotes to 'okina
+          .replace(/'/g, 'ʻ') // Convert left single quotes to 'okina
+      }
+      
+      console.log(`Word normalization (${this.language}): "${word}" -> "${normalized}"`);
       return normalized;
     }).filter(word => word.length > 0); // Remove empty words
     
