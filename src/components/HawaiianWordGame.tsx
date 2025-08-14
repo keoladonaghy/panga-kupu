@@ -625,10 +625,14 @@ const HawaiianWordGame: React.FC = () => {
     // Skip auto-check for max-length words since they get immediate processing
     if (isTypedWord) {
       const wordLimits = getWordLimitsForLanguage(gameLanguage);
+      // Completely skip auto-check for max-length words
+      if (word.length >= wordLimits.maxWordLength) {
+        console.log('🚫 SKIPPING AUTO-CHECK - Word is at max length:', word.length, 'max:', wordLimits.maxWordLength);
+        return; // Exit early to prevent any auto-check processing
+      }
+      
       const longestRemainingLength = getLongestRemainingWordLength();
-      const shouldAutoCheck = word.length === longestRemainingLength && 
-                             longestRemainingLength > 0 && 
-                             word.length < wordLimits.maxWordLength; // Skip max-length words
+      const shouldAutoCheck = word.length === longestRemainingLength && longestRemainingLength > 0;
       
       if (shouldAutoCheck) {
         if (isWordInCrossword && !gameState.foundWords.includes(normalizedWord)) {
