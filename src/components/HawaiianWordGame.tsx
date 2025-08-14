@@ -2144,15 +2144,22 @@ const HawaiianWordGame: React.FC = () => {
                 value={gameState.typedWord}
                 maxLength={getWordLimitsForLanguage(gameLanguage).maxWordLength}
                 onChange={(e) => {
+                  console.log('🔍 onChange triggered, current input:', e.target.value);
                   const wordLimits = getWordLimitsForLanguage(gameLanguage);
+                  console.log('📏 Word limits:', wordLimits);
+                  
                   // Clear any existing timeout
                   if (threeLetterTimeout) {
+                    console.log('🧹 Clearing existing timeout');
                     clearTimeout(threeLetterTimeout);
                     setThreeLetterTimeout(null);
                   }
                   
                   // Prevent typing if HOKA! is currently displayed
-                  if (gameState.typedWord === 'HOKA!') return;
+                  if (gameState.typedWord === 'HOKA!') {
+                    console.log('🚫 Prevented typing - HOKA! is displayed');
+                    return;
+                  }
                   
                   const newValue = e.target.value;
                   
@@ -2178,7 +2185,9 @@ const HawaiianWordGame: React.FC = () => {
                   
                   // Check for valid words immediately on any length change
                   if (newValue.length > 0) {
+                    console.log('🔍 Checking for immediate word match, length:', newValue.length);
                     const normalizedWord = toHawaiianUppercase(newValue.trim());
+                    console.log('🔤 Normalized word:', normalizedWord);
                      const isWordInCrossword = gameState.crosswordWords.some(crosswordWord => 
                        toHawaiianUppercase(crosswordWord.word) === normalizedWord && 
                        crosswordWord.word.length === normalizedWord.length
@@ -2236,11 +2245,15 @@ const HawaiianWordGame: React.FC = () => {
                   
                   // Check for minimum word length detection with 3-second delay
                   if (newValue.length >= wordLimits.minWordLength && newValue.length <= wordLimits.maxWordLength) {
+                    console.log('✅ Word length qualifies for timeout check:', newValue.length, 'min:', wordLimits.minWordLength, 'max:', wordLimits.maxWordLength);
                     const normalizedWord = toHawaiianUppercase(newValue.trim());
+                    console.log('🔤 Normalized word for timeout check:', normalizedWord);
                      const isWordInCrossword = gameState.crosswordWords.some(crosswordWord => 
                        toHawaiianUppercase(crosswordWord.word) === normalizedWord && 
                        crosswordWord.word.length === normalizedWord.length
                      );
+                    console.log('🎯 Is word in crossword?', isWordInCrossword);
+                    console.log('📝 Already found?', gameState.foundWords.includes(normalizedWord));
                     
                     if (!isWordInCrossword && !gameState.foundWords.includes(normalizedWord)) {
                       console.log(`🕐 Setting 3-second timeout for ${newValue.length}-letter word: ${normalizedWord}`);
