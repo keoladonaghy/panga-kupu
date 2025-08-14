@@ -335,7 +335,8 @@ const HawaiianWordGame: React.FC = () => {
       const hasIII = wordsToUse.includes('iii') || wordsToUse.includes('III');
       console.log(`Word list contains "iii": ${hasIII}`);
       
-      // Filter by length (3-8 letters) and remove 'okina characters
+      // Filter by length using language-specific limits
+      const wordLimits = getWordLimitsForLanguage(gameLanguage);
       const filteredWords = wordsToUse
         .map(word => {
           // Remove all 'okina character variants
@@ -346,9 +347,11 @@ const HawaiianWordGame: React.FC = () => {
             .replace(/'/g, '') // Remove right single quotes
             .replace(/'/g, '') // Remove left single quotes
         })
-        .filter(word => word.length >= 3 && word.length <= 5 && word.length > 0)
+        .filter(word => word.length >= wordLimits.minWordLength && word.length <= wordLimits.maxWordLength && word.length > 0)
         .filter((word, index, arr) => arr.indexOf(word) === index); // Remove duplicates
         
+      console.log(`Words after length filter (${wordLimits.minWordLength}-${wordLimits.maxWordLength} letters):`, filteredWords.length);
+      console.log('Sample filtered words:', filteredWords.slice(0, 10));
       console.log('Words after length filter:', filteredWords.length);
       console.log('Sample words with okina:', filteredWords.filter(w => w.includes("'") || w.includes("'") || w.includes("ʻ")).slice(0, 10));
       
