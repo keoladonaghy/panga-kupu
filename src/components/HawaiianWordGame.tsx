@@ -2339,10 +2339,11 @@ const HawaiianWordGame: React.FC = () => {
                       console.log(`🕐 Setting 3-second timeout for ${newValue.length}-letter word: ${normalizedWord}`);
                       const timeout = setTimeout(() => {
                         console.log(`⏰ 3-second timeout triggered for: ${normalizedWord}`);
-                        // Only show explanation toast once per browser using localStorage
+                        // Only show explanation toast for words that are max-1 length, not max length
+                        const shouldShowExplanation = newValue.length === (wordLimits.maxWordLength - 1);
                         const hasSeenExplanation = localStorage.getItem('wordDetectionExplanationShown') === 'true';
                         
-                        if (!hasSeenExplanation) {
+                        if (shouldShowExplanation && !hasSeenExplanation) {
                           toast({
                             title: "Word Detection Explanation",
                             description: `I am programmed to wait three seconds after you have typed a ${newValue.length} letter word, and will assume that is what you wanted. I will then clear your attempt and you can try again with a new word.`,
@@ -2356,7 +2357,7 @@ const HawaiianWordGame: React.FC = () => {
                             threeLetterToastShown: true
                           }));
                         } else {
-                          // Show HOKA! behavior after first toast has been shown
+                          // Show HOKA! behavior for max length words or after first toast has been shown
                           setGameState(prev => ({
                             ...prev,
                             typedWord: 'HOKA!',
