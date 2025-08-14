@@ -2241,6 +2241,7 @@ const HawaiianWordGame: React.FC = () => {
                   }
                   
                   const newValue = e.target.value;
+                  console.log('🔍 DEBUG: Input change detected', { newValue, length: newValue.length, maxLength: wordLimits.maxWordLength });
                   
                   // Check if new value would exceed max length
                   if (newValue.length > wordLimits.maxWordLength) {
@@ -2261,7 +2262,9 @@ const HawaiianWordGame: React.FC = () => {
                     return;
                   }
                   
+                  console.log('🔍 DEBUG: Setting typedWord to:', newValue);
                   setGameState(prev => ({ ...prev, typedWord: newValue }));
+                  
                   
                   // Check for valid words immediately on any length change
                   if (newValue.length > 0) {
