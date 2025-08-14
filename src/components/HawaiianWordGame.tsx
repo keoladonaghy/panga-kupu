@@ -17,7 +17,9 @@ import WordListUploader from './WordListUploader';
 import LanguageDropdown from './LanguageDropdown';
 
 // Updated language dropdown implementation
-// Constants
+import { getWordLimitsForLanguage } from '@/config/languageWordLimits';
+
+// Legacy constants - will be replaced by language-specific settings
 const MIN_WORD_LENGTH = 3; // Minimum character limit for valid words
 const MAX_WORD_LENGTH = 5; // Maximum character limit for typed words
 
@@ -203,7 +205,8 @@ const HawaiianWordGame: React.FC = () => {
   const generateCrosswordLayout = useCallback((allWords: string[]) => {
     console.log('generateCrosswordLayout called with', allWords.length, 'words');
     console.log('Starting crossword generation with', allWords.length, 'total words');
-    const generator = new CrosswordGenerator(allWords, 12, gameLanguage);
+    const wordLimits = getWordLimitsForLanguage(gameLanguage);
+    const generator = new CrosswordGenerator(allWords, 12, gameLanguage, wordLimits);
     const crosswordResult = generator.generateCrossword();
     
     console.log('Crossword generation result:', crosswordResult);
@@ -234,7 +237,8 @@ const HawaiianWordGame: React.FC = () => {
       const moreWords = allWords.slice(0, Math.min(50, allWords.length));
       console.log('Retrying with', moreWords.length, 'words');
       
-      const retryGenerator = new CrosswordGenerator(moreWords, 12, gameLanguage);
+      const retryWordLimits = getWordLimitsForLanguage(gameLanguage);
+      const retryGenerator = new CrosswordGenerator(moreWords, 12, gameLanguage, retryWordLimits);
       const retryResult = retryGenerator.generateCrossword();
       
       if (retryResult) {

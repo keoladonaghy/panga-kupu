@@ -1,4 +1,6 @@
 
+import { getWordLimitsForLanguage, type LanguageWordLimits } from '@/config/languageWordLimits';
+
 export interface CrosswordWord {
   word: string;
   row: number;
@@ -29,22 +31,24 @@ export class CrosswordGenerator {
   private selectedLetters: string[] = [];
   private filteredWords: string[] = [];
   private language: 'haw' | 'mao' | 'en'; // Add language parameter
+  private wordLimits: LanguageWordLimits; // Add word limits
   private readonly MAX_WORDS = 8; // Centralized word count limit
   private readonly MIN_FOUNDATION_WORDS = 2; // Minimum foundation words needed
   private readonly MAX_MEDIUM_WORDS = 7; // Maximum medium words to add
   private readonly MAX_SHORT_WORDS = 4; // Maximum short words to add
   private readonly LETTERS_PER_PUZZLE = 7; // Number of letters selected for each puzzle
   
-  // Word length constraints
-  private readonly MIN_WORD_LENGTH = 3; // Minimum letters per word
-  private readonly MAX_WORD_LENGTH = 5; // Maximum letters per word
-  private readonly MIN_FOUNDATION_LENGTH = 4; // Minimum letters for foundation words
-  private readonly MAX_FOUNDATION_LENGTH = 5; // Maximum letters for foundation words
-  private readonly MIN_MEDIUM_LENGTH = 3; // Minimum letters for medium words
-  private readonly MAX_MEDIUM_LENGTH = 5; // Maximum letters for medium words
-  private readonly SHORT_WORD_LENGTH = 3; // Exact length for short words
+  // Word category constraints
 
-  constructor(words: string[], gridSize: number = 12, language: 'haw' | 'mao' | 'en' = 'haw') {
+  constructor(words: string[], gridSize: number = 12, language: 'haw' | 'mao' | 'en' = 'haw', customWordLimits?: LanguageWordLimits) {
+    this.words = words;
+    this.gridSize = gridSize;
+    this.language = language;
+    this.wordLimits = customWordLimits || getWordLimitsForLanguage(language);
+    this.maxAttempts = 1000;
+    // Log the word limits being used for this language
+    console.log(`Using word limits for ${language}:`, this.wordLimits);
+    
     // Normalize and validate words before processing - remove 'okina characters
     const normalizedWords = words.map(word => {
       // Remove all 'okina character variants
@@ -62,9 +66,6 @@ export class CrosswordGenerator {
     
     console.log('Processed words for crossword:', normalizedWords.length);
     this.words = normalizedWords;
-    this.gridSize = gridSize;
-    this.language = language;
-    this.maxAttempts = 1000;
   }
 
   generateCrossword(): CrosswordGrid | null {
@@ -167,8 +168,8 @@ export class CrosswordGenerator {
 
   private filterWordsByLetters(): void {
     this.filteredWords = this.words.filter(word => {
-      // Check word length constraints
-      if (word.length < this.MIN_WORD_LENGTH || word.length > this.MAX_WORD_LENGTH) {
+      // Check word length constraints using language-specific limits
+      if (word.length < this.wordLimits.minWordLength || word.length > this.wordLimits.maxWordLength) {
         return false;
       }
       
@@ -190,7 +191,7 @@ export class CrosswordGenerator {
 
     // Step 1: Start with foundation words (ensure at least 2 five-letter words)
     const fiveLetterWords = this.filteredWords.filter(word => word.length === 5);
-    const foundationWords = this.filteredWords.filter(word => word.length >= this.MIN_FOUNDATION_LENGTH && word.length <= this.MAX_FOUNDATION_LENGTH);
+    const foundationWords = this.filteredWords.filter(word => word.length >= 4 && word.length <= this.wordLimits.maxWordLength);
     
     // Check if we have at least 2 five-letter words available
     if (fiveLetterWords.length < 2) {
@@ -199,7 +200,7 @@ export class CrosswordGenerator {
     }
     
     if (foundationWords.length < this.MIN_FOUNDATION_WORDS) {
-      console.log(`Not enough foundation words (${this.MIN_FOUNDATION_LENGTH}-${this.MAX_FOUNDATION_LENGTH} letters)`);
+      console.log(`Not enough foundation words (4-${this.wordLimits.maxWordLength} letters)`);
       return null;
     }
 
@@ -236,7 +237,7 @@ export class CrosswordGenerator {
 
     // Step 2: Add medium words
     const mediumWords = this.filteredWords.filter(word => 
-      word.length >= this.MIN_MEDIUM_LENGTH && word.length <= this.MAX_MEDIUM_LENGTH && !usedWords.has(word)
+      word.length >= this.wordLimits.minWordLength && word.length <= this.wordLimits.maxWordLength && !usedWords.has(word)
     );
     console.log('Available medium words:', mediumWords.length, mediumWords.slice(0, 10));
     
@@ -256,7 +257,7 @@ export class CrosswordGenerator {
 
     // Step 3: Add short words
     const shortWords = this.filteredWords.filter(word => 
-      word.length === this.SHORT_WORD_LENGTH && !usedWords.has(word)
+      word.length === 3 && !usedWords.has(word)
     );
     console.log('Available short words:', shortWords.length, shortWords.slice(0, 10));
     
@@ -275,9 +276,9 @@ export class CrosswordGenerator {
     }
 
     console.log(`Crossword complete with ${placedWords.length} words:`);
-    console.log(`- Foundation words (${this.MIN_FOUNDATION_LENGTH}-${this.MAX_FOUNDATION_LENGTH}): 2`);
-    console.log(`- Medium words (${this.MIN_MEDIUM_LENGTH}-${this.MAX_MEDIUM_LENGTH}): ${mediumWordsAdded}`);
-    console.log(`- Short words (${this.SHORT_WORD_LENGTH}): ${shortWordsAdded}`);
+    console.log(`- Foundation words (4-${this.wordLimits.maxWordLength}): 2`);
+    console.log(`- Medium words (${this.wordLimits.minWordLength}-${this.wordLimits.maxWordLength}): ${mediumWordsAdded}`);
+    console.log(`- Short words (3): ${shortWordsAdded}`);
     console.log('All placed words:', placedWords.map(w => `${w.word} (${w.word.length})`));
 
     // Step 4: Post-processing - systematically try to add more words using existing letters
