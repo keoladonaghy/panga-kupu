@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { NotificationBox } from './NotificationBox';
-import { Lightbulb, Upload, RotateCcw, ChevronDown, ChevronRight, Delete, HelpCircle, X, RefreshCcw, CornerDownLeft, Eye } from 'lucide-react';
+import { Lightbulb, Upload, RotateCcw, ChevronDown, ChevronRight, Delete, HelpCircle, X, RefreshCcw, CornerDownLeft, Eye, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -2089,7 +2089,7 @@ const HawaiianWordGame: React.FC = () => {
                 <PopoverTrigger asChild>
                   <button
                     className="w-6 h-6 bg-white/80 hover:bg-white rounded-full border border-white/40 
-                             flex items-center justify-center ml-3
+                             flex items-center justify-center ml-3 mb-2
                              transition-all duration-200 hover:scale-110"
                   >
                     <HelpCircle className="w-4 h-4 text-gray-700" />
@@ -2099,6 +2099,19 @@ const HawaiianWordGame: React.FC = () => {
                   <p className="text-sm leading-tight">Clicking on this button will erase what you have done so far and set up a new game.</p>
                 </PopoverContent>
               </Popover>
+
+              {/* Clear Word Button */}
+              <button
+                onClick={() => setGameState(prev => ({ ...prev, currentWord: '' }))}
+                disabled={!gameState.currentWord || buttonsDisabled}
+                className="w-12 h-12 bg-red-500 hover:bg-red-400 disabled:bg-gray-400 
+                         rounded-lg border-2 border-white/40 text-white font-bold text-sm 
+                         transition-all duration-200 hover:scale-110 disabled:scale-100 disabled:cursor-not-allowed
+                         flex items-center justify-center"
+                title="Clear current word"
+              >
+                <Trash2 className="w-8 h-8" />
+              </button>
             </div>
 
             {/* Right side buttons group - positioned 15px from circle edge */}
