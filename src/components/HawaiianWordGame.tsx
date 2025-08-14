@@ -1942,18 +1942,6 @@ const HawaiianWordGame: React.FC = () => {
             </div>
           </div>
           
-          {/* Success notification box - centered on screen */}
-          <NotificationBox
-            message={gameState.successMessage}
-            isVisible={gameState.showSuccessNotification}
-            position={{
-              left: '50%',
-              top: '50%'
-            }}
-            bgColor="bg-green-800"
-            borderColor="border-green-700"
-            textColor="text-white"
-          />
           
           {/* Collapsible Debugging Panel - Hidden */}
           <div className="hidden">
@@ -2227,7 +2215,7 @@ const HawaiianWordGame: React.FC = () => {
               <Delete className="w-6 h-6" />
             </button>
             
-            {/* Notification box centered over circle */}
+            {/* Notification boxes centered over circle */}
             <NotificationBox
               message={gameState.circleErrorMessage}
               isVisible={gameState.showCircleError}
@@ -2238,6 +2226,19 @@ const HawaiianWordGame: React.FC = () => {
               bgColor="bg-yellow-400"
               borderColor="border-yellow-500"
               textColor="text-black"
+            />
+            
+            {/* Success notification box - same position as error messages */}
+            <NotificationBox
+              message={gameState.successMessage}
+              isVisible={gameState.showSuccessNotification}
+              position={{
+                left: '50%',
+                top: '50%'
+              }}
+              bgColor="bg-green-800"
+              borderColor="border-green-700"
+              textColor="text-white"
             />
             
             {gameState.availableLetters.map((letter, index) => {
