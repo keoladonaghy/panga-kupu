@@ -28,14 +28,14 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ className = '' }) =
   const [isOpen, setIsOpen] = useState(false);
 
   const interfaceLanguages = [
-    { code: 'haw', name: "'Ōlelo Hawaiʻi", disabled: false },
-    { code: 'mao', name: 'Te Reo Māori', disabled: true },
+    { code: 'haw', name: 'Hawaiian', disabled: false },
+    { code: 'mao', name: 'Māori', disabled: true },
     { code: 'en', name: 'English', disabled: false }
   ];
 
   const gameLanguages = [
-    { code: 'haw', name: "'Ōlelo Hawaiʻi", disabled: false },
-    { code: 'mao', name: 'Te Reo Māori', disabled: false },
+    { code: 'haw', name: 'Hawaiian', disabled: false },
+    { code: 'mao', name: 'Māori', disabled: false },
     { code: 'en', name: 'English', disabled: true }
   ];
 
