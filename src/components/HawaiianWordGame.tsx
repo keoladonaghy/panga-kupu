@@ -784,6 +784,11 @@ const HawaiianWordGame: React.FC = () => {
   };
 
   const handleLetterClick = (letter: string) => {
+    // Don't allow letter clicks when error messages are displayed
+    if (gameState.showCircleError || gameState.showError || gameState.typedWord === 'HOKA!' || gameState.typedWord === 'UA LOA\'A MUA!') {
+      return;
+    }
+    
     // Clear any existing timeout when user interacts
     if (threeLetterTimeout) {
       clearTimeout(threeLetterTimeout);
@@ -2156,11 +2161,11 @@ const HawaiianWordGame: React.FC = () => {
                   onTouchEnd={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    if (!buttonsDisabled) {
+                    if (!buttonsDisabled && !gameState.showCircleError && !gameState.showError && gameState.typedWord !== 'HOKA!' && gameState.typedWord !== 'UA LOA\'A MUA!') {
                       handleLetterClick(letter);
                     }
                   }}
-                  disabled={buttonsDisabled}
+                  disabled={buttonsDisabled || gameState.showCircleError || gameState.showError || gameState.typedWord === 'HOKA!' || gameState.typedWord === 'UA LOA\'A MUA!'}
                   className="absolute w-12 h-12 bg-gray-300 hover:bg-gray-200 disabled:bg-gray-400 rounded-lg border-2 border-white/40 
                            text-black font-bold text-lg uppercase transition-all duration-200 hover:scale-110 disabled:scale-100 disabled:cursor-not-allowed
                            flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2
@@ -2391,7 +2396,7 @@ const HawaiianWordGame: React.FC = () => {
                 }}
                 placeholder="Type word here..."
                 className="bg-white/90 text-black border-white/30 w-48 text-sm sm:text-base"
-                disabled={gameState.typedWord === 'HOKA!'}
+                disabled={gameState.typedWord === 'HOKA!' || gameState.typedWord === 'UA LOA\'A MUA!' || gameState.showCircleError || gameState.showError}
               />
               <Button 
                 onClick={handleTypedWordSubmit}
