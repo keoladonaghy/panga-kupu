@@ -2102,7 +2102,19 @@ const HawaiianWordGame: React.FC = () => {
 
               {/* Clear Word Button */}
               <button
-                onClick={() => setGameState(prev => ({ ...prev, currentWord: '' }))}
+                onClick={() => {
+                  // Clear current word and any pending timeouts/alerts
+                  clearHokaTimeout();
+                  if (wordClearTimeout) {
+                    clearTimeout(wordClearTimeout);
+                    setWordClearTimeout(null);
+                  }
+                  setGameState(prev => ({ 
+                    ...prev, 
+                    currentWord: '',
+                    showHoka: false 
+                  }));
+                }}
                 disabled={!gameState.currentWord || buttonsDisabled}
                 className="w-12 h-12 bg-hawaiian-purple hover:bg-hawaiian-purple-hover disabled:bg-gray-400 
                          rounded-lg border-2 border-white/40 text-white font-bold text-sm 
