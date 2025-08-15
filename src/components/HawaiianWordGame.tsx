@@ -297,18 +297,13 @@ const HawaiianWordGame: React.FC = () => {
   const isWordFound = (word: string, length?: number) => {
     const normalizedWord = toHawaiianUppercase(word);
     
-    // Check both old format (for backward compatibility) and new format
-    if (gameState.foundWords.includes(normalizedWord)) return true;
-    
     // If length is provided, check the new format
     if (length !== undefined) {
       return gameState.foundWords.includes(`${normalizedWord}_${length}`);
     }
     
     // If no length provided, check if any version of this word exists
-    // Fix: Only match exact word boundaries, not substrings
     return gameState.foundWords.some(foundWord => {
-      if (foundWord === normalizedWord) return true;
       // Check for exact word_length format match
       const parts = foundWord.split('_');
       return parts.length === 2 && parts[0] === normalizedWord;
