@@ -958,11 +958,19 @@ const HawaiianWordGame: React.FC = () => {
         
         return; // Stop here, don't continue to check for HOKA!
       } else if (validWord && isWordFound(validWord, newWord.length)) {
-        // Already found this word - show UA LOA'A MUA! over delete key
-        console.log('🔄 Duplicate word found:', validWord);
+        // Check if this could be the start of a longer word before showing "already found"
+        const couldBeLongerWord = gameState.crosswordWords.some(crosswordWord => 
+          crosswordWord.word.length > newWord.length &&
+          toHawaiianUppercase(crosswordWord.word).startsWith(normalizedWord)
+        );
         
-        // For 3-letter words, also add to exclusion list and set timeout for UA LOA'A MUA message
-        if (newWord.length === 3 && !gameState.foundThreeLetterWords.includes(validWord)) {
+        if (!couldBeLongerWord) {
+          // Already found this word and no longer words start with it - show UA LOA'A MUA! over delete key
+          console.log('🔄 Duplicate word check - validWord:', validWord, 'newWord:', newWord, 'newWord.length:', newWord.length);
+          console.log('🔄 isWordFound result:', isWordFound(validWord, newWord.length));
+          
+          // For 3-letter words, also add to exclusion list and set timeout for UA LOA'A MUA message
+          if (newWord.length === 3 && !gameState.foundThreeLetterWords.includes(validWord)) {
           const updatedFoundThreeLetterWords = [...gameState.foundThreeLetterWords, validWord];
           
           setGameState(prev => ({
@@ -1012,6 +1020,8 @@ const HawaiianWordGame: React.FC = () => {
             }));
           }, 2000);
         }
+        
+        } // End of if (!couldBeLongerWord)
         
         return; // Stop here
       }
