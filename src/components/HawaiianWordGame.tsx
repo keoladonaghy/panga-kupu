@@ -1245,11 +1245,19 @@ const HawaiianWordGame: React.FC = () => {
   };
 
   const handleClearWord = () => {
+    // Clear all timeouts and HOKA state
+    clearHokaTimeout();
+    if (wordClearTimeout) {
+      clearTimeout(wordClearTimeout);
+      setWordClearTimeout(null);
+    }
     setGameState(prev => ({
       ...prev,
       selectedLetters: [],
       currentWord: '',
-      typedWord: ''
+      typedWord: '',
+      showHoka: false,
+      hokaMessage: ''
     }));
   };
 
@@ -2089,7 +2097,10 @@ const HawaiianWordGame: React.FC = () => {
                   setGameState(prev => ({ 
                     ...prev, 
                     currentWord: '',
-                    showHoka: false 
+                    selectedLetters: [],
+                    typedWord: '',
+                    showHoka: false,
+                    hokaMessage: ''
                   }));
                 }}
                 disabled={!gameState.currentWord || buttonsDisabled}
