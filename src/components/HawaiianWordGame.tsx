@@ -2102,13 +2102,26 @@ const HawaiianWordGame: React.FC = () => {
                     clearTimeout(wordClearTimeout);
                     setWordClearTimeout(null);
                   }
+                  if (threeLetterTimeout) {
+                    clearTimeout(threeLetterTimeout);
+                    setThreeLetterTimeout(null);
+                  }
+                  // Force clear the input field immediately
+                  const inputElement = document.querySelector('input[type="text"]') as HTMLInputElement;
+                  if (inputElement) {
+                    inputElement.value = '';
+                  }
                   setGameState(prev => ({ 
                     ...prev, 
                     currentWord: '',
                     selectedLetters: [],
                     typedWord: '',
                     showHoka: false,
-                    hokaMessage: ''
+                    hokaMessage: '',
+                    showCircleError: false,
+                    circleErrorMessage: '',
+                    showError: false,
+                    errorMessage: ''
                   }));
                 }}
                 disabled={!gameState.currentWord || buttonsDisabled}
