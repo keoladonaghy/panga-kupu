@@ -960,8 +960,8 @@ const HawaiianWordGame: React.FC = () => {
       } else if (validWord && isWordFound(validWord, newWord.length)) {
         // Check if this could be the start of a longer word before showing "already found"
         const couldBeLongerWord = gameState.crosswordWords.some(crosswordWord => 
-          crosswordWord.word.length > newWord.length &&
-          toHawaiianUppercase(crosswordWord.word).startsWith(normalizedWord)
+          crosswordWord.word.length > validWord.length &&
+          toHawaiianUppercase(crosswordWord.word).startsWith(toHawaiianUppercase(validWord))
         );
         
         if (!couldBeLongerWord) {
