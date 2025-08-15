@@ -1088,10 +1088,11 @@ const HawaiianWordGame: React.FC = () => {
       crosswordWord.word.length === word.length
     );
 
-    if (isWordInCrossword && !gameState.foundWords.includes(word)) {
+    if (isWordInCrossword && !isWordFound(word, word.length)) {
       // Word found! Add to found words and clear current word
       clearHokaTimeout(); // Clear any pending HOKA timeouts
-      const newFoundWords = [...gameState.foundWords, word];
+      const wordWithLength = `${word}_${word.length}`;
+      const newFoundWords = [...gameState.foundWords, wordWithLength];
       
       setGameState(prev => ({
         ...prev,
@@ -1119,7 +1120,7 @@ const HawaiianWordGame: React.FC = () => {
           setGameState(prev => ({ ...prev, showCelebration: true, isManualCelebration: false }));
         }, 1000);
       }
-    } else if (gameState.foundWords.includes(word)) {
+    } else if (isWordFound(word, word.length)) {
       // Already found this word - show UA LOA'A MUA! over delete key
       setGameState(prev => ({
         ...prev,
