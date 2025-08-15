@@ -964,88 +964,26 @@ const HawaiianWordGame: React.FC = () => {
         
         return; // Stop here, don't continue to check for HOKA!
       } else if (validWord && isWordFound(validWord, newWord.length)) {
-        // Only check for "already found" if the current typed word actually exists in the crossword
-        const currentWordExists = gameState.crosswordWords.some(crosswordWord => 
-          toHawaiianUppercase(crosswordWord.word) === normalizedWord
-        );
+        // Simple check: only show "already found" if the current typed word (at current length) was already found
+        console.log('🔄 Current word already found:', validWord, 'at length', newWord.length);
         
-        if (currentWordExists) {
-          // Check if this could be the start of a longer word before showing "already found"
-          const couldBeLongerWord = gameState.crosswordWords.some(crosswordWord => 
-            crosswordWord.word.length > validWord.length &&
-            toHawaiianUppercase(crosswordWord.word).startsWith(toHawaiianUppercase(validWord))
-          );
-          
-          console.log('🔄 Duplicate word check:');
-          console.log('  - validWord:', validWord);
-          console.log('  - validWord.length:', validWord.length);
-          console.log('  - currentWordExists:', currentWordExists);
-          console.log('  - crosswordWords:', gameState.crosswordWords.map(w => w.word));
-          console.log('  - longer words that start with this word:', gameState.crosswordWords.filter(cw => 
-            cw.word.length > validWord.length && 
-            toHawaiianUppercase(cw.word).startsWith(toHawaiianUppercase(validWord))
-          ).map(w => w.word));
-          console.log('  - couldBeLongerWord:', couldBeLongerWord);
+        // Show UA LOA'A MUA! immediately
+        setGameState(prev => ({
+          ...prev,
+          selectedLetters: [],
+          currentWord: '',
+          showCircleError: true,
+          circleErrorMessage: 'UA LOA\'A MUA!'
+        }));
         
-        if (!couldBeLongerWord) {
-          // Already found this word and no longer words start with it - show UA LOA'A MUA! over delete key
-          console.log('🔄 Duplicate word check - validWord:', validWord, 'newWord:', newWord, 'newWord.length:', newWord.length);
-          console.log('🔄 isWordFound result:', isWordFound(validWord, newWord.length));
-          
-          // For 3-letter words, also add to exclusion list and set timeout for UA LOA'A MUA message
-          if (newWord.length === 3 && !gameState.foundThreeLetterWords.includes(validWord)) {
-          const updatedFoundThreeLetterWords = [...gameState.foundThreeLetterWords, validWord];
-          
+        // Clear the error after 2 seconds
+        setTimeout(() => {
           setGameState(prev => ({
             ...prev,
-            selectedLetters: [],
-            currentWord: '',
-            foundThreeLetterWords: updatedFoundThreeLetterWords,
-            showCircleError: true,
-            circleErrorMessage: 'UA LOA\'A MUA!'
+            showCircleError: false,
+            circleErrorMessage: ''
           }));
-          
-          // Set timeout to show UA LOA'A MUA message if no further input
-          const timeout = setTimeout(() => {
-            setGameState(prev => ({
-              ...prev,
-              showCircleError: true,
-              circleErrorMessage: 'UA LOA\'A MUA!'
-            }));
-            
-            // Clear the message after 2 seconds
-            setTimeout(() => {
-              setGameState(prev => ({
-                ...prev,
-                showCircleError: false,
-                circleErrorMessage: ''
-              }));
-            }, 2000);
-            setThreeLetterTimeout(null);
-          }, 3000);
-          setThreeLetterTimeout(timeout);
-        } else {
-          // For 4-letter words or already excluded 3-letter words, show immediately
-          setGameState(prev => ({
-            ...prev,
-            selectedLetters: [],
-            currentWord: '',
-            showCircleError: true,
-            circleErrorMessage: 'UA LOA\'A MUA!'
-          }));
-          
-          // Clear the error after 2 seconds
-          setTimeout(() => {
-            setGameState(prev => ({
-              ...prev,
-              showCircleError: false,
-              circleErrorMessage: ''
-            }));
-          }, 2000);
-        }
-        
-          } // End of if (!couldBeLongerWord)
-        } // End of if (currentWordExists)
+        }, 2000);
         
         return; // Stop here
       }
