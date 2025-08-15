@@ -892,6 +892,12 @@ const HawaiianWordGame: React.FC = () => {
       // Only accept words that have an exact match (same text AND same length)
       const validWord = exactMatchingWords.length > 0 ? normalizedWord : null;
       
+      console.log('🔎 validWord determination:');
+      console.log('  - newWord:', newWord);
+      console.log('  - normalizedWord:', normalizedWord);
+      console.log('  - exactMatchingWords.length:', exactMatchingWords.length);
+      console.log('  - validWord:', validWord);
+      
       if (validWord && !isWordFound(validWord, newWord.length)) {
         console.log('✅ Valid word found:', validWord);
         console.log('📍 Matching crossword words:', exactMatchingWords.map(w => ({ word: w.word, length: w.word.length, row: w.row, col: w.col, direction: w.direction })));
