@@ -1251,13 +1251,21 @@ const HawaiianWordGame: React.FC = () => {
       clearTimeout(wordClearTimeout);
       setWordClearTimeout(null);
     }
+    if (threeLetterTimeout) {
+      clearTimeout(threeLetterTimeout);
+      setThreeLetterTimeout(null);
+    }
     setGameState(prev => ({
       ...prev,
       selectedLetters: [],
       currentWord: '',
       typedWord: '',
       showHoka: false,
-      hokaMessage: ''
+      hokaMessage: '',
+      showCircleError: false,
+      circleErrorMessage: '',
+      showError: false,
+      errorMessage: ''
     }));
   };
 
