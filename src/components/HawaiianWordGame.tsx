@@ -1214,6 +1214,7 @@ const HawaiianWordGame: React.FC = () => {
       }
     } else if (isWordFound(word, word.length)) {
       // Already found this word
+      console.log('🔄 TYPED WORD ALREADY FOUND:', word, 'length:', word.length);
       setGameState(prev => ({
         ...prev,
         typedWord: '',
@@ -1221,6 +1222,7 @@ const HawaiianWordGame: React.FC = () => {
         errorMessage: ''
       }));
       
+      console.log('📢 Showing toast for already found word');
       toast({
         title: "Already found!",
         description: "You've already found this word",
