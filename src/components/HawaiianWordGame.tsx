@@ -1487,26 +1487,29 @@ const HawaiianWordGame: React.FC = () => {
       return true;
     }
 
-    // Find the specific crossword word that should be at this exact position
-    // Each found word should only appear in its own designated position
-    const exactWordAtPosition = gameState.crosswordWords.find(crosswordWord => {
+    // Find all crossword words that could occupy this position
+    const wordsAtPosition = gameState.crosswordWords.filter(crosswordWord => {
       // Check if this cell position is part of this word's designated area
       const isInWordArea = crosswordWord.direction === 'across' 
         ? (row === crosswordWord.row && col >= crosswordWord.col && col < crosswordWord.col + crosswordWord.word.length)
         : (col === crosswordWord.col && row >= crosswordWord.row && row < crosswordWord.row + crosswordWord.word.length);
       
-      if (!isInWordArea) return false;
-      
-      // Normalize the crossword word and check if it was found
+      return isInWordArea;
+    });
+
+    if (wordsAtPosition.length === 0) return false;
+
+    // Check which of these words have been found
+    const foundWordsAtPosition = wordsAtPosition.filter(crosswordWord => {
       const normalizedCrosswordWord = toHawaiianUppercase(crosswordWord.word);
       const wordWithLength = `${normalizedCrosswordWord}_${crosswordWord.word.length}`;
       const isExactWordFound = gameState.foundWords.includes(wordWithLength);
       
-      console.log('🔍 Checking exact word placement:', {
-        crosswordWord: normalizedCrosswordWord,
+      console.log('🔍 Checking word at position:', {
+        word: normalizedCrosswordWord,
         wordLength: crosswordWord.word.length,
         wordWithLength,
-        isExactWordFound,
+        isFound: isExactWordFound,
         position: { row, col },
         wordPosition: { row: crosswordWord.row, col: crosswordWord.col },
         direction: crosswordWord.direction
@@ -1515,7 +1518,21 @@ const HawaiianWordGame: React.FC = () => {
       return isExactWordFound;
     });
 
-    return exactWordAtPosition !== undefined;
+    // If no words at this position have been found, don't show anything
+    if (foundWordsAtPosition.length === 0) return false;
+
+    // If multiple words have been found at this position, prioritize by word length
+    // This ensures shorter words appear in their correct positions, not longer word positions
+    if (foundWordsAtPosition.length > 1) {
+      console.log('🎯 Multiple found words at position:', { row, col }, 
+        'Words:', foundWordsAtPosition.map(w => ({ word: w.word, length: w.word.length })));
+      
+      // Sort by word length (shortest first) to prioritize exact matches
+      foundWordsAtPosition.sort((a, b) => a.word.length - b.word.length);
+      console.log('🎯 Prioritizing shortest word:', foundWordsAtPosition[0].word);
+    }
+
+    return true;
   };
 
   // Helper function to count only actual found words (not hint markers)
