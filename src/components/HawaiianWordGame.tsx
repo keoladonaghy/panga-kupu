@@ -959,26 +959,35 @@ const HawaiianWordGame: React.FC = () => {
         
         return; // Stop here, don't continue to check for HOKA!
       } else if (validWord && isWordFound(validWord, newWord.length)) {
-        // Simple check: only show "already found" if the current typed word (at current length) was already found
+        // Check if this could be the start of a longer unfound word before showing "already found"
+        const couldBeLongerWord = gameState.crosswordWords.some(crosswordWord => 
+          crosswordWord.word.length > validWord.length &&
+          toHawaiianUppercase(crosswordWord.word).startsWith(toHawaiianUppercase(validWord)) &&
+          !isWordFound(crosswordWord.word, crosswordWord.word.length)
+        );
+        
         console.log('🔄 Current word already found:', validWord, 'at length', newWord.length);
+        console.log('🔄 Could be longer unfound word:', couldBeLongerWord);
         
-        // Show UA LOA'A MUA! immediately
-        setGameState(prev => ({
-          ...prev,
-          selectedLetters: [],
-          currentWord: '',
-          showCircleError: true,
-          circleErrorMessage: 'UA LOA\'A MUA!'
-        }));
-        
-        // Clear the error after 2 seconds
-        setTimeout(() => {
+        if (!couldBeLongerWord) {
+          // Only show UA LOA'A MUA! if this word can't be the start of a longer unfound word
           setGameState(prev => ({
             ...prev,
-            showCircleError: false,
-            circleErrorMessage: ''
+            selectedLetters: [],
+            currentWord: '',
+            showCircleError: true,
+            circleErrorMessage: 'UA LOA\'A MUA!'
           }));
-        }, 2000);
+          
+          // Clear the error after 2 seconds
+          setTimeout(() => {
+            setGameState(prev => ({
+              ...prev,
+              showCircleError: false,
+              circleErrorMessage: ''
+            }));
+          }, 2000);
+        }
         
         return; // Stop here
       }
