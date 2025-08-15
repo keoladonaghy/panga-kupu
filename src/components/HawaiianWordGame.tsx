@@ -959,18 +959,19 @@ const HawaiianWordGame: React.FC = () => {
         
         return; // Stop here, don't continue to check for HOKA!
       } else if (validWord && isWordFound(validWord, newWord.length)) {
-        // Check if this could be the start of a longer unfound word before showing "already found"
-        const couldBeLongerWord = gameState.crosswordWords.some(crosswordWord => 
+        // Check if there are any longer unfound words that start with this already-found word
+        const longerUnfoundWords = gameState.crosswordWords.filter(crosswordWord => 
           crosswordWord.word.length > validWord.length &&
           toHawaiianUppercase(crosswordWord.word).startsWith(toHawaiianUppercase(validWord)) &&
           !isWordFound(crosswordWord.word, crosswordWord.word.length)
         );
         
-        console.log('🔄 Current word already found:', validWord, 'at length', newWord.length);
-        console.log('🔄 Could be longer unfound word:', couldBeLongerWord);
+        console.log('🔄 Already found word:', validWord, 'at length', newWord.length);
+        console.log('🔄 Longer unfound words that start with this:', longerUnfoundWords.map(w => w.word));
         
-        if (!couldBeLongerWord) {
-          // Only show UA LOA'A MUA! if this word can't be the start of a longer unfound word
+        if (longerUnfoundWords.length === 0) {
+          // No longer unfound words start with this - show UA LOA'A MUA!
+          console.log('🔄 No longer unfound words, showing UA LOA\'A MUA!');
           setGameState(prev => ({
             ...prev,
             selectedLetters: [],
@@ -987,6 +988,9 @@ const HawaiianWordGame: React.FC = () => {
               circleErrorMessage: ''
             }));
           }, 2000);
+        } else {
+          // There are longer unfound words - let the user continue typing
+          console.log('🔄 Longer unfound words exist, allowing continued typing');
         }
         
         return; // Stop here
