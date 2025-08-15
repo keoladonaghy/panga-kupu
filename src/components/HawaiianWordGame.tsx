@@ -2394,16 +2394,24 @@ const HawaiianWordGame: React.FC = () => {
                     console.log('🔍 Checking for immediate word match, length:', newValue.length);
                     const normalizedWord = toHawaiianUppercase(newValue.trim());
                     console.log('🔤 Normalized word:', normalizedWord);
-                     const isWordInCrossword = gameState.crosswordWords.some(crosswordWord => 
-                       toHawaiianUppercase(crosswordWord.word) === normalizedWord && 
-                       crosswordWord.word.length === normalizedWord.length
-                     );
+                    
+                    // Check if current typed word exactly matches any previously found word
+                    const matchingFoundWord = gameState.foundWords.find(foundWord => {
+                      const foundWordWithoutLength = foundWord.replace(/_\d+$/, '');
+                      return foundWordWithoutLength === normalizedWord && foundWordWithoutLength.length === normalizedWord.length;
+                    });
+                    
+                    const isWordInCrossword = gameState.crosswordWords.some(crosswordWord => 
+                      toHawaiianUppercase(crosswordWord.word) === normalizedWord && 
+                      crosswordWord.word.length === normalizedWord.length
+                    );
                     
                     // If it's a valid word that hasn't been found yet
-                    if (isWordInCrossword && !gameState.foundWords.includes(normalizedWord)) {
+                    if (isWordInCrossword && !matchingFoundWord) {
                       // Valid word found - trigger success immediately
                       clearHokaTimeout(); // Clear any pending HOKA timeouts
-                      const newFoundWords = [...gameState.foundWords, normalizedWord];
+                      const wordWithLength = `${normalizedWord}_${normalizedWord.length}`;
+                      const newFoundWords = [...gameState.foundWords, wordWithLength];
                       
                       setGameState(prev => ({
                         ...prev,
@@ -2432,11 +2440,21 @@ const HawaiianWordGame: React.FC = () => {
                       }
                       
                       return; // Stop here
-                    } else if (isWordInCrossword && gameState.foundWords.includes(normalizedWord)) {
-                      // Only show "already found" if this is a complete word attempt (at max length or through explicit submission)
-                      // Don't trigger while user is still potentially typing a longer word
+                    } else if (matchingFoundWord) {
+                      // User has typed a word that exactly matches a previously found word
+                      // Show "already found" message but allow continued typing for longer words
+                      console.log('🔄 User typed previously found word:', normalizedWord, 'allowing continued typing...');
+                      
+                      // Show toast notification that word was already found
+                      toast({
+                        title: "Already found!",
+                        description: "Continue typing to find a longer word that starts with this.",
+                        duration: 2000,
+                      });
+                      
+                      // Don't prevent further typing - let user continue to find longer words
+                      // Only show blocking message if at max length
                       if (newValue.length === wordLimits.maxWordLength) {
-                        // Already found this word - show UA LOA'A MUA!
                         setGameState(prev => ({
                           ...prev,
                           typedWord: 'UA LOA\'A MUA!'
