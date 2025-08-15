@@ -1161,6 +1161,7 @@ const HawaiianWordGame: React.FC = () => {
 
   const handleTypedWordSubmit = () => {
     const word = toHawaiianUppercase(gameState.typedWord.trim());
+    console.log('🔍 SUBMIT DEBUG - word:', word, 'typedWord:', gameState.typedWord);
     if (!word) return;
 
     // Check if the word is in the crossword puzzle
