@@ -959,19 +959,16 @@ const HawaiianWordGame: React.FC = () => {
         
         return; // Stop here, don't continue to check for HOKA!
       } else if (validWord && isWordFound(validWord, newWord.length)) {
-        // Check if there are any longer unfound words that start with this already-found word
-        const longerUnfoundWords = gameState.crosswordWords.filter(crosswordWord => 
-          crosswordWord.word.length > validWord.length &&
-          toHawaiianUppercase(crosswordWord.word).startsWith(toHawaiianUppercase(validWord)) &&
-          !isWordFound(crosswordWord.word, crosswordWord.word.length)
-        );
+        // Only show UA LOA'A MUA! if this is the maximum word length possible with current letters
+        // This allows players to discover for themselves if longer words exist
+        const maxPossibleLength = gameState.availableLetters.length;
         
         console.log('🔄 Already found word:', validWord, 'at length', newWord.length);
-        console.log('🔄 Longer unfound words that start with this:', longerUnfoundWords.map(w => w.word));
+        console.log('🔄 Max possible length with available letters:', maxPossibleLength);
         
-        if (longerUnfoundWords.length === 0) {
-          // No longer unfound words start with this - show UA LOA'A MUA!
-          console.log('🔄 No longer unfound words, showing UA LOA\'A MUA!');
+        if (newWord.length >= maxPossibleLength) {
+          // At maximum length, so show UA LOA'A MUA!
+          console.log('🔄 At max length, showing UA LOA\'A MUA!');
           setGameState(prev => ({
             ...prev,
             selectedLetters: [],
@@ -989,8 +986,8 @@ const HawaiianWordGame: React.FC = () => {
             }));
           }, 2000);
         } else {
-          // There are longer unfound words - let the user continue typing
-          console.log('🔄 Longer unfound words exist, allowing continued typing');
+          // Not at max length - let player continue to discover longer words themselves
+          console.log('🔄 Not at max length, allowing continued typing');
         }
         
         return; // Stop here
