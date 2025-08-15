@@ -1487,65 +1487,35 @@ const HawaiianWordGame: React.FC = () => {
       return true;
     }
 
-    // Find all crossword words that match found words at this position
-    const matchingWords = gameState.crosswordWords.filter(crosswordWord => {
-      // Normalize both the crossword word and found words for comparison
-      const normalizedCrosswordWord = toHawaiianUppercase(crosswordWord.word);
-      
-      // Check if this specific word (with its length) was found
-      // Format: "WORD_LENGTH" ensures "MAU_3" doesn't match "MAUA_4"
-      const wordWithLength = `${normalizedCrosswordWord}_${crosswordWord.word.length}`;
-      const isExactWordFound = gameState.foundWords.includes(wordWithLength);
-      
-      console.log('🔍 Checking word placement:', {
-        crosswordWord: normalizedCrosswordWord,
-        wordLength: crosswordWord.word.length,
-        wordWithLength,
-        foundWords: gameState.foundWords,
-        isExactWordFound,
-        position: { row, col }
-      });
-      
-      if (!isExactWordFound) return false;
-      
-      // Check if this cell position is part of this word
-      const isInWord = crosswordWord.direction === 'across' 
+    // Find the specific crossword word that should be at this exact position
+    // Each found word should only appear in its own designated position
+    const exactWordAtPosition = gameState.crosswordWords.find(crosswordWord => {
+      // Check if this cell position is part of this word's designated area
+      const isInWordArea = crosswordWord.direction === 'across' 
         ? (row === crosswordWord.row && col >= crosswordWord.col && col < crosswordWord.col + crosswordWord.word.length)
         : (col === crosswordWord.col && row >= crosswordWord.row && row < crosswordWord.row + crosswordWord.word.length);
       
-      return isInWord;
-    });
-
-    if (matchingWords.length === 0) return false;
-    
-    // If multiple words could occupy this position, prioritize by exact length match
-    // This ensures 3-letter words go to 3-letter slots, not longer word slots
-    if (matchingWords.length > 1) {
-      console.log('🎯 Multiple words could occupy position:', { row, col }, 
-        'Words:', matchingWords.map(w => ({ word: w.word, length: w.word.length })));
+      if (!isInWordArea) return false;
       
-      // Group words by their length
-      const wordsByLength = new Map();
-      matchingWords.forEach(word => {
-        const len = word.word.length;
-        if (!wordsByLength.has(len)) {
-          wordsByLength.set(len, []);
-        }
-        wordsByLength.get(len).push(word);
+      // Normalize the crossword word and check if it was found
+      const normalizedCrosswordWord = toHawaiianUppercase(crosswordWord.word);
+      const wordWithLength = `${normalizedCrosswordWord}_${crosswordWord.word.length}`;
+      const isExactWordFound = gameState.foundWords.includes(wordWithLength);
+      
+      console.log('🔍 Checking exact word placement:', {
+        crosswordWord: normalizedCrosswordWord,
+        wordLength: crosswordWord.word.length,
+        wordWithLength,
+        isExactWordFound,
+        position: { row, col },
+        wordPosition: { row: crosswordWord.row, col: crosswordWord.col },
+        direction: crosswordWord.direction
       });
       
-      // Prefer the shortest word length first (3-letter over 4-letter, etc.)
-      const sortedLengths = Array.from(wordsByLength.keys()).sort((a, b) => a - b);
-      const preferredLength = sortedLengths[0];
-      const preferredWords = wordsByLength.get(preferredLength);
-      
-      console.log('🎯 Prioritizing words of length:', preferredLength, 
-        'Words:', preferredWords.map(w => w.word));
-      
-      return preferredWords.length > 0;
-    }
-    
-    return true;
+      return isExactWordFound;
+    });
+
+    return exactWordAtPosition !== undefined;
   };
 
   // Helper function to count only actual found words (not hint markers)
