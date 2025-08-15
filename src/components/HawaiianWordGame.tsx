@@ -964,6 +964,16 @@ const HawaiianWordGame: React.FC = () => {
           toHawaiianUppercase(crosswordWord.word).startsWith(toHawaiianUppercase(validWord))
         );
         
+        console.log('🔄 Duplicate word check:');
+        console.log('  - validWord:', validWord);
+        console.log('  - validWord.length:', validWord.length);
+        console.log('  - crosswordWords:', gameState.crosswordWords.map(w => w.word));
+        console.log('  - longer words that start with this word:', gameState.crosswordWords.filter(cw => 
+          cw.word.length > validWord.length && 
+          toHawaiianUppercase(cw.word).startsWith(toHawaiianUppercase(validWord))
+        ).map(w => w.word));
+        console.log('  - couldBeLongerWord:', couldBeLongerWord);
+        
         if (!couldBeLongerWord) {
           // Already found this word and no longer words start with it - show UA LOA'A MUA! over delete key
           console.log('🔄 Duplicate word check - validWord:', validWord, 'newWord:', newWord, 'newWord.length:', newWord.length);
