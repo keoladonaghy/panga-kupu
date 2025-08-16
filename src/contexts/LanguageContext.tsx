@@ -23,7 +23,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   // Initialize languages from localStorage
   const getInitialInterfaceLanguage = (): SupportedLanguage => {
     const stored = localStorage.getItem('interface-language');
-    return (stored === 'en' || stored === 'haw' || stored === 'mao') ? stored : 'haw';
+    return (stored === 'en' || stored === 'haw' || stored === 'mao') ? stored : 'en';
   };
   
   const getInitialGameLanguage = (): SupportedLanguage => {
