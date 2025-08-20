@@ -56,7 +56,7 @@ const WORD_FOUND_TOAST_DESCRIPTION = (word: string) => `Ua koho pono 'oe iā ${w
 
 const HawaiianWordGame: React.FC = () => {
   const [showInstructions, setShowInstructions] = useState(false);
-  const { t, currentLanguage } = useTranslation();
+  const { t, currentLanguage, getCelebrationMessage } = useTranslation();
   const { gameLanguage } = useLanguageContext();
   const [gameState, setGameState] = useState<GameState>({
     foundWords: [],
@@ -1816,17 +1816,21 @@ const HawaiianWordGame: React.FC = () => {
           {/* Black Screen Fade */}
           <div className="absolute inset-0 bg-black animate-[blackFade_1s_ease-in-out_forwards]" />
           
-          {/* Congratulations Text */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center opacity-0 animate-[textPhase_4s_ease-in-out_2s_forwards]">
-              <div className="text-6xl font-black text-white leading-tight" 
-                   style={{ fontFamily: 'Arial Black, Arial, sans-serif', textShadow: '4px 4px 8px rgba(0,0,0,0.8)' }}>
-                <div>UA</div>
-                <div>LANAKILA</div>
-                <div>ʻOE!</div>
-              </div>
-            </div>
-          </div>
+           {/* Congratulations Text */}
+           <div className="absolute inset-0 flex items-center justify-center">
+             <div className="text-center opacity-0 animate-[textPhase_4s_ease-in-out_2s_forwards]">
+               <div className="text-6xl font-black text-white leading-tight" 
+                    style={{ fontFamily: 'Arial Black, Arial, sans-serif', textShadow: '4px 4px 8px rgba(0,0,0,0.8)' }}>
+                 {(() => {
+                   const message = getCelebrationMessage();
+                   const lines = message.split(' ');
+                   return lines.map((line, index) => (
+                     <div key={index}>{line}</div>
+                   ));
+                 })()}
+               </div>
+             </div>
+           </div>
         </div>
       )}
       

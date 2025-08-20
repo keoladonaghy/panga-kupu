@@ -40,8 +40,30 @@ export const useTranslation = () => {
     return value || key;
   };
 
+  // Helper function for getting random celebration message
+  const getCelebrationMessage = (): string => {
+    const translation = translations[interfaceLanguage];
+    const messages = getNestedValue(translation, 'game.messages.celebrationComplete');
+    
+    if (Array.isArray(messages)) {
+      const randomIndex = Math.floor(Math.random() * messages.length);
+      return messages[randomIndex];
+    }
+    
+    // Fallback to English if current language doesn't have array
+    const englishMessages = getNestedValue(translations.en, 'game.messages.celebrationComplete');
+    if (Array.isArray(englishMessages)) {
+      const randomIndex = Math.floor(Math.random() * englishMessages.length);
+      return englishMessages[randomIndex];
+    }
+    
+    // Final fallback to single string if exists
+    return messages || englishMessages || 'You Won!';
+  };
+
   return {
     t,
+    getCelebrationMessage,
     currentLanguage,
     setLanguage,
     availableLanguages

@@ -76,7 +76,12 @@
       "hintUsed": "Ua hoʻohana ʻia ka 'ōlelo ho'ohani!",
       "hintLetterRevealed": "Huapalapala i hōʻike ʻia: {{letter}}",
       "noHintsLeft": "ʻAʻohe 'ōlelo ho'ohani i koe!",
-      "celebrationComplete": "Ua Lanakila 'Oe!"
+      "celebrationComplete": [
+        "Ua Lanakila 'Oe!",
+        "Hūlō!",
+        "Maikaʻi Loa!",
+        "ʻAno ʻAi!"
+      ]
     }
   },
   "uploader": {

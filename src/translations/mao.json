@@ -75,7 +75,12 @@
       "hintUsed": "Kotahi Tīwiri i whakamahia!",
       "hintLetterRevealed": "Te reta i whakakitea: {{letter}}",
       "noHintsLeft": "Kāore he tīwhiri!",
-      "celebrationComplete": "Ka Mau Te Wehi!"
+      "celebrationComplete": [
+        "Ka Mau Te Wehi!",
+        "Kia Ora!",
+        "Tino Pai!",
+        "Rawe!"
+      ]
     }
   },
   "uploader": {
