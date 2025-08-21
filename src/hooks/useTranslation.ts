@@ -27,17 +27,26 @@ const getNestedValue = (obj: any, path: string): string => {
 export const useTranslation = () => {
   const { interfaceLanguage, currentLanguage, setLanguage, availableLanguages } = useLanguageContext();
 
-  const t = (key: string): string => {
+  const t = (key: string, params?: Record<string, string | number>): string => {
     const translation = translations[interfaceLanguage];
-    const value = getNestedValue(translation, key);
+    let value = getNestedValue(translation, key);
     
     // Fallback to English if translation not found
     if (value === undefined && interfaceLanguage !== 'en') {
       const fallbackValue = getNestedValue(translations.en, key);
-      return fallbackValue || key;
+      value = fallbackValue || key;
+    } else {
+      value = value || key;
     }
     
-    return value || key;
+    // Replace interpolation variables
+    if (params && typeof value === 'string') {
+      Object.entries(params).forEach(([paramKey, paramValue]) => {
+        value = value.replace(new RegExp(`{{${paramKey}}}`, 'g'), String(paramValue));
+      });
+    }
+    
+    return value;
   };
 
   // Helper function for getting random celebration message
