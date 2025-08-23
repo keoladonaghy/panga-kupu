@@ -293,6 +293,11 @@ export class CrosswordGenerator {
       
       console.log('Selected macron vowels:', selectedMacronVowels);
       
+      // Handle 'eta (glottal stop) selection - 44% of words have it
+      const shouldIncludeEta = Math.random() < 0.44;
+      
+      console.log('Should include \'eta:', shouldIncludeEta);
+      
       // Build letter set (no digraphs for Tahitian, similar to Hawaiian)
       
       // Add all vowels first
@@ -301,9 +306,18 @@ export class CrosswordGenerator {
       // Add selected macron vowels
       selectedLetters.push(...selectedMacronVowels);
       
-      // Fill remaining slots with consonants
+      // Separate 'eta from other consonants
+      const etaChar = '\u2018'; // U+2018
+      const otherConsonants = consonants.filter(c => c !== etaChar);
+      
+      // Add 'eta if selected
+      if (shouldIncludeEta) {
+        selectedLetters.push(etaChar);
+      }
+      
+      // Fill remaining slots with other consonants
       const remainingSlots = this.LETTERS_PER_PUZZLE - selectedLetters.length;
-      const shuffledConsonants = [...consonants].sort(() => Math.random() - 0.5);
+      const shuffledConsonants = [...otherConsonants].sort(() => Math.random() - 0.5);
       selectedLetters.push(...shuffledConsonants.slice(0, remainingSlots));
       
       // Final shuffle to randomize letter order
