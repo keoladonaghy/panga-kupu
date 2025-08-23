@@ -314,6 +314,12 @@ export class CrosswordGenerator {
     return letters;
   }
 
+  // Helper: determine if a word uses Māori digraphs
+  private isDigraphWord(word: string): boolean {
+    if (this.language !== 'mao') return false;
+    return word.includes('wh') || word.includes('ng');
+  }
+
   private buildStructuredCrossword(): CrosswordGrid | null {
     const grid: string[][] = Array(11).fill(null).map(() => 
       Array(12).fill('')
@@ -326,6 +332,10 @@ export class CrosswordGenerator {
     const maxFoundationLength = Math.min(5, this.wordLimits.maxWordLength);
     const foundationWords = this.filteredWords.filter(word => word.length >= 4 && word.length <= maxFoundationLength);
     
+    // Digraph balance: cap Māori digraph words to 50% of the puzzle
+    const maxDigraphWords = this.language === 'mao' ? Math.ceil(this.MAX_WORDS * 0.5) : 0;
+    let digraphWordsPlaced = 0;
+    
     // For languages with max length >= 5, prioritize five-letter words
     // For languages with max length < 5, use the longest available words
     let selectedFoundation: string[];
@@ -336,8 +346,19 @@ export class CrosswordGenerator {
         console.log(`Not enough five-letter words available: ${fiveLetterWords.length}`);
         return null;
       }
-      selectedFoundation = [...fiveLetterWords].sort(() => Math.random() - 0.5).slice(0, 2);
-      console.log('Foundation words selected (ensuring 2 five-letter words):', selectedFoundation);
+      const fiveLetterNonDigraph = fiveLetterWords.filter(w => !this.isDigraphWord(w));
+      const fiveLetterDigraph = fiveLetterWords.filter(w => this.isDigraphWord(w));
+      if (fiveLetterNonDigraph.length > 0 && fiveLetterWords.length >= 2) {
+        // Ensure at least one foundation word is non-digraph when possible
+        const first = fiveLetterNonDigraph[Math.floor(Math.random() * fiveLetterNonDigraph.length)];
+        const poolForSecond = fiveLetterWords.filter(w => w !== first);
+        const second = poolForSecond[Math.floor(Math.random() * poolForSecond.length)];
+        selectedFoundation = [first, second];
+      } else {
+        // Fallback: any two
+        selectedFoundation = [...fiveLetterWords].sort(() => Math.random() - 0.5).slice(0, 2);
+      }
+      console.log('Foundation words selected (ensuring mix if possible):', selectedFoundation);
     } else {
       // For shorter max lengths, use the longest available words
       const longestWords = this.filteredWords.filter(word => word.length === maxFoundationLength);
@@ -363,6 +384,7 @@ export class CrosswordGenerator {
       number: 1
     });
     usedWords.add(firstWord);
+    if (this.isDigraphWord(firstWord)) { digraphWordsPlaced++; }
     console.log('Placed foundation word 1:', firstWord);
 
     // Place second foundation word vertically
@@ -371,6 +393,7 @@ export class CrosswordGenerator {
       const secondWord = selectedFoundation[1];
       if (this.tryPlaceIntersectingWord(grid, placedWords, secondWord, usedWords, wordNumber)) {
         wordNumber++;
+        if (this.isDigraphWord(secondWord)) { digraphWordsPlaced++; }
         console.log('Placed foundation word 2:', secondWord);
       }
     }
@@ -384,11 +407,14 @@ export class CrosswordGenerator {
     let mediumWordsAdded = 0;
     for (const word of mediumWords) {
       if (mediumWordsAdded >= this.MAX_MEDIUM_WORDS || placedWords.length >= this.MAX_WORDS) break; // Stop when target reached
-      
+      if (this.language === 'mao' && this.isDigraphWord(word) && digraphWordsPlaced >= maxDigraphWords) {
+        continue;
+      }
       console.log(`Trying to place medium word: ${word}`);
       if (this.tryPlaceIntersectingWord(grid, placedWords, word, usedWords, wordNumber)) {
         wordNumber++;
         mediumWordsAdded++;
+        if (this.isDigraphWord(word)) { digraphWordsPlaced++; }
         console.log(`SUCCESS: Placed medium word ${mediumWordsAdded}:`, word);
       } else {
         console.log(`FAILED: Could not place medium word:`, word);
@@ -404,11 +430,14 @@ export class CrosswordGenerator {
     let shortWordsAdded = 0;
     for (const word of shortWords) {
       if (shortWordsAdded >= this.MAX_SHORT_WORDS || placedWords.length >= this.MAX_WORDS) break;
-      
+      if (this.language === 'mao' && this.isDigraphWord(word) && digraphWordsPlaced >= maxDigraphWords) {
+        continue;
+      }
       console.log(`Trying to place short word: ${word}`);
       if (this.tryPlaceIntersectingWord(grid, placedWords, word, usedWords, wordNumber)) {
         wordNumber++;
         shortWordsAdded++;
+        if (this.isDigraphWord(word)) { digraphWordsPlaced++; }
         console.log(`SUCCESS: Placed short word ${shortWordsAdded}:`, word);
       } else {
         console.log(`FAILED: Could not place short word:`, word);
@@ -643,6 +672,7 @@ export class CrosswordGenerator {
     // Get all available words that aren't already used
     const availableWords = this.filteredWords.filter(word => !usedWords.has(word));
     console.log(`Post-processing: ${availableWords.length} available words to try`);
+    const maxDigraphWords = this.language === 'mao' ? Math.ceil(this.MAX_WORDS * 0.5) : 0;
 
     // For each existing letter in the grid, try to find words that use it
     for (let row = 0; row < 11 && wordsAdded < maxAdditionalWords; row++) {
@@ -653,6 +683,12 @@ export class CrosswordGenerator {
           // Try to place words using this letter as an intersection point
           for (const word of availableWords) {
             if (wordsAdded >= maxAdditionalWords) break;
+            if (this.language === 'mao' && this.isDigraphWord(word)) {
+              const currentDigraphCount = placedWords.filter(w => this.isDigraphWord(w.word)).length;
+              if (currentDigraphCount >= maxDigraphWords) {
+                continue;
+              }
+            }
             
             // Find all positions where this letter appears in the word
             for (let charIndex = 0; charIndex < word.length; charIndex++) {
