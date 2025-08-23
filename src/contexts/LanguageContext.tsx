@@ -28,7 +28,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   
   const getInitialGameLanguage = (): SupportedLanguage => {
     const stored = localStorage.getItem('game-language');
-    return (stored === 'en' || stored === 'haw' || stored === 'mao' || stored === 'tah') ? stored : 'haw';
+    return (stored === 'en' || stored === 'haw' || stored === 'mao' || stored === 'tah') ? stored : 'mao';
   };
   
   const [interfaceLanguage, setInterfaceLanguageState] = useState<SupportedLanguage>(getInitialInterfaceLanguage);
