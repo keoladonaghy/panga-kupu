@@ -166,6 +166,15 @@ export class CrosswordGenerator {
     return proportion;
   }
 
+  /**
+   * Count total vowels (with or without macron) in a word
+   */
+  private countVowels(word: string): number {
+    const vowelPattern = /[aeiouāēīōū]/gi;
+    const matches = word.match(vowelPattern);
+    return matches ? matches.length : 0;
+  }
+
   private selectRandomLetters(): void {
     console.log('=== SELECTING RANDOM LETTERS ===');
     console.log('Current language:', this.language);
@@ -440,6 +449,15 @@ export class CrosswordGenerator {
       // Check word length constraints using language-specific limits
       if (word.length < this.wordLimits.minWordLength || word.length > this.wordLimits.maxWordLength) {
         return false;
+      }
+      
+      // Vowel limit rule for Hawaiian and Tahitian: no more than 5 vowels per word
+      if (this.language === 'haw' || this.language === 'tah') {
+        const vowelCount = this.countVowels(word);
+        if (vowelCount > 5) {
+          console.log(`Filtering out word "${word}" - has ${vowelCount} vowels (limit: 5)`);
+          return false;
+        }
       }
       
       // Check if word contains only the selected letters
