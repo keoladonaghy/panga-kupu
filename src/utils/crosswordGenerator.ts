@@ -154,6 +154,18 @@ export class CrosswordGenerator {
     return null;
   }
 
+  /**
+   * Calculate the proportion of words in the list that contain macron vowels
+   */
+  private calculateMacronProportion(): number {
+    const wordsWithMacrons = this.words.filter(word => 
+      /[āēīōū]/.test(word)
+    ).length;
+    const proportion = wordsWithMacrons / this.words.length;
+    console.log(`Macron analysis: ${wordsWithMacrons}/${this.words.length} words (${(proportion * 100).toFixed(1)}%) contain macrons`);
+    return proportion;
+  }
+
   private selectRandomLetters(): void {
     let vowels: string[];
     let vowelsWithKahako: string[];
@@ -173,12 +185,29 @@ export class CrosswordGenerator {
     
     let selectedLetters: string[] = [];
     
-    // Select at most one vowel with kahakō (40% chance)
-    const includeKahakoVowel = Math.random() < 0.4;
-    let kahakoVowel: string | null = null;
+    // Enhanced macron selection based on word list proportion
+    const macronProportion = this.calculateMacronProportion();
+    
+    // Dynamic probability: use the actual proportion of words with macrons, with minimum 40%
+    const macronChance = Math.max(0.4, macronProportion * 0.9);
+    
+    // Allow multiple macron vowels if they're prevalent in the word list
+    const maxMacronVowels = macronProportion > 0.5 ? 2 : 1;
+    
+    console.log(`Macron selection: ${(macronChance * 100).toFixed(1)}% chance, max ${maxMacronVowels} vowels`);
+    
+    // Select macron vowels
+    const selectedMacronVowels: string[] = [];
+    const includeKahakoVowel = Math.random() < macronChance;
+    
     if (includeKahakoVowel) {
-      kahakoVowel = vowelsWithKahako[Math.floor(Math.random() * vowelsWithKahako.length)];
+      // Shuffle and select up to maxMacronVowels
+      const shuffledMacronVowels = [...vowelsWithKahako].sort(() => Math.random() - 0.5);
+      const numToSelect = Math.min(maxMacronVowels, Math.floor(Math.random() * maxMacronVowels) + 1);
+      selectedMacronVowels.push(...shuffledMacronVowels.slice(0, numToSelect));
     }
+    
+    console.log('Selected macron vowels:', selectedMacronVowels);
     
     if (this.language === 'mao') {
       // Enhanced selection for Māori to improve digraph representation
@@ -198,10 +227,8 @@ export class CrosswordGenerator {
       // Add all vowels
       selectedLetters.push(...vowels);
       
-      // Add kahakō vowel if selected
-      if (kahakoVowel) {
-        selectedLetters.push(kahakoVowel);
-      }
+      // Add selected macron vowels
+      selectedLetters.push(...selectedMacronVowels);
       
       // Fill remaining slots with other consonants
       const remainingSlots = this.LETTERS_PER_PUZZLE - selectedLetters.length;
@@ -215,20 +242,21 @@ export class CrosswordGenerator {
       // Final shuffle to randomize letter order
       selectedLetters = selectedLetters.sort(() => Math.random() - 0.5);
     } else {
-      // Original Hawaiian selection logic
+      // Enhanced Hawaiian selection logic
       const availableLetters = [...vowels, ...consonants];
-      if (kahakoVowel) {
-        availableLetters.push(kahakoVowel);
-      }
+      selectedLetters.push(...availableLetters);
       
-      const shuffled = [...availableLetters].sort(() => Math.random() - 0.5);
+      // Add selected macron vowels
+      selectedLetters.push(...selectedMacronVowels);
+      
+      const shuffled = [...selectedLetters].sort(() => Math.random() - 0.5);
       selectedLetters = shuffled.slice(0, this.LETTERS_PER_PUZZLE);
     }
     
     this.selectedLetters = selectedLetters;
     
     console.log(`Selected exactly ${this.LETTERS_PER_PUZZLE} letters for ${this.language} crossword:`, this.selectedLetters);
-    console.log('Kahakō vowel selected:', kahakoVowel || 'none');
+    console.log('Macron vowels selected:', selectedMacronVowels.length > 0 ? selectedMacronVowels : 'none');
     if (this.language === 'mao') {
       const hasNg = this.selectedLetters.includes('ng');
       const hasWh = this.selectedLetters.includes('wh');
