@@ -180,19 +180,60 @@ export class CrosswordGenerator {
       kahakoVowel = vowelsWithKahako[Math.floor(Math.random() * vowelsWithKahako.length)];
     }
     
-    // Select 7 letters from available letters
-    const availableLetters = [...vowels, ...consonants];
-    if (kahakoVowel) {
-      availableLetters.push(kahakoVowel);
+    if (this.language === 'mao') {
+      // Enhanced selection for Māori to improve digraph representation
+      const digraphs = ['ng', 'wh'];
+      const otherConsonants = consonants.filter(c => !digraphs.includes(c));
+      
+      // 70% chance to include at least one digraph
+      const includeDigraph = Math.random() < 0.7;
+      let selectedDigraph: string | null = null;
+      
+      if (includeDigraph) {
+        // Weighted selection: ng and wh have equal probability
+        selectedDigraph = digraphs[Math.floor(Math.random() * digraphs.length)];
+        selectedLetters.push(selectedDigraph);
+      }
+      
+      // Add all vowels
+      selectedLetters.push(...vowels);
+      
+      // Add kahakō vowel if selected
+      if (kahakoVowel) {
+        selectedLetters.push(kahakoVowel);
+      }
+      
+      // Fill remaining slots with other consonants
+      const remainingSlots = this.LETTERS_PER_PUZZLE - selectedLetters.length;
+      const availableConsonants = includeDigraph 
+        ? [...otherConsonants, ...digraphs.filter(d => d !== selectedDigraph)]
+        : consonants;
+      
+      const shuffledConsonants = [...availableConsonants].sort(() => Math.random() - 0.5);
+      selectedLetters.push(...shuffledConsonants.slice(0, remainingSlots));
+      
+      // Final shuffle to randomize letter order
+      selectedLetters = selectedLetters.sort(() => Math.random() - 0.5);
+    } else {
+      // Original Hawaiian selection logic
+      const availableLetters = [...vowels, ...consonants];
+      if (kahakoVowel) {
+        availableLetters.push(kahakoVowel);
+      }
+      
+      const shuffled = [...availableLetters].sort(() => Math.random() - 0.5);
+      selectedLetters = shuffled.slice(0, this.LETTERS_PER_PUZZLE);
     }
-    
-    const shuffled = [...availableLetters].sort(() => Math.random() - 0.5);
-    selectedLetters = shuffled.slice(0, this.LETTERS_PER_PUZZLE);
     
     this.selectedLetters = selectedLetters;
     
     console.log(`Selected exactly ${this.LETTERS_PER_PUZZLE} letters for ${this.language} crossword:`, this.selectedLetters);
     console.log('Kahakō vowel selected:', kahakoVowel || 'none');
+    if (this.language === 'mao') {
+      const hasNg = this.selectedLetters.includes('ng');
+      const hasWh = this.selectedLetters.includes('wh');
+      console.log('Digraphs included - ng:', hasNg, 'wh:', hasWh);
+    }
   }
 
   private filterWordsByLetters(): void {
