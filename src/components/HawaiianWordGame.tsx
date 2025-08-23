@@ -1499,7 +1499,33 @@ const HawaiianWordGame: React.FC = () => {
 
     if (wordsAtPosition.length === 0) return false;
 
-    // Check which of these words have been found
+    // Find words that have been found and that start exactly at the current position
+    // This ensures shorter words don't get placed in longer words' starting positions
+    const exactStartingWords = wordsAtPosition.filter(crosswordWord => {
+      const isExactStart = (crosswordWord.row === row && crosswordWord.col === col);
+      const normalizedCrosswordWord = toHawaiianUppercase(crosswordWord.word);
+      const wordWithLength = `${normalizedCrosswordWord}_${crosswordWord.word.length}`;
+      const isFound = gameState.foundWords.includes(wordWithLength);
+      
+      return isFound && isExactStart;
+    });
+
+    // If there's a word that starts exactly at this position, prioritize it
+    if (exactStartingWords.length > 0) {
+      // Sort by word length (shortest first) to prioritize shorter words in their own positions
+      exactStartingWords.sort((a, b) => a.word.length - b.word.length);
+      const prioritizedWord = exactStartingWords[0];
+      
+      console.log('🎯 Found word starting exactly at position:', {
+        position: { row, col },
+        word: prioritizedWord.word,
+        length: prioritizedWord.word.length
+      });
+      
+      return true;
+    }
+
+    // Check if this position is part of any found word's designated area (for middle letters)
     const foundWordsAtPosition = wordsAtPosition.filter(crosswordWord => {
       const normalizedCrosswordWord = toHawaiianUppercase(crosswordWord.word);
       const wordWithLength = `${normalizedCrosswordWord}_${crosswordWord.word.length}`;
@@ -1521,15 +1547,27 @@ const HawaiianWordGame: React.FC = () => {
     // If no words at this position have been found, don't show anything
     if (foundWordsAtPosition.length === 0) return false;
 
-    // If multiple words have been found at this position, prioritize by word length
-    // This ensures shorter words appear in their correct positions, not longer word positions
+    // For positions that aren't starting positions, prioritize by word specificity
+    // This ensures that if multiple words overlap, the most appropriate one is shown
     if (foundWordsAtPosition.length > 1) {
       console.log('🎯 Multiple found words at position:', { row, col }, 
         'Words:', foundWordsAtPosition.map(w => ({ word: w.word, length: w.word.length })));
       
-      // Sort by word length (shortest first) to prioritize exact matches
-      foundWordsAtPosition.sort((a, b) => a.word.length - b.word.length);
-      console.log('🎯 Prioritizing shortest word:', foundWordsAtPosition[0].word);
+      // Sort by word length (shortest first) and then by how close to the word's start
+      foundWordsAtPosition.sort((a, b) => {
+        const distanceA = a.direction === 'across' ? (col - a.col) : (row - a.row);
+        const distanceB = b.direction === 'across' ? (col - b.col) : (row - b.row);
+        
+        // Prioritize words where this position is closer to the start
+        if (distanceA !== distanceB) {
+          return distanceA - distanceB;
+        }
+        
+        // If same distance, prioritize shorter words
+        return a.word.length - b.word.length;
+      });
+      
+      console.log('🎯 Prioritizing word:', foundWordsAtPosition[0].word);
     }
 
     return true;
