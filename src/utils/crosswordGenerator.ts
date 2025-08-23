@@ -269,21 +269,24 @@ export class CrosswordGenerator {
       // Final shuffle to randomize letter order
       selectedLetters = selectedLetters.sort(() => Math.random() - 0.5);
     } else if (this.language === 'tah') {
-      // Tahitian: Systematic approach (placeholder - will use provided percentages later)
+      // Tahitian: Systematic approach based on provided percentages
       
-      // For now, use similar to Hawaiian but with placeholder percentages
+      // Select macron vowels based on distribution:
+      // Single macron: 15%
+      // Two macrons same vowel: 1%
+      // Two macrons different vowels: 0.5%
       const macronRandom = Math.random();
       
-      if (macronRandom < 0.18) {
-        // Single macron (placeholder - will update with your percentages)
+      if (macronRandom < 0.15) {
+        // Single macron (15%)
         const shuffledMacronVowels = [...vowelsWithKahako].sort(() => Math.random() - 0.5);
         selectedMacronVowels.push(shuffledMacronVowels[0]);
-      } else if (macronRandom < 0.225) {
-        // Two macrons same vowel (placeholder)
+      } else if (macronRandom < 0.15 + 0.01) {
+        // Two macrons same vowel (1%)
         const randomVowel = vowelsWithKahako[Math.floor(Math.random() * vowelsWithKahako.length)];
         selectedMacronVowels.push(randomVowel, randomVowel);
-      } else if (macronRandom < 0.245) {
-        // Two macrons different vowels (placeholder)
+      } else if (macronRandom < 0.15 + 0.01 + 0.005) {
+        // Two macrons different vowels (0.5%)
         const shuffledMacronVowels = [...vowelsWithKahako].sort(() => Math.random() - 0.5);
         selectedMacronVowels.push(...shuffledMacronVowels.slice(0, 2));
       }
