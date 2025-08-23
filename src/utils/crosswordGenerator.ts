@@ -211,32 +211,29 @@ export class CrosswordGenerator {
     console.log('Selected macron vowels:', selectedMacronVowels);
     
     if (this.language === 'mao') {
-      // Enhanced selection for Māori to improve digraph representation
+      // Māori letter selection with modest digraph boost
       const digraphs = ['ng', 'wh'];
       const otherConsonants = consonants.filter(c => !digraphs.includes(c));
       
-      // 70% chance to include at least one digraph
-      const includeDigraph = Math.random() < 0.7;
-      let selectedDigraph: string | null = null;
-      
-      if (includeDigraph) {
-        // Weighted selection: ng and wh have equal probability
-        selectedDigraph = digraphs[Math.floor(Math.random() * digraphs.length)];
-        selectedLetters.push(selectedDigraph);
-      }
-      
-      // Add all vowels
+      // Add all vowels first
       selectedLetters.push(...vowels);
       
       // Add selected macron vowels
       selectedLetters.push(...selectedMacronVowels);
       
-      // Fill remaining slots with other consonants
-      const remainingSlots = this.LETTERS_PER_PUZZLE - selectedLetters.length;
-      const availableConsonants = includeDigraph 
-        ? [...otherConsonants, ...digraphs.filter(d => d !== selectedDigraph)]
-        : consonants;
+      // Enhanced digraph inclusion: 40% chance for each digraph
+      // This increases overall digraph exposure without overwhelming any single puzzle
+      const availableConsonants = [...otherConsonants];
       
+      if (Math.random() < 0.4) {
+        availableConsonants.push('ng');
+      }
+      if (Math.random() < 0.4) {
+        availableConsonants.push('wh');
+      }
+      
+      // Fill remaining slots with consonants (including any selected digraphs)
+      const remainingSlots = this.LETTERS_PER_PUZZLE - selectedLetters.length;
       const shuffledConsonants = [...availableConsonants].sort(() => Math.random() - 0.5);
       selectedLetters.push(...shuffledConsonants.slice(0, remainingSlots));
       
