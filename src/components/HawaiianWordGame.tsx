@@ -1978,7 +1978,7 @@ const HawaiianWordGame: React.FC = () => {
             </div>
             <div className="flex items-center">
               <h1 className="text-lg sm:text-2xl font-bold text-[hsl(var(--ocean-blue))]">
-                &nbsp;{gameLanguage === 'haw' ? 'Nane Huaʻōlelo' : gameLanguage === 'mao' ? 'Panga Kupu' : t('welcome.title').toUpperCase()}&nbsp;
+                &nbsp;{t('welcome.title').toUpperCase()}&nbsp;
               </h1>
               <Button
                 variant="ghost"
