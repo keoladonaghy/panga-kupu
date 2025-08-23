@@ -277,21 +277,31 @@ export class CrosswordGenerator {
       // Two macrons different vowels: 0.5%
       const macronRandom = Math.random();
       
+      console.log(`Tahitian macron selection - Random value: ${macronRandom}`);
+      
       if (macronRandom < 0.15) {
         // Single macron (15%)
+        console.log('Tahitian: Selecting single macron vowel');
         const shuffledMacronVowels = [...vowelsWithKahako].sort(() => Math.random() - 0.5);
         selectedMacronVowels.push(shuffledMacronVowels[0]);
+        console.log('Tahitian: Selected single macron:', shuffledMacronVowels[0]);
       } else if (macronRandom < 0.15 + 0.01) {
         // Two macrons same vowel (1%)
+        console.log('Tahitian: Selecting two same macron vowels');
         const randomVowel = vowelsWithKahako[Math.floor(Math.random() * vowelsWithKahako.length)];
         selectedMacronVowels.push(randomVowel, randomVowel);
+        console.log('Tahitian: Selected same macron:', randomVowel);
       } else if (macronRandom < 0.15 + 0.01 + 0.005) {
         // Two macrons different vowels (0.5%)
+        console.log('Tahitian: Selecting two different macron vowels');
         const shuffledMacronVowels = [...vowelsWithKahako].sort(() => Math.random() - 0.5);
         selectedMacronVowels.push(...shuffledMacronVowels.slice(0, 2));
+        console.log('Tahitian: Selected different macrons:', shuffledMacronVowels.slice(0, 2));
+      } else {
+        console.log('Tahitian: No macron vowels selected');
       }
       
-      console.log('Selected macron vowels:', selectedMacronVowels);
+      console.log('Tahitian: Final selected macron vowels:', selectedMacronVowels);
       
       // Handle 'eta (glottal stop) selection - 44% of words have it
       const shouldIncludeEta = Math.random() < 0.44;
