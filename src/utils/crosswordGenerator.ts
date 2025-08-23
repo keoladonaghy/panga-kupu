@@ -231,21 +231,43 @@ export class CrosswordGenerator {
         }
       }
       
-      // Step 2: Select macron vowels based on distribution
+      // Step 2: Select macron vowels based on actual word data frequencies
+      // Māori frequencies: ā(18%), ē(3.5%), ī(2.75%), ō(5%), ū(3.5%)
+      // Total: ~32.75% of words have macrons
       const macronRandom = Math.random();
       
-      if (macronRandom < 0.2731) {
-        // Single macron (27.31%)
-        const shuffledMacronVowels = [...vowelsWithKahako].sort(() => Math.random() - 0.5);
-        selectedMacronVowels.push(shuffledMacronVowels[0]);
-      } else if (macronRandom < 0.2731 + 0.0069) {
-        // Two macrons same vowel (0.69%)
-        const randomVowel = vowelsWithKahako[Math.floor(Math.random() * vowelsWithKahako.length)];
-        selectedMacronVowels.push(randomVowel, randomVowel);
-      } else if (macronRandom < 0.2731 + 0.0069 + 0.015) {
-        // Two macrons different vowels (1.50%)
-        const shuffledMacronVowels = [...vowelsWithKahako].sort(() => Math.random() - 0.5);
-        selectedMacronVowels.push(...shuffledMacronVowels.slice(0, 2));
+      console.log(`Māori macron selection - Random value: ${macronRandom}`);
+      
+      if (macronRandom < 0.3275) {
+        console.log('Māori: Selecting macron vowel based on frequency data');
+        
+        // Weight selection by actual frequencies within the 32.75% that have macrons
+        const weightedSelection = Math.random();
+        
+        // ā: 18% of total = 55% of macron selections (18/32.75)
+        // ō: 5% of total = 15.3% of macron selections (5/32.75)
+        // ē: 3.5% of total = 10.7% of macron selections (3.5/32.75)
+        // ū: 3.5% of total = 10.7% of macron selections (3.5/32.75)
+        // ī: 2.75% of total = 8.4% of macron selections (2.75/32.75)
+        
+        if (weightedSelection < 0.55) {
+          selectedMacronVowels.push('ā');
+          console.log('Māori: Selected ā (most common macron - 18%)');
+        } else if (weightedSelection < 0.703) {
+          selectedMacronVowels.push('ō');
+          console.log('Māori: Selected ō (second most common - 5%)');
+        } else if (weightedSelection < 0.810) {
+          selectedMacronVowels.push('ē');
+          console.log('Māori: Selected ē (third most common - 3.5%)');
+        } else if (weightedSelection < 0.916) {
+          selectedMacronVowels.push('ū');
+          console.log('Māori: Selected ū (fourth most common - 3.5%)');
+        } else {
+          selectedMacronVowels.push('ī');
+          console.log('Māori: Selected ī (least common - 2.75%)');
+        }
+      } else {
+        console.log('Māori: No macron vowels selected (67.25% chance)');
       }
       
       console.log('Digraphs to include:', digraphsToInclude);
@@ -344,21 +366,43 @@ export class CrosswordGenerator {
     } else {
       // Hawaiian: Systematic approach based on word distribution (same as Māori but no digraphs)
       
-      // Select macron vowels based on distribution
+      // Select macron vowels based on actual word data frequencies
+      // Hawaiian frequencies: ā(12%), ē(1%), ī(1.5%), ō(4%), ū(3.74%)
+      // Total: ~22.24% of words have macrons
       const macronRandom = Math.random();
       
-      if (macronRandom < 0.18) {
-        // Single macron (18%)
-        const shuffledMacronVowels = [...vowelsWithKahako].sort(() => Math.random() - 0.5);
-        selectedMacronVowels.push(shuffledMacronVowels[0]);
-      } else if (macronRandom < 0.18 + 0.025) {
-        // Two macrons same vowel (2.5%)
-        const randomVowel = vowelsWithKahako[Math.floor(Math.random() * vowelsWithKahako.length)];
-        selectedMacronVowels.push(randomVowel, randomVowel);
-      } else if (macronRandom < 0.18 + 0.025 + 0.02) {
-        // Two macrons different vowels (2%)
-        const shuffledMacronVowels = [...vowelsWithKahako].sort(() => Math.random() - 0.5);
-        selectedMacronVowels.push(...shuffledMacronVowels.slice(0, 2));
+      console.log(`Hawaiian macron selection - Random value: ${macronRandom}`);
+      
+      if (macronRandom < 0.2224) {
+        console.log('Hawaiian: Selecting macron vowel based on frequency data');
+        
+        // Weight selection by actual frequencies within the 22.24% that have macrons
+        const weightedSelection = Math.random();
+        
+        // ā: 12% of total = 54% of macron selections (12/22.24)
+        // ō: 4% of total = 18% of macron selections (4/22.24)
+        // ū: 3.74% of total = 16.8% of macron selections (3.74/22.24)
+        // ī: 1.5% of total = 6.7% of macron selections (1.5/22.24)
+        // ē: 1% of total = 4.5% of macron selections (1/22.24)
+        
+        if (weightedSelection < 0.54) {
+          selectedMacronVowels.push('ā');
+          console.log('Hawaiian: Selected ā (most common macron - 12%)');
+        } else if (weightedSelection < 0.72) {
+          selectedMacronVowels.push('ō');
+          console.log('Hawaiian: Selected ō (second most common - 4%)');
+        } else if (weightedSelection < 0.888) {
+          selectedMacronVowels.push('ū');
+          console.log('Hawaiian: Selected ū (third most common - 3.74%)');
+        } else if (weightedSelection < 0.955) {
+          selectedMacronVowels.push('ī');
+          console.log('Hawaiian: Selected ī (fourth most common - 1.5%)');
+        } else {
+          selectedMacronVowels.push('ē');
+          console.log('Hawaiian: Selected ē (least common - 1%)');
+        }
+      } else {
+        console.log('Hawaiian: No macron vowels selected (77.76% chance)');
       }
       
       console.log('Selected macron vowels:', selectedMacronVowels);
