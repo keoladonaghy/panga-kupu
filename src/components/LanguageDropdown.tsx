@@ -71,7 +71,7 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ className = '' }) =
         <PopoverTrigger asChild>
           <Button
             variant="ghost"
-            className="text-white hover:bg-white/20 rounded-full"
+            className="text-[hsl(var(--ocean-blue))] hover:bg-white/20 rounded-full"
             style={{ width: '32px', height: '32px', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           >
             <Globe style={{ width: '24px', height: '24px' }} />
