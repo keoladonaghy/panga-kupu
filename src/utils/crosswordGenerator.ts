@@ -192,18 +192,19 @@ export class CrosswordGenerator {
     const macronChance = Math.max(0.4, macronProportion * 0.9);
     
     // Allow multiple macron vowels if they're prevalent in the word list
-    const maxMacronVowels = macronProportion > 0.5 ? 2 : 1;
+    // But never more than 2 different ones to avoid making puzzles too difficult
+    const maxMacronVowels = Math.min(2, macronProportion > 0.5 ? 2 : 1);
     
-    console.log(`Macron selection: ${(macronChance * 100).toFixed(1)}% chance, max ${maxMacronVowels} vowels`);
+    console.log(`Macron selection: ${(macronChance * 100).toFixed(1)}% chance, max ${maxMacronVowels} different vowels`);
     
-    // Select macron vowels
+    // Select macron vowels (hard limit of 2 different types max)
     const selectedMacronVowels: string[] = [];
     const includeKahakoVowel = Math.random() < macronChance;
     
     if (includeKahakoVowel) {
-      // Shuffle and select up to maxMacronVowels
+      // Shuffle and select up to maxMacronVowels (never more than 2)
       const shuffledMacronVowels = [...vowelsWithKahako].sort(() => Math.random() - 0.5);
-      const numToSelect = Math.min(maxMacronVowels, Math.floor(Math.random() * maxMacronVowels) + 1);
+      const numToSelect = Math.min(2, maxMacronVowels, Math.floor(Math.random() * maxMacronVowels) + 1);
       selectedMacronVowels.push(...shuffledMacronVowels.slice(0, numToSelect));
     }
     
