@@ -316,36 +316,57 @@ const HawaiianWordGame: React.FC = () => {
     
     try {
       // Choose file based on game language
-      const fileName = gameLanguage === 'mao' ? '/KupuMaori.txt' : '/HawaiianWords.txt';
-      const response = await fetch(fileName);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch ${gameLanguage === 'mao' ? 'Māori' : 'Hawaiian'} words file`);
+      let fileName: string;
+      let words: string[];
+      
+      if (gameLanguage === 'mao') {
+        fileName = '/KupuMaori.txt';
+      } else if (gameLanguage === 'tah') {
+        // For Tahitian, use the imported word list (for now)
+        const { tahitianWords } = await import('../data/tahitianWords');
+        words = tahitianWords;
+      } else {
+        fileName = '/HawaiianWords.txt';
       }
       
-      const text = await response.text();
-      const wordsToUse = text.split('\n')
-        .map(word => word.trim())
-        .filter(word => word.length > 0);
+      if (gameLanguage !== 'tah') {
+        const response = await fetch(fileName);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch ${gameLanguage === 'mao' ? 'Māori' : 'Hawaiian'} words file`);
+        }
+        
+        const text = await response.text();
+        words = text
+          .split('\n')
+          .map(line => line.trim())
+          .filter(line => line.length > 0 && !line.startsWith('#'));
+      }
       
-      console.log('Loading Hawaiian words from public file...');
-      console.log(`Word source: PUBLIC FILE`);
-      console.log(`Total words available: ${wordsToUse.length}`);
+      console.log('Loading words from source...');
+      console.log(`Word source: ${gameLanguage === 'tah' ? 'IMPORTED TAHITIAN LIST' : 'PUBLIC FILE'}`);
+      console.log(`Total words available: ${words.length}`);
       
       // Debug: check if "iii" is in the word list
-      const hasIII = wordsToUse.includes('iii') || wordsToUse.includes('III');
+      const hasIII = words.includes('iii') || words.includes('III');
       console.log(`Word list contains "iii": ${hasIII}`);
       
       // Filter by length using language-specific limits
       const wordLimits = getWordLimitsForLanguage(gameLanguage);
-      const filteredWords = wordsToUse
+      const filteredWords = words
         .map(word => {
-          // Normalize quotes to proper 'okina for Hawaiian, remove for others
+          // Normalize quotes to proper 'okina for Hawaiian, 'eta for Tahitian, remove for others
           if (gameLanguage === 'haw') {
             return word
               .replace(/'/g, 'ʻ') // Convert straight quotes to 'okina
               .replace(/`/g, 'ʻ') // Convert backticks to 'okina
               .replace(/'/g, 'ʻ') // Convert right single quotes to 'okina
               .replace(/'/g, 'ʻ') // Convert left single quotes to 'okina
+          } else if (gameLanguage === 'tah') {
+            return word
+              .replace(/'/g, '\u2018') // Convert straight quotes to 'eta
+              .replace(/`/g, '\u2018') // Convert backticks to 'eta
+              .replace(/'/g, '\u2018') // Convert right single quotes to 'eta
+              .replace(/ʻ/g, '\u2018') // Convert 'okina to 'eta
           } else {
             return word
               .replace(/'/g, '') // Remove straight quotes

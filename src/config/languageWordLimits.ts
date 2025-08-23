@@ -6,6 +6,7 @@ export interface LanguageWordLimits {
 export interface AllLanguageLimits {
   haw: LanguageWordLimits;
   mao: LanguageWordLimits;
+  tah: LanguageWordLimits;
   en: LanguageWordLimits;
 }
 
@@ -19,6 +20,10 @@ export const DEFAULT_WORD_LIMITS: AllLanguageLimits = {
     minWordLength: 3,
     maxWordLength: 5  // Stays at 5
   },
+  tah: {
+    minWordLength: 3,
+    maxWordLength: 5  // Same as Māori for now
+  },
   en: {
     minWordLength: 3,
     maxWordLength: 5
@@ -26,13 +31,13 @@ export const DEFAULT_WORD_LIMITS: AllLanguageLimits = {
 };
 
 // Function to get word limits for a specific language
-export const getWordLimitsForLanguage = (language: 'haw' | 'mao' | 'en'): LanguageWordLimits => {
+export const getWordLimitsForLanguage = (language: 'haw' | 'mao' | 'tah' | 'en'): LanguageWordLimits => {
   return DEFAULT_WORD_LIMITS[language];
 };
 
 // Function to update word limits for a specific language
 export const updateWordLimitsForLanguage = (
-  language: 'haw' | 'mao' | 'en', 
+  language: 'haw' | 'mao' | 'tah' | 'en', 
   limits: LanguageWordLimits
 ): AllLanguageLimits => {
   return {

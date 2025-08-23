@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 
-export type SupportedLanguage = 'en' | 'haw' | 'mao';
+export type SupportedLanguage = 'en' | 'haw' | 'mao' | 'tah';
 
 interface LanguageContextType {
   interfaceLanguage: SupportedLanguage;
@@ -23,12 +23,12 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   // Initialize languages from localStorage
   const getInitialInterfaceLanguage = (): SupportedLanguage => {
     const stored = localStorage.getItem('interface-language');
-    return (stored === 'en' || stored === 'haw' || stored === 'mao') ? stored : 'en';
+    return (stored === 'en' || stored === 'haw' || stored === 'mao' || stored === 'tah') ? stored : 'en';
   };
   
   const getInitialGameLanguage = (): SupportedLanguage => {
     const stored = localStorage.getItem('game-language');
-    return (stored === 'en' || stored === 'haw' || stored === 'mao') ? stored : 'haw';
+    return (stored === 'en' || stored === 'haw' || stored === 'mao' || stored === 'tah') ? stored : 'haw';
   };
   
   const [interfaceLanguage, setInterfaceLanguageState] = useState<SupportedLanguage>(getInitialInterfaceLanguage);
@@ -37,6 +37,7 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   const availableLanguages = [
     { code: 'haw' as SupportedLanguage, name: 'Hawaiian', nativeName: "'Ōlelo Hawaiʻi" },
     { code: 'mao' as SupportedLanguage, name: 'Māori', nativeName: 'Te Reo Māori' },
+    { code: 'tah' as SupportedLanguage, name: 'Tahitian', nativeName: 'Reo Tahiti' },
     { code: 'en' as SupportedLanguage, name: 'English', nativeName: 'English' }
   ];
 
@@ -62,11 +63,11 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
       const interfaceStored = localStorage.getItem('interface-language');
       const gameStored = localStorage.getItem('game-language');
       
-      if (interfaceStored && (interfaceStored === 'en' || interfaceStored === 'haw' || interfaceStored === 'mao') && interfaceStored !== interfaceLanguage) {
+      if (interfaceStored && (interfaceStored === 'en' || interfaceStored === 'haw' || interfaceStored === 'mao' || interfaceStored === 'tah') && interfaceStored !== interfaceLanguage) {
         setInterfaceLanguageState(interfaceStored);
       }
       
-      if (gameStored && (gameStored === 'en' || gameStored === 'haw' || gameStored === 'mao') && gameStored !== gameLanguage) {
+      if (gameStored && (gameStored === 'en' || gameStored === 'haw' || gameStored === 'mao' || gameStored === 'tah') && gameStored !== gameLanguage) {
         setGameLanguageState(gameStored);
       }
     };

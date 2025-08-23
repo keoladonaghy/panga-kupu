@@ -1,26 +1,26 @@
 {
   "welcome": {
-    "title": "Hawaiian Word Puzzle",
+    "title": "Tahitian Word Puzzle",
     "startButton": "Begin",
     "helpButton": "Help"
   },
   "instructions": {
     "title": "How to Play",
-    "hawaiianToggle": "'Ōlelo Hawaiʻi",
+    "tahitianToggle": "Reo Tahiti",
     "englishToggle": "English",
     "close": "Close",
     "steps": {
       "selectLetters": {
         "title": "Select Letters:",
         "description": "Tap the buttons around the wheel to form a word. The wheel contains a mix of:",
-        "vowels": "Hawaiian vowels: a, e, i, o, u",
-        "longVowels": "Long vowels with kahakō: ā, ē, ī, ō, ū",
-        "okina": "The glottal stop: ʻokina (ʻ)",
+        "vowels": "Tahitian vowels: a, e, i, o, u",
+        "longVowels": "Long vowels with macron: ā, ē, ī, ō, ū",
+        "eta": "The glottal stop: 'eta (')",
         "note": "Letters may appear more than once across different words but are shown only once in the wheel."
       },
       "formingWords": {
         "title": "Forming Words:",
-        "correctSpelling": "Words in the puzzle must be spelled correctly in ʻōlelo Hawaiʻi, using 'okina and kahakō when required.",
+        "correctSpelling": "Words in the puzzle must be spelled correctly in Reo Tahiti, using 'eta and macrons when required.",
         "availableLetters": "All letters in the word must come from the seven on the wheel.",
         "minLength": "Each word must be at least X letters long (define this minimum if applicable)."
       },
@@ -42,10 +42,10 @@
     },
     "tips": {
       "title": "Tips",
-      "diacriticals": "Don't forget to use the kahakō (macron) and the ʻokina where needed—they count as distinct characters.",
-      "differences": "Many Hawaiian words differ only by the use of kahakō or the ʻokina. Be careful:",
-      "example": "For example, these are all different words: pau, paʻu, paʻū, and pāʻū.",
-      "pronunciation": "Listen closely to how Hawaiian words are pronounced—they often hint at correct spelling."
+      "diacriticals": "Don't forget to use the macron and the 'eta where needed—they count as distinct characters.",
+      "differences": "Many Tahitian words differ only by the use of macrons or the 'eta. Be careful:",
+      "example": "For example, these are different words with and without diacriticals.",
+      "pronunciation": "Listen closely to how Tahitian words are pronounced—they often hint at correct spelling."
     }
   },
   "game": {
@@ -66,7 +66,7 @@
       "cancel": "Quit"
     },
     "messages": {
-      "wordFound": "UIHĀ!",
+      "wordFound": "MĀURUURU!",
       "wordFoundDesc": "You have successfully located {{word}}!",
       "alreadyFound": "PREVIOUSLY FOUND!",
       "invalidWord": "Not a valid word",
@@ -87,7 +87,7 @@
   },
   "uploader": {
     "title": "Upload Custom Word List",
-    "description": "Upload a text file with Hawaiian words (one per line) to create a custom puzzle.",
+    "description": "Upload a text file with Tahitian words (one per line) to create a custom puzzle.",
     "dragDrop": "Drag and drop a .txt file here, or click to select",
     "processing": "Processing...",
     "success": "{{count}} words loaded successfully!",
@@ -98,14 +98,14 @@
   "languageDropdown": {
     "interfaceLanguage": "Interface Language",
     "gameLanguage": "Game Language", 
-    "hawaiian": "Hawaiian",
-    "maori": "Māori",
-    "tahitian": "Tahitian",
+    "hawaiian": "'Ōlelo Hawaiʻi",
+    "maori": "Te Reo Māori",
+    "tahitian": "Reo Tahiti",
     "english": "English",
     "underDevelopment": "(under development)",
     "cancel": "Cancel",
     "ok": "OK",
-    "acknowledgment": "Mahalo to Mary Boyce for the Māori word list used in this game."
+    "acknowledgment": "Māuruuru to contributors for the Tahitian word list used in this game."
   },
-  "loading": "Loading words..."
+  "loading": "Loading Tahitian words..."
 }

@@ -30,7 +30,7 @@ export class CrosswordGenerator {
   private maxAttempts: number;
   private selectedLetters: string[] = [];
   private filteredWords: string[] = [];
-  private language: 'haw' | 'mao' | 'en'; // Add language parameter
+  private language: 'haw' | 'mao' | 'tah' | 'en'; // Add language parameter
   private wordLimits: LanguageWordLimits; // Add word limits
   private readonly MAX_WORDS = 8; // Centralized word count limit
   private readonly MIN_FOUNDATION_WORDS = 2; // Minimum foundation words needed
@@ -40,7 +40,7 @@ export class CrosswordGenerator {
   
   // Word category constraints
 
-  constructor(words: string[], gridSize: number = 12, language: 'haw' | 'mao' | 'en' = 'haw', customWordLimits?: LanguageWordLimits) {
+  constructor(words: string[], gridSize: number = 12, language: 'haw' | 'mao' | 'tah' | 'en' = 'haw', customWordLimits?: LanguageWordLimits) {
     this.words = words;
     this.gridSize = gridSize;
     this.language = language;
@@ -49,12 +49,12 @@ export class CrosswordGenerator {
     // Log the word limits being used for this language
     console.log(`Using word limits for ${language}:`, this.wordLimits);
     
-    // Normalize and validate words - preserve 'okina for Hawaiian, remove for others
+    // Normalize and validate words - preserve 'okina for Hawaiian and Tahitian, remove for others
     const normalizedWords = words.map(word => {
       let normalized = word.trim();
       
-      if (this.language !== 'haw') {
-        // For non-Hawaiian languages, remove 'okina character variants
+      if (this.language !== 'haw' && this.language !== 'tah') {
+        // For non-Hawaiian/Tahitian languages, remove 'okina character variants
         normalized = normalized
           .replace(/'/g, '') // Remove straight quotes
           .replace(/ʻ/g, '') // Remove 'okina
@@ -62,12 +62,12 @@ export class CrosswordGenerator {
           .replace(/'/g, '') // Remove right single quotes
           .replace(/'/g, '') // Remove left single quotes
       } else {
-        // For Hawaiian, only normalize other quote variants to proper 'okina
+        // For Hawaiian and Tahitian, normalize other quote variants to proper 'okina/eta
         normalized = normalized
-          .replace(/'/g, 'ʻ') // Convert straight quotes to 'okina
-          .replace(/`/g, 'ʻ') // Convert backticks to 'okina
-          .replace(/'/g, 'ʻ') // Convert right single quotes to 'okina
-          .replace(/'/g, 'ʻ') // Convert left single quotes to 'okina
+          .replace(/'/g, this.language === 'tah' ? '\u2018' : 'ʻ') // Convert straight quotes to 'eta or 'okina
+          .replace(/`/g, this.language === 'tah' ? '\u2018' : 'ʻ') // Convert backticks to 'eta or 'okina
+          .replace(/'/g, this.language === 'tah' ? '\u2018' : 'ʻ') // Convert right single quotes to 'eta or 'okina
+          .replace(/'/g, this.language === 'tah' ? '\u2018' : 'ʻ') // Convert left single quotes to 'eta or 'okina
       }
       
       console.log(`Word normalization (${this.language}): "${word}" -> "${normalized}"`);
@@ -176,6 +176,11 @@ export class CrosswordGenerator {
       vowels = ['a', 'e', 'i', 'o', 'u'];
       vowelsWithKahako = ['ā', 'ē', 'ī', 'ō', 'ū'];
       consonants = ['h', 'k', 'l', 'm', 'n', 'p', 'w', 'ʻ'];
+    } else if (this.language === 'tah') {
+      // Tahitian alphabet consists of: a, e, i, o, u (vowels), ā, ē, ī, ō, ū (vowels with kahakō), f, h, m, n, p, r, t, v, ' (consonants + 'eta)
+      vowels = ['a', 'e', 'i', 'o', 'u'];
+      vowelsWithKahako = ['ā', 'ē', 'ī', 'ō', 'ū'];
+      consonants = ['f', 'h', 'm', 'n', 'p', 'r', 't', 'v', '\u2018'];
     } else {
       // Māori alphabet consists of: a, e, i, o, u (vowels), ā, ē, ī, ō, ū (vowels with kahakō), h, k, m, n, ng, p, r, t, w, wh (consonants)
       vowels = ['a', 'e', 'i', 'o', 'u'];
@@ -263,6 +268,43 @@ export class CrosswordGenerator {
       
       // Final shuffle to randomize letter order
       selectedLetters = selectedLetters.sort(() => Math.random() - 0.5);
+    } else if (this.language === 'tah') {
+      // Tahitian: Systematic approach (placeholder - will use provided percentages later)
+      
+      // For now, use similar to Hawaiian but with placeholder percentages
+      const macronRandom = Math.random();
+      
+      if (macronRandom < 0.18) {
+        // Single macron (placeholder - will update with your percentages)
+        const shuffledMacronVowels = [...vowelsWithKahako].sort(() => Math.random() - 0.5);
+        selectedMacronVowels.push(shuffledMacronVowels[0]);
+      } else if (macronRandom < 0.225) {
+        // Two macrons same vowel (placeholder)
+        const randomVowel = vowelsWithKahako[Math.floor(Math.random() * vowelsWithKahako.length)];
+        selectedMacronVowels.push(randomVowel, randomVowel);
+      } else if (macronRandom < 0.245) {
+        // Two macrons different vowels (placeholder)
+        const shuffledMacronVowels = [...vowelsWithKahako].sort(() => Math.random() - 0.5);
+        selectedMacronVowels.push(...shuffledMacronVowels.slice(0, 2));
+      }
+      
+      console.log('Selected macron vowels:', selectedMacronVowels);
+      
+      // Build letter set (no digraphs for Tahitian, similar to Hawaiian)
+      
+      // Add all vowels first
+      selectedLetters.push(...vowels);
+      
+      // Add selected macron vowels
+      selectedLetters.push(...selectedMacronVowels);
+      
+      // Fill remaining slots with consonants
+      const remainingSlots = this.LETTERS_PER_PUZZLE - selectedLetters.length;
+      const shuffledConsonants = [...consonants].sort(() => Math.random() - 0.5);
+      selectedLetters.push(...shuffledConsonants.slice(0, remainingSlots));
+      
+      // Final shuffle to randomize letter order
+      selectedLetters = selectedLetters.sort(() => Math.random() - 0.5);
     } else {
       // Hawaiian: Systematic approach based on word distribution (same as Māori but no digraphs)
       
@@ -335,7 +377,7 @@ export class CrosswordGenerator {
    */
   private parseWordIntoLetters(word: string): string[] {
     if (this.language !== 'mao') {
-      // For Hawaiian, simple character split is fine
+      // For Hawaiian and Tahitian, simple character split is fine
       return word.split('');
     }
 
