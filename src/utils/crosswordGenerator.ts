@@ -197,21 +197,53 @@ export class CrosswordGenerator {
     
     console.log(`Macron selection: ${(macronChance * 100).toFixed(1)}% chance, max ${maxMacronVowels} different vowels`);
     
-    // Select macron vowels (hard limit of 2 different types max)
+    // Select macron vowels based on distribution (for all languages)
     const selectedMacronVowels: string[] = [];
-    const includeKahakoVowel = Math.random() < macronChance;
-    
-    if (includeKahakoVowel) {
-      // Shuffle and select up to maxMacronVowels (never more than 2)
-      const shuffledMacronVowels = [...vowelsWithKahako].sort(() => Math.random() - 0.5);
-      const numToSelect = Math.min(2, maxMacronVowels, Math.floor(Math.random() * maxMacronVowels) + 1);
-      selectedMacronVowels.push(...shuffledMacronVowels.slice(0, numToSelect));
-    }
-    
-    console.log('Selected macron vowels:', selectedMacronVowels);
     
     if (this.language === 'mao') {
-      // Māori letter selection with modest digraph boost
+      // Māori: Systematic approach based on word distribution
+      
+      // Step 1: Determine if puzzle should contain digraphs (22% of words have them)
+      const shouldHaveDigraphs = Math.random() < 0.22;
+      const digraphsToInclude: string[] = [];
+      
+      if (shouldHaveDigraphs) {
+        // ng: 12.41%, wh: 10.89%, both: 1.12%
+        const ngChance = 12.41 / 22; // ~56% of digraph puzzles should have ng
+        const whChance = 10.89 / 22; // ~49% of digraph puzzles should have wh
+        const bothChance = 1.12 / 22; // ~5% should have both
+        
+        const random = Math.random();
+        if (random < bothChance) {
+          digraphsToInclude.push('ng', 'wh');
+        } else if (random < ngChance) {
+          digraphsToInclude.push('ng');
+        } else {
+          digraphsToInclude.push('wh');
+        }
+      }
+      
+      // Step 2: Select macron vowels based on distribution
+      const macronRandom = Math.random();
+      
+      if (macronRandom < 0.2731) {
+        // Single macron (27.31%)
+        const shuffledMacronVowels = [...vowelsWithKahako].sort(() => Math.random() - 0.5);
+        selectedMacronVowels.push(shuffledMacronVowels[0]);
+      } else if (macronRandom < 0.2731 + 0.0069) {
+        // Two macrons same vowel (0.69%)
+        const randomVowel = vowelsWithKahako[Math.floor(Math.random() * vowelsWithKahako.length)];
+        selectedMacronVowels.push(randomVowel, randomVowel);
+      } else if (macronRandom < 0.2731 + 0.0069 + 0.015) {
+        // Two macrons different vowels (1.50%)
+        const shuffledMacronVowels = [...vowelsWithKahako].sort(() => Math.random() - 0.5);
+        selectedMacronVowels.push(...shuffledMacronVowels.slice(0, 2));
+      }
+      
+      console.log('Digraphs to include:', digraphsToInclude);
+      console.log('Selected macron vowels:', selectedMacronVowels);
+      
+      // Step 3: Build letter set
       const digraphs = ['ng', 'wh'];
       const otherConsonants = consonants.filter(c => !digraphs.includes(c));
       
@@ -221,25 +253,27 @@ export class CrosswordGenerator {
       // Add selected macron vowels
       selectedLetters.push(...selectedMacronVowels);
       
-      // Modest digraph inclusion: 15% chance for each digraph
-      // This aligns better with natural language distribution (~22% of words have digraphs)
-      const availableConsonants = [...otherConsonants];
+      // Add selected digraphs
+      selectedLetters.push(...digraphsToInclude);
       
-      if (Math.random() < 0.15) {
-        availableConsonants.push('ng');
-      }
-      if (Math.random() < 0.15) {
-        availableConsonants.push('wh');
-      }
-      
-      // Fill remaining slots with consonants (including any selected digraphs)
+      // Fill remaining slots with other consonants
       const remainingSlots = this.LETTERS_PER_PUZZLE - selectedLetters.length;
-      const shuffledConsonants = [...availableConsonants].sort(() => Math.random() - 0.5);
+      const shuffledConsonants = [...otherConsonants].sort(() => Math.random() - 0.5);
       selectedLetters.push(...shuffledConsonants.slice(0, remainingSlots));
       
       // Final shuffle to randomize letter order
       selectedLetters = selectedLetters.sort(() => Math.random() - 0.5);
     } else {
+      // Hawaiian: Use traditional macron selection for now
+      const includeKahakoVowel = Math.random() < macronChance;
+      
+      if (includeKahakoVowel) {
+        // Shuffle and select up to maxMacronVowels (never more than 2)
+        const shuffledMacronVowels = [...vowelsWithKahako].sort(() => Math.random() - 0.5);
+        const numToSelect = Math.min(2, maxMacronVowels, Math.floor(Math.random() * maxMacronVowels) + 1);
+        selectedMacronVowels.push(...shuffledMacronVowels.slice(0, numToSelect));
+      }
+      
       // Enhanced Hawaiian selection logic
       const availableLetters = [...vowels, ...consonants];
       selectedLetters.push(...availableLetters);
