@@ -264,7 +264,7 @@ export class CrosswordGenerator {
       // Final shuffle to randomize letter order
       selectedLetters = selectedLetters.sort(() => Math.random() - 0.5);
     } else {
-      // Enhanced Hawaiian selection logic
+      // Hawaiian selection logic - build exactly 7 letters
       const includeKahakoVowel = Math.random() < macronChance;
       
       if (includeKahakoVowel) {
@@ -274,14 +274,19 @@ export class CrosswordGenerator {
         selectedMacronVowels.push(...shuffledMacronVowels.slice(0, numToSelect));
       }
       
-      const availableLetters = [...vowels, ...consonants];
-      selectedLetters.push(...availableLetters);
+      // Add all regular vowels first
+      selectedLetters.push(...vowels);
       
       // Add selected macron vowels
       selectedLetters.push(...selectedMacronVowels);
       
-      const shuffled = [...selectedLetters].sort(() => Math.random() - 0.5);
-      selectedLetters = shuffled.slice(0, this.LETTERS_PER_PUZZLE);
+      // Fill remaining slots with consonants
+      const remainingSlots = this.LETTERS_PER_PUZZLE - selectedLetters.length;
+      const shuffledConsonants = [...consonants].sort(() => Math.random() - 0.5);
+      selectedLetters.push(...shuffledConsonants.slice(0, remainingSlots));
+      
+      // Final shuffle to randomize letter order
+      selectedLetters = selectedLetters.sort(() => Math.random() - 0.5);
     }
     
     this.selectedLetters = selectedLetters;
