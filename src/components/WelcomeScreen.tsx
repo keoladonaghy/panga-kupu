@@ -19,7 +19,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ onStart }) => {
       <div className="text-center">
         {/* Main Title with Help Icon */}
         <div className="flex items-center justify-center gap-2 mb-8">
-          <h1 className="text-6xl font-bold text-white drop-shadow-2xl">
+          <h1 className="text-6xl font-bold text-[hsl(var(--ocean-blue))] drop-shadow-2xl">
             {t('welcome.title')}
           </h1>
           <Button
