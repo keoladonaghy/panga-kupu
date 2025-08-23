@@ -272,36 +272,44 @@ export class CrosswordGenerator {
       // Final shuffle to randomize letter order
       selectedLetters = selectedLetters.sort(() => Math.random() - 0.5);
     } else if (this.language === 'tah') {
-      // Tahitian: Systematic approach based on provided percentages
+      // Tahitian: Updated based on actual word data frequencies
+      // Macron frequencies: ā(0%), ē(0.2%), ī(0%), ō(2.5%), ū(2%)
+      // Total: ~5% of words have macrons
       
-      // Select macron vowels based on distribution:
-      // Single macron: 15%
-      // Two macrons same vowel: 1%
-      // Two macrons different vowels: 0.5%
       const macronRandom = Math.random();
       
       console.log(`Tahitian macron selection - Random value: ${macronRandom}`);
       
-      if (macronRandom < 0.15) {
-        // Single macron (15%)
-        console.log('Tahitian: Selecting single macron vowel');
-        const shuffledMacronVowels = [...vowelsWithKahako].sort(() => Math.random() - 0.5);
-        selectedMacronVowels.push(shuffledMacronVowels[0]);
-        console.log('Tahitian: Selected single macron:', shuffledMacronVowels[0]);
-      } else if (macronRandom < 0.15 + 0.01) {
-        // Two macrons same vowel (1%)
-        console.log('Tahitian: Selecting two same macron vowels');
-        const randomVowel = vowelsWithKahako[Math.floor(Math.random() * vowelsWithKahako.length)];
-        selectedMacronVowels.push(randomVowel, randomVowel);
-        console.log('Tahitian: Selected same macron:', randomVowel);
-      } else if (macronRandom < 0.15 + 0.01 + 0.005) {
-        // Two macrons different vowels (0.5%)
-        console.log('Tahitian: Selecting two different macron vowels');
-        const shuffledMacronVowels = [...vowelsWithKahako].sort(() => Math.random() - 0.5);
-        selectedMacronVowels.push(...shuffledMacronVowels.slice(0, 2));
-        console.log('Tahitian: Selected different macrons:', shuffledMacronVowels.slice(0, 2));
+      // Use actual frequency data - only ~5% of words have macrons
+      if (macronRandom < 0.05) {
+        console.log('Tahitian: Selecting macron vowel based on frequency data');
+        
+        // Weight selection by actual frequencies within the 5% that have macrons
+        const weightedSelection = Math.random();
+        
+        // ō: 2.5% of total = 50% of macron selections (2.5/5.0)
+        // ū: 2% of total = 40% of macron selections (2.0/5.0)  
+        // ē: 0.2% of total = 4% of macron selections (0.2/5.0)
+        // ā, ī: 0% = 6% combined for rare appearance (3% each)
+        
+        if (weightedSelection < 0.50) {
+          selectedMacronVowels.push('ō');
+          console.log('Tahitian: Selected ō (most common macron - 2.5%)');
+        } else if (weightedSelection < 0.90) {
+          selectedMacronVowels.push('ū');
+          console.log('Tahitian: Selected ū (second most common - 2%)');
+        } else if (weightedSelection < 0.94) {
+          selectedMacronVowels.push('ē');
+          console.log('Tahitian: Selected ē (rare - 0.2%)');
+        } else if (weightedSelection < 0.97) {
+          selectedMacronVowels.push('ā');
+          console.log('Tahitian: Selected ā (very rare - 0%)');
+        } else {
+          selectedMacronVowels.push('ī');
+          console.log('Tahitian: Selected ī (very rare - 0%)');
+        }
       } else {
-        console.log('Tahitian: No macron vowels selected');
+        console.log('Tahitian: No macron vowels selected (95% chance)');
       }
       
       console.log('Tahitian: Final selected macron vowels:', selectedMacronVowels);
