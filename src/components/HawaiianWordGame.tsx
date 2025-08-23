@@ -845,21 +845,26 @@ const HawaiianWordGame: React.FC = () => {
     
     console.log('=== LETTER CLICK DEBUG ===');
     console.log('Letter clicked:', letter);
+    console.log('Letter length:', letter.length);
     console.log('Current word:', gameState.currentWord);
     console.log('Current word length:', currentLength);
     console.log('MIN_WORD_LENGTH:', MIN_WORD_LENGTH);
     console.log('MAX_WORD_LENGTH:', MAX_WORD_LENGTH);
     
+    // For Māori digraphs (ng, wh), count them as single letters for length calculation
+    const letterLength = (gameLanguage === 'mao' && (letter === 'ng' || letter === 'wh')) ? 1 : letter.length;
+    
     // Prevent clicking beyond max length - use dynamic word limits
     const currentWordLimits = getWordLimitsForLanguage(gameLanguage);
-    if (currentLength >= currentWordLimits.maxWordLength) {
-      console.log('🔍 DEBUG: HOKA trigger #4 - Letter click blocked at max length', { currentLength, maxLength: currentWordLimits.maxWordLength, timestamp: Date.now() });
-      console.log(`🚫 BLOCKED - already at max length (${currentWordLimits.maxWordLength}), cannot add more letters`);
+    if (currentLength + letterLength > currentWordLimits.maxWordLength) {
+      console.log('🔍 DEBUG: HOKA trigger #4 - Letter click blocked at max length', { currentLength, letterLength, maxLength: currentWordLimits.maxWordLength, timestamp: Date.now() });
+      console.log(`🚫 BLOCKED - would exceed max length (${currentWordLimits.maxWordLength}), cannot add "${letter}"`);
       return;
     }
     
     const newWord = gameState.currentWord + letter;
     console.log('✅ Adding letter, new word will be:', newWord);
+    console.log('✅ Full letter being added:', JSON.stringify(letter));
     
     setGameState(prev => ({
       ...prev,
