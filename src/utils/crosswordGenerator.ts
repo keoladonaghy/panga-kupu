@@ -167,6 +167,9 @@ export class CrosswordGenerator {
   }
 
   private selectRandomLetters(): void {
+    console.log('=== SELECTING RANDOM LETTERS ===');
+    console.log('Current language:', this.language);
+    
     let vowels: string[];
     let vowelsWithKahako: string[];
     let consonants: string[];
