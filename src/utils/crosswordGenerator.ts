@@ -244,11 +244,45 @@ export class CrosswordGenerator {
       }
       
       // Check if word contains only the selected letters
-      const wordLetters = word.toLowerCase().split('');
+      const wordLetters = this.parseWordIntoLetters(word.toLowerCase());
       return wordLetters.every(letter => {
         return this.selectedLetters.includes(letter);
       });
     });
+    
+    console.log(`Filtered to ${this.filteredWords.length} words using selected letters`);
+  }
+
+  /**
+   * Parse a word into its constituent letters, handling digraphs for Māori
+   */
+  private parseWordIntoLetters(word: string): string[] {
+    if (this.language !== 'mao') {
+      // For Hawaiian, simple character split is fine
+      return word.split('');
+    }
+
+    // For Māori, handle digraphs ng and wh
+    const letters: string[] = [];
+    let i = 0;
+    
+    while (i < word.length) {
+      // Check for digraphs first
+      if (i < word.length - 1) {
+        const twoChar = word.substring(i, i + 2);
+        if (twoChar === 'ng' || twoChar === 'wh') {
+          letters.push(twoChar);
+          i += 2;
+          continue;
+        }
+      }
+      
+      // Single character
+      letters.push(word.charAt(i));
+      i++;
+    }
+    
+    return letters;
   }
 
   private buildStructuredCrossword(): CrosswordGrid | null {
