@@ -221,14 +221,14 @@ export class CrosswordGenerator {
       // Add selected macron vowels
       selectedLetters.push(...selectedMacronVowels);
       
-      // Enhanced digraph inclusion: 40% chance for each digraph
-      // This increases overall digraph exposure without overwhelming any single puzzle
+      // Modest digraph inclusion: 15% chance for each digraph
+      // This aligns better with natural language distribution (~22% of words have digraphs)
       const availableConsonants = [...otherConsonants];
       
-      if (Math.random() < 0.4) {
+      if (Math.random() < 0.15) {
         availableConsonants.push('ng');
       }
-      if (Math.random() < 0.4) {
+      if (Math.random() < 0.15) {
         availableConsonants.push('wh');
       }
       
