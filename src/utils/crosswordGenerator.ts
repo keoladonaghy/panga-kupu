@@ -282,15 +282,21 @@ export class CrosswordGenerator {
       console.log('Digraphs to include:', digraphsToInclude);
       console.log('Selected macron vowels:', selectedMacronVowels);
       
-      // Step 3: Build letter set
+      // Step 3: Build letter set - enforce 5-vowel maximum
       const digraphs = ['ng', 'wh'];
       const otherConsonants = consonants.filter(c => !digraphs.includes(c));
       
-      // Add all vowels first
-      selectedLetters.push(...vowels);
-      
-      // Add selected macron vowels
-      selectedLetters.push(...selectedMacronVowels);
+      if (selectedMacronVowels.length > 0) {
+        // If we have a macron vowel, only include 4 regular vowels to maintain 5-vowel limit
+        const shuffledVowels = [...vowels].sort(() => Math.random() - 0.5);
+        selectedLetters.push(...shuffledVowels.slice(0, 4));
+        selectedLetters.push(...selectedMacronVowels);
+        console.log('Māori: Using 4 regular vowels + 1 macron vowel = 5 total vowels');
+      } else {
+        // If no macron vowels, use all 5 regular vowels
+        selectedLetters.push(...vowels);
+        console.log('Māori: Using all 5 regular vowels, no macrons');
+      }
       
       // Add selected digraphs
       selectedLetters.push(...digraphsToInclude);
@@ -349,12 +355,19 @@ export class CrosswordGenerator {
       console.log('Should include \'eta:', shouldIncludeEta);
       
       // Build letter set (no digraphs for Tahitian, similar to Hawaiian)
+      // IMPORTANT: Enforce 5-vowel maximum by replacing one regular vowel if macron is selected
       
-      // Add all vowels first
-      selectedLetters.push(...vowels);
-      
-      // Add selected macron vowels
-      selectedLetters.push(...selectedMacronVowels);
+      if (selectedMacronVowels.length > 0) {
+        // If we have a macron vowel, only include 4 regular vowels to maintain 5-vowel limit
+        const shuffledVowels = [...vowels].sort(() => Math.random() - 0.5);
+        selectedLetters.push(...shuffledVowels.slice(0, 4));
+        selectedLetters.push(...selectedMacronVowels);
+        console.log('Tahitian: Using 4 regular vowels + 1 macron vowel = 5 total vowels');
+      } else {
+        // If no macron vowels, use all 5 regular vowels
+        selectedLetters.push(...vowels);
+        console.log('Tahitian: Using all 5 regular vowels, no macrons');
+      }
       
       // Separate 'eta from other consonants
       const etaChar = '\u2018'; // U+2018
@@ -417,12 +430,19 @@ export class CrosswordGenerator {
       console.log('Selected macron vowels:', selectedMacronVowels);
       
       // Build letter set (no digraphs for Hawaiian)
+      // IMPORTANT: Enforce 5-vowel maximum by replacing one regular vowel if macron is selected
       
-      // Add all vowels first
-      selectedLetters.push(...vowels);
-      
-      // Add selected macron vowels
-      selectedLetters.push(...selectedMacronVowels);
+      if (selectedMacronVowels.length > 0) {
+        // If we have a macron vowel, only include 4 regular vowels to maintain 5-vowel limit
+        const shuffledVowels = [...vowels].sort(() => Math.random() - 0.5);
+        selectedLetters.push(...shuffledVowels.slice(0, 4));
+        selectedLetters.push(...selectedMacronVowels);
+        console.log('Hawaiian: Using 4 regular vowels + 1 macron vowel = 5 total vowels');
+      } else {
+        // If no macron vowels, use all 5 regular vowels
+        selectedLetters.push(...vowels);
+        console.log('Hawaiian: Using all 5 regular vowels, no macrons');
+      }
       
       // Fill remaining slots with consonants
       const remainingSlots = this.LETTERS_PER_PUZZLE - selectedLetters.length;
