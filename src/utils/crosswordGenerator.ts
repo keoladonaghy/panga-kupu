@@ -451,8 +451,8 @@ export class CrosswordGenerator {
         return false;
       }
       
-      // Vowel limit rule for Hawaiian and Tahitian: no more than 5 vowels per word
-      if (this.language === 'haw' || this.language === 'tah') {
+      // Vowel limit rule for Hawaiian, Tahitian, and Māori: no more than 5 vowels per word
+      if (this.language === 'haw' || this.language === 'tah' || this.language === 'mao') {
         const vowelCount = this.countVowels(word);
         if (vowelCount > 5) {
           console.log(`Filtering out word "${word}" - has ${vowelCount} vowels (limit: 5)`);
