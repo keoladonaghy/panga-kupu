@@ -264,7 +264,7 @@ export class CrosswordGenerator {
       // Final shuffle to randomize letter order
       selectedLetters = selectedLetters.sort(() => Math.random() - 0.5);
     } else {
-      // Hawaiian: Use traditional macron selection for now
+      // Enhanced Hawaiian selection logic
       const includeKahakoVowel = Math.random() < macronChance;
       
       if (includeKahakoVowel) {
@@ -274,7 +274,6 @@ export class CrosswordGenerator {
         selectedMacronVowels.push(...shuffledMacronVowels.slice(0, numToSelect));
       }
       
-      // Enhanced Hawaiian selection logic
       const availableLetters = [...vowels, ...consonants];
       selectedLetters.push(...availableLetters);
       
