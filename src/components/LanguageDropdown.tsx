@@ -36,8 +36,7 @@ const LanguageDropdown: React.FC<LanguageDropdownProps> = ({ className = '' }) =
   const gameLanguages = [
     { code: 'haw', nameKey: 'hawaiian', disabled: false },
     { code: 'mao', nameKey: 'maori', disabled: false },
-    { code: 'tah', nameKey: 'tahitian', disabled: true },
-    { code: 'en', nameKey: 'english', disabled: true }
+    { code: 'tah', nameKey: 'tahitian', disabled: true }
   ];
 
   // Handle applying changes
