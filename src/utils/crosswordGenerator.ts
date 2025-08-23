@@ -264,17 +264,30 @@ export class CrosswordGenerator {
       // Final shuffle to randomize letter order
       selectedLetters = selectedLetters.sort(() => Math.random() - 0.5);
     } else {
-      // Hawaiian selection logic - build exactly 7 letters
-      const includeKahakoVowel = Math.random() < macronChance;
+      // Hawaiian: Systematic approach based on word distribution (same as Māori but no digraphs)
       
-      if (includeKahakoVowel) {
-        // Shuffle and select up to maxMacronVowels (never more than 2)
+      // Select macron vowels based on distribution
+      const macronRandom = Math.random();
+      
+      if (macronRandom < 0.18) {
+        // Single macron (18%)
         const shuffledMacronVowels = [...vowelsWithKahako].sort(() => Math.random() - 0.5);
-        const numToSelect = Math.min(2, maxMacronVowels, Math.floor(Math.random() * maxMacronVowels) + 1);
-        selectedMacronVowels.push(...shuffledMacronVowels.slice(0, numToSelect));
+        selectedMacronVowels.push(shuffledMacronVowels[0]);
+      } else if (macronRandom < 0.18 + 0.025) {
+        // Two macrons same vowel (2.5%)
+        const randomVowel = vowelsWithKahako[Math.floor(Math.random() * vowelsWithKahako.length)];
+        selectedMacronVowels.push(randomVowel, randomVowel);
+      } else if (macronRandom < 0.18 + 0.025 + 0.02) {
+        // Two macrons different vowels (2%)
+        const shuffledMacronVowels = [...vowelsWithKahako].sort(() => Math.random() - 0.5);
+        selectedMacronVowels.push(...shuffledMacronVowels.slice(0, 2));
       }
       
-      // Add all regular vowels first
+      console.log('Selected macron vowels:', selectedMacronVowels);
+      
+      // Build letter set (no digraphs for Hawaiian)
+      
+      // Add all vowels first
       selectedLetters.push(...vowels);
       
       // Add selected macron vowels
