@@ -2042,7 +2042,7 @@ const HawaiianWordGame: React.FC = () => {
             <div className="flex items-baseline">
               <AnimatedTitle />
             </div>
-            <div className="flex items-center" style={{ gap: '5px' }}>
+            <div className="flex items-center">
               <Button
                 variant="ghost"
                 onClick={() => setShowInstructions(true)}
@@ -2051,7 +2051,9 @@ const HawaiianWordGame: React.FC = () => {
               >
                 <HelpCircle style={{ width: '24px', height: '24px' }} />
               </Button>
-              <LanguageDropdown />
+              <div style={{ marginLeft: '5px' }}>
+                <LanguageDropdown />
+              </div>
             </div>
           </div>
           
