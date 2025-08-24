@@ -34,8 +34,12 @@ const AnimatedTitle = () => {
     // Set the width of the left box to accommodate all possible words
     leftBox.style.width = Math.ceil(Math.max(...candidates.map(measureText))) + 'px';
     
-    // Move the first three sequences left during cycling phase
-    leftBox.style.transform = 'translateX(1.5rem)';
+    // Move the entire phrase (left words + Moana) left by the width of "Word" at current font size
+    const containerEl = leftBox.parentElement as HTMLElement | null;
+    if (containerEl) {
+      const sampleWidth = Math.ceil(measureText('Word'));
+      containerEl.style.transform = `translateX(-${sampleWidth}px)`;
+    }
 
     const dissolveCycle = (txt: string, tStart: number) => {
       setTimeout(() => {
@@ -63,10 +67,11 @@ const AnimatedTitle = () => {
       setAnimationState('sliding');
       left.style.display = 'none';
       
-      // Reset left-box position before slide animation to preserve final positioning
-      leftBox.style.transform = 'translateX(0)';
+      // Reset container transform before slide animation to preserve final positioning
+      const container = leftBox.parentElement as HTMLElement | null;
+      if (container) container.style.transform = 'translateX(0)';
       
-      const header = leftBox.parentElement;
+      const header = container;
       if (header) {
         const gapPx = parseFloat(getComputedStyle(header).columnGap || getComputedStyle(header).gap || '0') || 0;
         // Slide Moana left by the reserved width of the left-box + the inter-item gap
