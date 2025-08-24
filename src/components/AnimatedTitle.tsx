@@ -114,6 +114,9 @@ const AnimatedTitle = () => {
           .animated-title-left {
             display: inline-block;
             color: hsl(14 85% 50%);
+            position: absolute;
+            right: 0;
+            bottom: 0;
             font-size: 1em;
             line-height: 1em;
             height: 1em;
