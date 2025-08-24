@@ -8,7 +8,6 @@ const AnimatedTitle = () => {
   const measureRef = useRef<HTMLSpanElement>(null);
   
   const [animationState, setAnimationState] = useState<'initial' | 'cycling' | 'sliding' | 'complete'>('initial');
-  const [shouldAnimate, setShouldAnimate] = useState(false);
   const [leftBoxWidth, setLeftBoxWidth] = useState(0);
 
   useEffect(() => {
