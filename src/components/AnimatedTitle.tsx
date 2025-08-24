@@ -34,6 +34,14 @@ const AnimatedTitle = () => {
     // Set the width of the left box to accommodate all possible words
     leftBox.style.width = Math.ceil(Math.max(...candidates.map(measureText))) + 'px';
 
+    // Position the container so the first words appear where Moana will end up
+    const header = leftBox.parentElement;
+    if (header) {
+      const gapPx = parseFloat(getComputedStyle(header).columnGap || getComputedStyle(header).gap || '0') || 0;
+      const offset = leftBox.getBoundingClientRect().width + gapPx;
+      header.style.transform = `translateX(-${offset}px)`;
+    }
+
     const dissolveCycle = (txt: string, tStart: number) => {
       setTimeout(() => {
         left.textContent = txt;
@@ -62,6 +70,9 @@ const AnimatedTitle = () => {
       
       const header = leftBox.parentElement;
       if (header) {
+        // Reset the container position since we're now sliding Moana instead
+        header.style.transform = 'translateX(0)';
+        
         const gapPx = parseFloat(getComputedStyle(header).columnGap || getComputedStyle(header).gap || '0') || 0;
         const offset = leftBox.getBoundingClientRect().width + gapPx;
         moana.style.setProperty('--offset', offset + 'px');
