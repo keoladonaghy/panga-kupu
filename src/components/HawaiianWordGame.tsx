@@ -2045,7 +2045,7 @@ const HawaiianWordGame: React.FC = () => {
                 variant="ghost"
                 size="icon"
                 onClick={() => setShowInstructions(true)}
-                className="text-white hover:bg-white/20 rounded-full ml-4 h-5 w-5 p-0 self-baseline"
+                className="text-white hover:bg-white/20 rounded-full ml-6 h-5 w-5 p-0 self-baseline"
               >
                 <HelpCircle className="h-5 w-5" />
               </Button>
