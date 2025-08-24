@@ -34,7 +34,23 @@ const AnimatedTitle = () => {
     // Set the width of the left box to accommodate all possible words
     leftBox.style.width = Math.ceil(Math.max(...candidates.map(measureText))) + 'px';
     
-    // (Removed temporary container transform to keep first-sequence positions unchanged)
+    // Position container so longest Polynesian word starts 10px from browser edge
+    const containerEl = leftBox.parentElement as HTMLElement | null;
+    if (containerEl) {
+      // Find longest word and measure it
+      const longestWord = candidates.reduce((a, b) => measureText(a) > measureText(b) ? a : b);
+      const longestWidth = measureText(longestWord);
+      
+      // Calculate current position of word's left edge
+      const containerRect = containerEl.getBoundingClientRect();
+      const leftBoxRect = leftBox.getBoundingClientRect();
+      const wordLeftEdge = leftBoxRect.right - longestWidth;
+      const currentDistanceFromBrowser = wordLeftEdge;
+      
+      // Move container to put word 10px from browser edge
+      const neededShift = currentDistanceFromBrowser - 10;
+      containerEl.style.transform = `translateX(-${neededShift}px)`;
+    }
 
     const dissolveCycle = (txt: string, tStart: number) => {
       setTimeout(() => {
@@ -62,7 +78,7 @@ const AnimatedTitle = () => {
       setAnimationState('sliding');
       left.style.display = 'none';
       
-      // Keep container transform to avoid jump; use it as header
+      // Keep the transform to maintain positioning consistency
       const header = leftBox.parentElement as HTMLElement | null;
       if (header) {
         const gapPx = parseFloat(getComputedStyle(header).columnGap || getComputedStyle(header).gap || '0') || 0;
