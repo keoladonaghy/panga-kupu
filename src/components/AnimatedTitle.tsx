@@ -140,8 +140,8 @@ const AnimatedTitle = () => {
             display: inline-block;
             color: hsl(14 85% 50%);
             position: absolute;
-            left: 50px;
-            top: 0;
+            left: 25px;
+            top: -1px;
             opacity: 0;
             font-size: 1em;
             line-height: 1em;
@@ -149,7 +149,6 @@ const AnimatedTitle = () => {
             margin: 0;
             padding: 0;
             white-space: nowrap;
-            border: 2px solid purple;
           }
 
           .fade-in-1s {
