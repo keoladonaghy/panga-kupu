@@ -24,18 +24,46 @@ const AnimatedTitle = () => {
       setShouldAnimate(false);
       setAnimationState('complete');
       
-      // Set up final state immediately
+      // Set up final state immediately (no animation)
       setTimeout(() => {
         const left = leftRef.current;
+        const leftBox = leftBoxRef.current;
+        const moana = moanaRef.current;
         const words = wordsRef.current;
-        
-        if (left && words) {
-          left.style.display = 'none';
+        const measure = measureRef.current;
+        if (!left || !leftBox || !moana || !words || !measure) return;
+
+        // Ensure leftBox has the correct width to compute offset
+        const candidates = ['ʻŌlelo', 'Kupu', 'Parau'];
+        const measureText = (text: string): number => {
+          measure.textContent = text;
+          return measure.getBoundingClientRect().width;
+        };
+        leftBox.style.width = Math.ceil(Math.max(...candidates.map(measureText))) + 'px';
+
+        // Compute offset and place Moana to the far left (as if slid)
+        const header = leftBox.parentElement as HTMLElement | null;
+        const gapPx = header ? (parseFloat(getComputedStyle(header).columnGap || getComputedStyle(header).gap || '0') || 0) : 0;
+        const offset = leftBox.getBoundingClientRect().width + gapPx;
+        moana.style.removeProperty('animation');
+        moana.style.removeProperty('--offset');
+        moana.classList.remove('slide-full-left');
+        moana.style.transform = `translateX(-${offset}px)`;
+
+        // Hide the cycling word and show Words at the correct position
+        left.style.display = 'none';
+        // Wait a frame for transform to take effect, then position Words
+        requestAnimationFrame(() => {
+          const headerRect = header?.getBoundingClientRect();
+          const moanaRect = moana.getBoundingClientRect();
+          const fs = parseFloat(getComputedStyle(moana).fontSize);
+          if (headerRect) {
+            words.style.left = (moanaRect.right - headerRect.left + 0.5 * fs) + 'px';
+          }
           words.style.opacity = '1';
-          words.style.left = '0';
-        }
+        });
       }, 0);
-      
+
       return; // Exit early, don't run animation
     }
     const left = leftRef.current;
