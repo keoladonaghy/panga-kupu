@@ -153,6 +153,7 @@ const AnimatedTitle = () => {
             left: var(--moana-position);
             top: 0;
             border: 1px solid green; /* DEBUG: Moana container */
+            display: none; /* Hidden for now */
           }
 
           .animated-title-moana {
