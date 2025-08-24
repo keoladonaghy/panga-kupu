@@ -2039,16 +2039,17 @@ const HawaiianWordGame: React.FC = () => {
                 </>
               )}
             </div>
-            <div className="flex items-center">
+            <div className="flex items-baseline">
               <AnimatedTitle />
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => setShowInstructions(true)}
-                className="text-white hover:bg-white/20 rounded-full ml-2"
+                className="text-white hover:bg-white/20 rounded-full ml-2 h-5 w-5 p-0 self-baseline"
               >
                 <HelpCircle className="h-5 w-5" />
               </Button>
+            </div>
             </div>
             <div className="flex items-center">
               <LanguageDropdown />
