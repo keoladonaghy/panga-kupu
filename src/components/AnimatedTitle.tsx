@@ -103,7 +103,7 @@ const AnimatedTitle = () => {
             letter-spacing: 0.3px;
             height: calc(1em + 1px);
             line-height: 1em;
-            margin: 4px 0 0 12px;
+            margin: 4px 0 0 0;
             overflow: visible;
             font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
             font-size: 16pt;
@@ -114,7 +114,7 @@ const AnimatedTitle = () => {
             justify-content: flex-start;
             overflow: visible;
             height: 1em;
-            padding-left: 8px;
+            padding-left: 0;
           }
 
           .animated-title-left,
