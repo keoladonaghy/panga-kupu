@@ -12,7 +12,6 @@ const AnimatedTitle = () => {
   const [titleX, setTitleX] = useState(35);
   const [mainContainerWidth, setMainContainerWidth] = useState(0);
   const [moanaPosition, setMoanaPosition] = useState(0);
-  const [wordFinderPosition, setWordFinderPosition] = useState(0);
 
   useEffect(() => {
     const left = leftRef.current;
@@ -45,15 +44,10 @@ const AnimatedTitle = () => {
     const moanaPos = widestPolynesian + spaceWidth;
     setMoanaPosition(moanaPos);
 
-    // Calculate Word Finder position (where Moana ends up after slide + Moana width + space)
-    // After slide animation, Moana is at position 0, so Word Finder goes after Moana width + space
-    const moanaWidth = measureText('Moana');
-    const wordFinderPos = moanaWidth + spaceWidth;
-    setWordFinderPosition(wordFinderPos);
-
     // Calculate main container width (width of "Moana Word Finder")
+    const moanaWidth = measureText('Moana');
     const wordFinderWidth = measureText('Word Finder');
-    const totalWidth = Math.max(moanaPos + moanaWidth, wordFinderPos + wordFinderWidth) + 20; // Add some padding
+    const totalWidth = moanaPos + moanaWidth + spaceWidth + wordFinderWidth + 20; // Add some padding
     setMainContainerWidth(totalWidth);
 
     const dissolveCycle = (txt: string, tStart: number) => {
@@ -86,7 +80,8 @@ const AnimatedTitle = () => {
       moana.classList.add('slide-to-anchor');
 
       const handleAnimationEnd = () => {
-        // Word Finder is already positioned correctly via CSS, just fade it in
+        // Position Word Finder next to final Moana position
+        words.style.left = '0.5em';
         words.classList.add('fade-in-1s');
         setAnimationState('complete');
       };
@@ -171,16 +166,11 @@ const AnimatedTitle = () => {
             white-space: nowrap;
           }
 
-          .word-finder-container {
-            position: absolute;
-            left: var(--word-finder-position);
-            top: 0;
-            border: 1px solid purple; /* DEBUG: Word Finder container */
-          }
-
           .animated-title-words {
             display: inline-block;
             color: hsl(14 85% 50%);
+            position: absolute;
+            top: 0;
             opacity: 0;
             font-size: 1em;
             line-height: 1em;
@@ -232,16 +222,14 @@ const AnimatedTitle = () => {
       </style>
       
       <div className="main-animation-container" style={{ '--main-container-width': `${mainContainerWidth}px` } as React.CSSProperties}>
-        <div className="title-frame" style={{ '--left-box-width': `${leftBoxWidth}px`, '--title-x': `${titleX}px`, '--moana-position': `${moanaPosition}px`, '--word-finder-position': `${wordFinderPosition}px` } as React.CSSProperties}>
+        <div className="title-frame" style={{ '--left-box-width': `${leftBoxWidth}px`, '--title-x': `${titleX}px`, '--moana-position': `${moanaPosition}px` } as React.CSSProperties}>
           <span ref={leftBoxRef} className="animated-title-left-box">
             <span ref={leftRef} className="animated-title-left">ʻŌlelo</span>
           </span>
           <div className="moana-container">
             <span ref={moanaRef} className="animated-title-moana">Moana</span>
           </div>
-          <div className="word-finder-container">
-            <span ref={wordsRef} className="animated-title-words">Word Finder</span>
-          </div>
+          <span ref={wordsRef} className="animated-title-words">Word Finder</span>
         </div>
       </div>
 
