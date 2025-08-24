@@ -48,7 +48,7 @@ const AnimatedTitle = () => {
       const currentDistanceFromBrowser = wordLeftEdge;
       
       // Move container to put word 10px from browser edge
-      const neededShift = currentDistanceFromBrowser - 10;
+      const neededShift = currentDistanceFromBrowser - 20;
       containerEl.style.transform = `translateX(-${neededShift}px)`;
     }
 
