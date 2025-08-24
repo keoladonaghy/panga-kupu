@@ -99,7 +99,7 @@ const AnimatedTitle = () => {
             position: relative;
             display: flex;
             align-items: flex-start;
-            gap: 0.4rem;
+            gap: 0.5em;
             font-weight: 800;
             letter-spacing: 0.3px;
             height: calc(1em + 1px);
