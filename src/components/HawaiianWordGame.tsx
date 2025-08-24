@@ -16,6 +16,7 @@ import { hawaiianWords } from '@/data/hawaiianWords';
 import { maoriWords } from '@/data/maoriWords';
 import WordListUploader from './WordListUploader';
 import LanguageDropdown from './LanguageDropdown';
+import AnimatedTitle from './AnimatedTitle';
 
 // Updated language dropdown implementation
 import { getWordLimitsForLanguage } from '@/config/languageWordLimits';
@@ -2039,9 +2040,7 @@ const HawaiianWordGame: React.FC = () => {
               )}
             </div>
             <div className="flex items-center">
-              <h1 className="text-lg sm:text-2xl font-bold text-[hsl(var(--ocean-blue))]">
-                &nbsp;{t('welcome.title').toUpperCase()}&nbsp;
-              </h1>
+              <AnimatedTitle />
               <Button
                 variant="ghost"
                 size="icon"
