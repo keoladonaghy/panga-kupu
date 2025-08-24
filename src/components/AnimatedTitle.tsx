@@ -140,7 +140,7 @@ const AnimatedTitle = () => {
             display: inline-block;
             color: hsl(14 85% 50%);
             position: absolute;
-            left: 95px;
+            left: 80px;
             top: -1px;
             opacity: 1; /* Temporarily visible to see positioning */
             font-size: 1em;
