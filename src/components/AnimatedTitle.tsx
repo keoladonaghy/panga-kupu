@@ -142,7 +142,7 @@ const AnimatedTitle = () => {
             position: absolute;
             left: 80px;
             top: -1px;
-            opacity: 0;
+            opacity: 1; /* Temporarily visible to see positioning */
             font-size: 1em;
             line-height: 1em;
             height: 1em;
