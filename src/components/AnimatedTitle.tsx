@@ -33,6 +33,9 @@ const AnimatedTitle = () => {
 
     // Set the width of the left box to accommodate all possible words
     leftBox.style.width = Math.ceil(Math.max(...candidates.map(measureText))) + 'px';
+    
+    // Move the first three sequences left during cycling phase
+    leftBox.style.transform = 'translateX(-1rem)';
 
     const dissolveCycle = (txt: string, tStart: number) => {
       setTimeout(() => {
@@ -59,6 +62,9 @@ const AnimatedTitle = () => {
     setTimeout(() => {
       setAnimationState('sliding');
       left.style.display = 'none';
+      
+      // Reset left-box position before slide animation to preserve final positioning
+      leftBox.style.transform = 'translateX(0)';
       
       const header = leftBox.parentElement;
       if (header) {
