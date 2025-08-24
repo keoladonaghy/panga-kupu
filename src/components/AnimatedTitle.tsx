@@ -10,6 +10,7 @@ const AnimatedTitle = () => {
   const [animationState, setAnimationState] = useState<'initial' | 'cycling' | 'sliding' | 'complete'>('initial');
   const [leftBoxWidth, setLeftBoxWidth] = useState(0);
   const [titleX, setTitleX] = useState(35);
+  const [mainContainerWidth, setMainContainerWidth] = useState(0);
 
   useEffect(() => {
     const left = leftRef.current;
@@ -35,6 +36,13 @@ const AnimatedTitle = () => {
     const mWidth = measureText('M');
     const adjustedTitleX = 35 - (2 * mWidth);
     setTitleX(adjustedTitleX);
+
+    // Calculate main container width (width of "Moana Word Finder")
+    const moanaWidth = measureText('Moana');
+    const wordFinderWidth = measureText('Word Finder');
+    const spacingWidth = measureText(' '); // space between Moana and Word Finder
+    const totalWidth = moanaWidth + spacingWidth + wordFinderWidth + 20; // Add some padding
+    setMainContainerWidth(totalWidth);
 
     const dissolveCycle = (txt: string, tStart: number) => {
       setTimeout(() => {
@@ -87,6 +95,19 @@ const AnimatedTitle = () => {
     <>
       <style>
         {`
+          .main-animation-container {
+            width: var(--main-container-width);
+            border: 2px solid black;
+            position: relative;
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+            font-size: 16pt;
+            font-weight: 800;
+            letter-spacing: 0.3px;
+            line-height: 1em;
+            height: calc(1em + 1px);
+            margin: 4px 0 0 0;
+          }
+
           .title-frame {
             position: relative;
             left: var(--title-x);
@@ -97,8 +118,8 @@ const AnimatedTitle = () => {
             letter-spacing: 0.3px;
             line-height: 1em;
             height: calc(1em + 1px);
-            margin: 4px 0 0 0;
-            border: 2px solid red; /* DEBUG: Main container */
+            margin: 0;
+            border: 2px solid red; /* DEBUG: Inner container */
           }
 
           .animated-title-left-box {
@@ -108,14 +129,6 @@ const AnimatedTitle = () => {
             height: 1em;
             position: relative;
             border: 1px solid blue; /* DEBUG: Left box container */
-          }
-
-          .animated-title-left-box {
-            display: inline-block;
-            width: var(--left-box-width);
-            text-align: right;
-            height: 1em;
-            position: relative;
           }
 
           .animated-title-left {
@@ -198,12 +211,14 @@ const AnimatedTitle = () => {
         `}
       </style>
       
-      <div className="title-frame" style={{ '--left-box-width': `${leftBoxWidth}px` } as React.CSSProperties}>
-        <span ref={leftBoxRef} className="animated-title-left-box">
-          <span ref={leftRef} className="animated-title-left">ʻŌlelo</span>
-        </span>
-        <span ref={moanaRef} className="animated-title-moana">Moana</span>
-        <span ref={wordsRef} className="animated-title-words">Word Finder</span>
+      <div className="main-animation-container" style={{ '--main-container-width': `${mainContainerWidth}px` } as React.CSSProperties}>
+        <div className="title-frame" style={{ '--left-box-width': `${leftBoxWidth}px`, '--title-x': `${titleX}px` } as React.CSSProperties}>
+          <span ref={leftBoxRef} className="animated-title-left-box">
+            <span ref={leftRef} className="animated-title-left">ʻŌlelo</span>
+          </span>
+          <span ref={moanaRef} className="animated-title-moana">Moana</span>
+          <span ref={wordsRef} className="animated-title-words">Word Finder</span>
+        </div>
       </div>
 
       <span ref={measureRef} className="animated-title-measure">X</span>
