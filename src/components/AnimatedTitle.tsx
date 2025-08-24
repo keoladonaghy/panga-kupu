@@ -94,7 +94,7 @@ const AnimatedTitle = () => {
             line-height: 1em;
             height: calc(1em + 1px);
             margin: 4px 0 0 0;
-            border: 2px solid black;
+            /* border: 2px solid black; */ /* Hidden */
           }
 
           .animated-title-left-box {
@@ -142,6 +142,7 @@ const AnimatedTitle = () => {
             margin: 0;
             padding: 0;
             white-space: nowrap;
+            border: 2px solid purple;
           }
 
           .fade-in-1s {
