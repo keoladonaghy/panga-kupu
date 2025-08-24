@@ -1573,24 +1573,25 @@ const HawaiianWordGame: React.FC = () => {
 
     if (wordsAtPosition.length === 0) return false;
 
-    // Find words that have been found and that start exactly at the current position
-    // This ensures shorter words don't get placed in longer words' starting positions
-    const exactStartingWords = wordsAtPosition.filter(crosswordWord => {
-      const isExactStart = (crosswordWord.row === row && crosswordWord.col === col);
+    // PRIORITY 1: Check for words that have their dedicated starting position at this cell
+    // This ensures words go to their own spaces first, not as substrings of longer words
+    const dedicatedWords = wordsAtPosition.filter(crosswordWord => {
+      const isWordStartPosition = (crosswordWord.row === row && crosswordWord.col === col);
+      if (!isWordStartPosition) return false;
+      
       const normalizedCrosswordWord = toHawaiianUppercase(crosswordWord.word);
       const wordWithLength = `${normalizedCrosswordWord}_${crosswordWord.word.length}`;
       const isFound = gameState.foundWords.includes(wordWithLength);
       
-      return isFound && isExactStart;
+      return isFound;
     });
 
-    // If there's a word that starts exactly at this position, prioritize it
-    if (exactStartingWords.length > 0) {
-      // Sort by word length (shortest first) to prioritize shorter words in their own positions
-      exactStartingWords.sort((a, b) => a.word.length - b.word.length);
-      const prioritizedWord = exactStartingWords[0];
+    if (dedicatedWords.length > 0) {
+      // Prioritize shorter words in their own positions
+      dedicatedWords.sort((a, b) => a.word.length - b.word.length);
+      const prioritizedWord = dedicatedWords[0];
       
-      console.log('🎯 Found word starting exactly at position:', {
+      console.log('🎯 PRIORITY 1: Word in its dedicated position:', {
         position: { row, col },
         word: prioritizedWord.word,
         length: prioritizedWord.word.length
@@ -1599,13 +1600,29 @@ const HawaiianWordGame: React.FC = () => {
       return true;
     }
 
-    // Check if this position is part of any found word's designated area (for middle letters)
+    // PRIORITY 2: Check if this position should only show letters from words that start here
+    // This prevents substring highlighting when a dedicated word should occupy this space
+    const potentialDedicatedWords = wordsAtPosition.filter(crosswordWord => 
+      crosswordWord.row === row && crosswordWord.col === col
+    );
+    
+    if (potentialDedicatedWords.length > 0) {
+      // If there are words that should start at this position but haven't been found yet,
+      // don't show any substring matches here
+      console.log('🚫 PRIORITY 2: Position reserved for dedicated word:', {
+        position: { row, col },
+        potentialWords: potentialDedicatedWords.map(w => w.word)
+      });
+      return false;
+    }
+
+    // PRIORITY 3: Allow substring matches only in positions that aren't word starting positions
     const foundWordsAtPosition = wordsAtPosition.filter(crosswordWord => {
       const normalizedCrosswordWord = toHawaiianUppercase(crosswordWord.word);
       const wordWithLength = `${normalizedCrosswordWord}_${crosswordWord.word.length}`;
       const isExactWordFound = gameState.foundWords.includes(wordWithLength);
       
-      console.log('🔍 Checking word at position:', {
+      console.log('🔍 PRIORITY 3: Checking substring match:', {
         word: normalizedCrosswordWord,
         wordLength: crosswordWord.word.length,
         wordWithLength,
@@ -1618,16 +1635,13 @@ const HawaiianWordGame: React.FC = () => {
       return isExactWordFound;
     });
 
-    // If no words at this position have been found, don't show anything
     if (foundWordsAtPosition.length === 0) return false;
 
-    // For positions that aren't starting positions, prioritize by word specificity
-    // This ensures that if multiple words overlap, the most appropriate one is shown
+    // Prioritize by word specificity - shorter words and closer to word start
     if (foundWordsAtPosition.length > 1) {
-      console.log('🎯 Multiple found words at position:', { row, col }, 
+      console.log('🎯 Multiple substring matches at position:', { row, col }, 
         'Words:', foundWordsAtPosition.map(w => ({ word: w.word, length: w.word.length })));
       
-      // Sort by word length (shortest first) and then by how close to the word's start
       foundWordsAtPosition.sort((a, b) => {
         const distanceA = a.direction === 'across' ? (col - a.col) : (row - a.row);
         const distanceB = b.direction === 'across' ? (col - b.col) : (row - b.row);
@@ -1641,7 +1655,7 @@ const HawaiianWordGame: React.FC = () => {
         return a.word.length - b.word.length;
       });
       
-      console.log('🎯 Prioritizing word:', foundWordsAtPosition[0].word);
+      console.log('🎯 Prioritizing substring match:', foundWordsAtPosition[0].word);
     }
 
     return true;
