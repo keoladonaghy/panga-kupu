@@ -9,6 +9,7 @@ const AnimatedTitle = () => {
   
   const [animationState, setAnimationState] = useState<'initial' | 'cycling' | 'sliding' | 'complete'>('initial');
   const [leftBoxWidth, setLeftBoxWidth] = useState(0);
+  const [wordFinderPosition, setWordFinderPosition] = useState(0);
 
   useEffect(() => {
     const left = leftRef.current;
@@ -29,6 +30,12 @@ const AnimatedTitle = () => {
     const calculatedWidth = Math.ceil(Math.max(...candidates.map(measureText))) + 10;
     setLeftBoxWidth(calculatedWidth);
     leftBox.style.width = calculatedWidth + 'px';
+
+    // Calculate Word Finder position (leftBoxWidth + 0.5em + Moana width + space)
+    const moanaWidth = measureText('Moana');
+    const spaceWidth = measureText(' ');
+    const wordFinderPos = calculatedWidth + (0.5 * 16) + moanaWidth + spaceWidth; // 0.5em = 8px at 16pt
+    setWordFinderPosition(wordFinderPos);
 
 
     const dissolveCycle = (txt: string, tStart: number) => {
@@ -61,8 +68,7 @@ const AnimatedTitle = () => {
       moana.classList.add('slide-to-anchor');
 
       const handleAnimationEnd = () => {
-        // Position Word Finder next to final Moana position
-        words.style.left = '0.5em';
+        // Word Finder is positioned via CSS, just fade it in
         words.classList.add('fade-in-1s');
         setAnimationState('complete');
       };
@@ -134,6 +140,7 @@ const AnimatedTitle = () => {
             display: inline-block;
             color: hsl(14 85% 50%);
             position: absolute;
+            left: var(--word-finder-position);
             top: 0;
             opacity: 0;
             font-size: 1em;
@@ -186,7 +193,7 @@ const AnimatedTitle = () => {
         `}
       </style>
       
-      <div className="title-frame" style={{ '--left-box-width': `${leftBoxWidth}px` } as React.CSSProperties}>
+      <div className="title-frame" style={{ '--left-box-width': `${leftBoxWidth}px`, '--word-finder-position': `${wordFinderPosition}px` } as React.CSSProperties}>
         <span ref={leftBoxRef} className="animated-title-left-box">
           <span ref={leftRef} className="animated-title-left">ʻŌlelo</span>
         </span>
