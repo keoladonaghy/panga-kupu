@@ -83,7 +83,7 @@ const AnimatedTitle = () => {
       <style>
         {`
           .title-frame {
-            --title-x: -22px; /* 10px from browser edge - 32px root padding */
+            --title-x: -10px;
             position: relative;
             left: var(--title-x);
             width: fit-content;
