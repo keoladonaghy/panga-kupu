@@ -106,6 +106,7 @@ const AnimatedTitle = () => {
             width: var(--main-container-width);
             border: 2px solid black;
             position: relative;
+            left: -5px;
             font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
             font-size: 16pt;
             font-weight: 800;
