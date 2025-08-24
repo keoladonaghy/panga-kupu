@@ -2041,13 +2041,15 @@ const HawaiianWordGame: React.FC = () => {
             </div>
             <div className="flex items-baseline">
               <AnimatedTitle />
+            </div>
+            <div className="flex items-center gap-2">
               <Button
                 variant="ghost"
-                size="icon"
                 onClick={() => setShowInstructions(true)}
-                className="text-white hover:bg-white/20 rounded-full ml-6 h-5 w-5 p-0 self-baseline"
+                className="text-[hsl(var(--ocean-blue))] hover:bg-white/20 rounded-full"
+                style={{ width: '32px', height: '32px', padding: '0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
               >
-                <HelpCircle className="h-5 w-5" />
+                <HelpCircle style={{ width: '24px', height: '24px' }} />
               </Button>
             </div>
             <div className="flex items-center">
