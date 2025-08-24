@@ -300,20 +300,27 @@ const HawaiianWordGame: React.FC = () => {
     return result;
   };
 
-  // Helper function to check if a word was found (works with new length-aware format)
-  const isWordFound = (word: string, length?: number) => {
+  // Helper function to check if a word was found (works with position-aware format)
+  const isWordFound = (word: string, length?: number, row?: number, col?: number, direction?: string) => {
     const normalizedWord = toHawaiianUppercase(word);
     
-    // If length is provided, check the new format
-    if (length !== undefined) {
-      return gameState.foundWords.includes(`${normalizedWord}_${length}`);
+    // If position data is provided, check for exact position match
+    if (length !== undefined && row !== undefined && col !== undefined && direction !== undefined) {
+      return gameState.foundWords.includes(`${normalizedWord}_${length}_${row}_${col}_${direction}`);
     }
     
-    // If no length provided, check if any version of this word exists
+    // If only length is provided, check for any word with that length
+    if (length !== undefined) {
+      return gameState.foundWords.some(foundWord => {
+        const parts = foundWord.split('_');
+        return parts.length >= 2 && parts[0] === normalizedWord && parseInt(parts[1]) === length;
+      });
+    }
+    
+    // If no specifics provided, check if any version of this word exists
     return gameState.foundWords.some(foundWord => {
-      // Check for exact word_length format match
       const parts = foundWord.split('_');
-      return parts.length === 2 && parts[0] === normalizedWord;
+      return parts.length >= 2 && parts[0] === normalizedWord;
     });
   };
 
@@ -774,7 +781,8 @@ const HawaiianWordGame: React.FC = () => {
       // Only accept words that have an exact match (same text AND same length)
       const validWord = exactMatchingWords.length > 0 ? normalizedWord : null;
       
-      if (validWord && !isWordFound(validWord, currentWord.length)) {
+      const matchingWord = exactMatchingWords[0];
+      if (validWord && !isWordFound(validWord, currentWord.length, matchingWord?.row, matchingWord?.col, matchingWord?.direction)) {
         console.log('✅ Manual check - Valid word found:', validWord);
         
         // Check if this is a 3-letter word that should be excluded from re-triggering
@@ -783,9 +791,9 @@ const HawaiianWordGame: React.FC = () => {
           return;
         }
         
-        // Store the found word with length information
-        const wordWithLength = `${validWord}_${currentWord.length}`;
-        const newFoundWords = [...gameState.foundWords, wordWithLength];
+        // Store the found word with position information
+        const wordWithPosition = `${validWord}_${currentWord.length}_${matchingWord.row}_${matchingWord.col}_${matchingWord.direction}`;
+        const newFoundWords = [...gameState.foundWords, wordWithPosition];
         const newFoundThreeLetterWords = currentWord.length === 3 ? 
           [...gameState.foundThreeLetterWords, validWord] : 
           gameState.foundThreeLetterWords;
@@ -936,10 +944,11 @@ const HawaiianWordGame: React.FC = () => {
           return; // Skip processing this word - allow continued typing for longer words
         }
         
-        // Store the found word with length information to ensure correct placement
-        // Format: "WORD_LENGTH" so we can distinguish between words of different lengths
-        const wordWithLength = `${validWord}_${newWord.length}`;
-        const newFoundWords = [...gameState.foundWords, wordWithLength];
+        // Store the found word with unique position identifier to ensure correct placement
+        // Format: "WORD_LENGTH_ROW_COL_DIRECTION" for precise word identification
+        const matchingWord = exactMatchingWords[0]; // Use the first exact match
+        const wordWithPosition = `${validWord}_${newWord.length}_${matchingWord.row}_${matchingWord.col}_${matchingWord.direction}`;
+        const newFoundWords = [...gameState.foundWords, wordWithPosition];
         const newFoundThreeLetterWords = newWord.length === 3 ? 
           [...gameState.foundThreeLetterWords, validWord] : 
           gameState.foundThreeLetterWords;
@@ -991,7 +1000,7 @@ const HawaiianWordGame: React.FC = () => {
         }
         
         return; // Stop here, don't continue to check for HOKA!
-      } else if (validWord && isWordFound(validWord, newWord.length)) {
+      } else if (validWord && isWordFound(validWord, newWord.length, exactMatchingWords[0]?.row, exactMatchingWords[0]?.col, exactMatchingWords[0]?.direction)) {
         // Only show UA LOA'A MUA! if this is the maximum word length possible with current letters
         // This allows players to discover for themselves if longer words exist
         const maxPossibleLength = gameState.availableLetters.length;
@@ -1116,16 +1125,16 @@ const HawaiianWordGame: React.FC = () => {
     if (!word) return;
 
     // Check if the word is in the crossword puzzle
-    const isWordInCrossword = gameState.crosswordWords.some(crosswordWord => 
+    const matchingCrosswordWord = gameState.crosswordWords.find(crosswordWord => 
       toHawaiianUppercase(crosswordWord.word) === word && 
       crosswordWord.word.length === word.length
     );
 
-    if (isWordInCrossword && !isWordFound(word, word.length)) {
+    if (matchingCrosswordWord && !isWordFound(word, word.length, matchingCrosswordWord.row, matchingCrosswordWord.col, matchingCrosswordWord.direction)) {
       // Word found! Add to found words and clear current word
       clearHokaTimeout(); // Clear any pending HOKA timeouts
-      const wordWithLength = `${word}_${word.length}`;
-      const newFoundWords = [...gameState.foundWords, wordWithLength];
+      const wordWithPosition = `${word}_${word.length}_${matchingCrosswordWord.row}_${matchingCrosswordWord.col}_${matchingCrosswordWord.direction}`;
+      const newFoundWords = [...gameState.foundWords, wordWithPosition];
       
       setGameState(prev => ({
         ...prev,
@@ -1153,7 +1162,7 @@ const HawaiianWordGame: React.FC = () => {
           setGameState(prev => ({ ...prev, showCelebration: true, isManualCelebration: false }));
         }, 1000);
       }
-    } else if (isWordFound(word, word.length)) {
+    } else if (isWordFound(word, word.length, matchingCrosswordWord?.row, matchingCrosswordWord?.col, matchingCrosswordWord?.direction)) {
       // Already found this word - show UA LOA'A MUA! over delete key
       setGameState(prev => ({
         ...prev,
@@ -1589,28 +1598,21 @@ const HawaiianWordGame: React.FC = () => {
 
     if (wordsAtPosition.length === 0) return false;
 
-    // PRIORITY 1: Check for words that have their dedicated starting position at this cell
-    // This ensures words go to their own spaces first, not as substrings of longer words
-    const dedicatedWords = wordsAtPosition.filter(crosswordWord => {
-      const isWordStartPosition = (crosswordWord.row === row && crosswordWord.col === col);
-      if (!isWordStartPosition) return false;
-      
+    // PRIORITY 1: Check for exact position matches using the new identifier system
+    // This ensures words only display in their precise intended positions
+    const exactMatches = wordsAtPosition.filter(crosswordWord => {
       const normalizedCrosswordWord = toHawaiianUppercase(crosswordWord.word);
-      const wordWithLength = `${normalizedCrosswordWord}_${crosswordWord.word.length}`;
-      const isFound = gameState.foundWords.includes(wordWithLength);
+      const wordWithPosition = `${normalizedCrosswordWord}_${crosswordWord.word.length}_${crosswordWord.row}_${crosswordWord.col}_${crosswordWord.direction}`;
+      const isFound = gameState.foundWords.includes(wordWithPosition);
       
       return isFound;
     });
 
-    if (dedicatedWords.length > 0) {
-      // Prioritize shorter words in their own positions
-      dedicatedWords.sort((a, b) => a.word.length - b.word.length);
-      const prioritizedWord = dedicatedWords[0];
-      
-      console.log('🎯 PRIORITY 1: Word in its dedicated position:', {
+    if (exactMatches.length > 0) {
+      console.log('🎯 PRIORITY 1: Exact position match found:', {
         position: { row, col },
-        word: prioritizedWord.word,
-        length: prioritizedWord.word.length
+        word: exactMatches[0].word,
+        length: exactMatches[0].word.length
       });
       
       return true;
