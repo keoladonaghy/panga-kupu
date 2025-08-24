@@ -106,8 +106,9 @@ const AnimatedTitle = () => {
           .animated-title-left-box {
             display: inline-flex;
             justify-content: flex-end;
-            overflow: hidden;
+            overflow: visible;
             height: 1em;
+            padding-left: 8px;
           }
 
           .animated-title-left,
