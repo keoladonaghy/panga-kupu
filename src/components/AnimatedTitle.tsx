@@ -44,10 +44,11 @@ const AnimatedTitle = () => {
     const moanaPos = widestPolynesian + spaceWidth;
     setMoanaPosition(moanaPos);
 
-    // Calculate main container width (width of "Moana Word Finder")
+    // Calculate main container width (width of "Moana Word Finder" + 60% wider)
     const moanaWidth = measureText('Moana');
     const wordFinderWidth = measureText('Word Finder');
-    const totalWidth = moanaPos + moanaWidth + spaceWidth + wordFinderWidth + 20; // Add some padding
+    const baseWidth = moanaPos + moanaWidth + spaceWidth + wordFinderWidth + 20;
+    const totalWidth = baseWidth * 1.6; // 60% wider
     setMainContainerWidth(totalWidth);
 
     const dissolveCycle = (txt: string, tStart: number) => {
@@ -110,7 +111,7 @@ const AnimatedTitle = () => {
             font-weight: 800;
             letter-spacing: 0.3px;
             line-height: 1em;
-            height: calc(1em + 1px);
+            height: 18px;
             margin: 4px 0 0 0;
           }
 
