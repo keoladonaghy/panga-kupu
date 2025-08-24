@@ -8,8 +8,36 @@ const AnimatedTitle = () => {
   const measureRef = useRef<HTMLSpanElement>(null);
   
   const [animationState, setAnimationState] = useState<'initial' | 'cycling' | 'sliding' | 'complete'>('initial');
+  const [shouldAnimate, setShouldAnimate] = useState(false);
 
   useEffect(() => {
+    // Check if animation should run today
+    const today = new Date().toDateString();
+    const lastAnimationDate = localStorage.getItem('animated-title-last-shown');
+    
+    if (lastAnimationDate !== today) {
+      // Show animation and save today's date
+      setShouldAnimate(true);
+      localStorage.setItem('animated-title-last-shown', today);
+    } else {
+      // Skip animation, show final state
+      setShouldAnimate(false);
+      setAnimationState('complete');
+      
+      // Set up final state immediately
+      setTimeout(() => {
+        const left = leftRef.current;
+        const words = wordsRef.current;
+        
+        if (left && words) {
+          left.style.display = 'none';
+          words.style.opacity = '1';
+          words.style.left = '0';
+        }
+      }, 0);
+      
+      return; // Exit early, don't run animation
+    }
     const left = leftRef.current;
     const leftBox = leftBoxRef.current;
     const moana = moanaRef.current;
@@ -17,9 +45,11 @@ const AnimatedTitle = () => {
     const measure = measureRef.current;
 
     if (!left || !leftBox || !moana || !words || !measure) return;
-
-    const candidates = ['ʻŌlelo', 'Kupu', 'Parau'];
     
+    // Only run animation if shouldAnimate is true
+    if (!shouldAnimate) return;
+    
+    const candidates = ['ʻŌlelo', 'Kupu', 'Parau'];
     const measureText = (text: string): number => {
       measure.textContent = text;
       return measure.getBoundingClientRect().width;
@@ -80,7 +110,7 @@ const AnimatedTitle = () => {
         moana.removeEventListener('animationend', () => {});
       }
     };
-  }, []);
+  }, [shouldAnimate]);
 
   return (
     <>
