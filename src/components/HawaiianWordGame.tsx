@@ -1623,13 +1623,26 @@ const HawaiianWordGame: React.FC = () => {
     );
     
     if (potentialDedicatedWords.length > 0) {
-      // If there are words that should start at this position but haven't been found yet,
-      // don't show any substring matches here
-      console.log('🚫 PRIORITY 2: Position reserved for dedicated word:', {
+      // Allow intersecting letters to show even if there's a potential word starting here
+      // Only block if ALL intersecting words are unfound
+      const allIntersectingWordsUnfound = wordsAtPosition.every(crosswordWord => {
+        const normalizedCrosswordWord = toHawaiianUppercase(crosswordWord.word);
+        const wordWithLength = `${normalizedCrosswordWord}_${crosswordWord.word.length}`;
+        return !gameState.foundWords.includes(wordWithLength);
+      });
+      
+      if (allIntersectingWordsUnfound) {
+        console.log('🚫 PRIORITY 2: Position reserved for dedicated word (no intersecting words found):', {
+          position: { row, col },
+          potentialWords: potentialDedicatedWords.map(w => w.word)
+        });
+        return false;
+      }
+      
+      console.log('✅ PRIORITY 2: Allowing intersection display despite potential dedicated word:', {
         position: { row, col },
         potentialWords: potentialDedicatedWords.map(w => w.word)
       });
-      return false;
     }
 
     // PRIORITY 3: Allow substring matches only in positions that aren't word starting positions
