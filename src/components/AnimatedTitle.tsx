@@ -168,7 +168,7 @@ const AnimatedTitle = () => {
           }
 
           .animated-title-words {
-            display: inline-block;
+            display: none; /* Hidden for now */
             color: hsl(14 85% 50%);
             position: absolute;
             top: 0;
