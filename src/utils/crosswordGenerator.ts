@@ -84,74 +84,155 @@ export class CrosswordGenerator {
     console.log('Language:', this.language);
     console.log('Word limits:', this.wordLimits);
     
-    // Try different letter combinations until we get at least MAX_WORDS words AND at least 2 five-letter words
-    for (let letterAttempt = 0; letterAttempt < 10; letterAttempt++) {
-      console.log(`=== LETTER SELECTION ATTEMPT ${letterAttempt + 1}/10 ===`);
-      
-      // Step 1: Select letters for puzzle
-      this.selectRandomLetters();
-      console.log('Selected letters:', this.selectedLetters);
-      
-      // Step 2: Filter words to only use those letters
-      this.filterWordsByLetters();
-      console.log('Filtered words count:', this.filteredWords.length);
-      console.log('Sample filtered words:', this.filteredWords.slice(0, 10));
-      
-      // Check if we have enough five-letter words specifically - BUT only if max length allows it
-      const fiveLetterWords = this.filteredWords.filter(word => word.length === 5);
-      const maxPossibleLength = Math.min(5, this.wordLimits.maxWordLength);
-      const longestWords = this.filteredWords.filter(word => word.length === maxPossibleLength);
-      console.log(`Five-letter words available: ${fiveLetterWords.length}`);
-      console.log(`Longest possible words (${maxPossibleLength} letters): ${longestWords.length}`);
-      console.log('Sample longest words:', longestWords.slice(0, 5));
-      
-      if (this.filteredWords.length < this.MAX_WORDS) {
-        console.log(`WARNING: Not enough words with selected letters for ${this.MAX_WORDS}-word puzzle:`, this.selectedLetters);
-        console.log('Available filtered words:', this.filteredWords.length);
-        continue; // Try different letters
-      }
-      
-      // Modify the five-letter requirement based on max word length
-      const requiredLongWords = this.wordLimits.maxWordLength >= 5 ? 2 : 0;
-      if (this.wordLimits.maxWordLength >= 5 && fiveLetterWords.length < requiredLongWords) {
-        console.log(`WARNING: Not enough five-letter words with selected letters:`, fiveLetterWords.length);
-        continue; // Try different letters
-      } else if (this.wordLimits.maxWordLength < 5) {
-        console.log(`INFO: Skipping five-letter requirement since max length is ${this.wordLimits.maxWordLength}`);
-      }
-      
-      // Try to build crossword with current letter selection
-      for (let attempt = 0; attempt < this.maxAttempts; attempt++) {
-        if (attempt % 100 === 0) {
-          console.log(`Crossword attempt ${attempt}/${this.maxAttempts} with letter set ${letterAttempt + 1}`);
-        }
-        const result = this.buildStructuredCrossword();
-        if (result && result.words.length >= this.MAX_WORDS) {
-          // Verify the required long words based on language constraints
-          if (this.wordLimits.maxWordLength >= 5) {
-            const resultFiveLetterWords = result.words.filter(word => word.word.length === 5);
-            if (resultFiveLetterWords.length >= 2) {
-              console.log(`=== CROSSWORD GENERATION SUCCESS WITH ${result.words.length} WORDS (${resultFiveLetterWords.length} five-letter words) ===`);
-              return result;
-            } else {
-              console.log(`WARNING: Generated puzzle only has ${resultFiveLetterWords.length} five-letter words, continuing...`);
-            }
-          } else {
-            // For languages with shorter max length, just check we have enough words
-            console.log(`=== CROSSWORD GENERATION SUCCESS WITH ${result.words.length} WORDS (max length: ${this.wordLimits.maxWordLength}) ===`);
-            return result;
+    try {
+      // Try different letter combinations until we get at least MAX_WORDS words AND at least 2 five-letter words
+      for (let letterAttempt = 0; letterAttempt < 10; letterAttempt++) {
+        console.log(`=== LETTER SELECTION ATTEMPT ${letterAttempt + 1}/10 ===`);
+        
+        try {
+          // Step 1: Select letters for puzzle with timeout protection
+          console.log('🔤 Starting letter selection...');
+          const startTime = Date.now();
+          this.selectRandomLetters();
+          const selectionTime = Date.now() - startTime;
+          console.log(`✅ Letter selection completed in ${selectionTime}ms`);
+          console.log('Selected letters:', this.selectedLetters);
+          
+          // Validate letter selection
+          if (!this.selectedLetters || this.selectedLetters.length !== this.LETTERS_PER_PUZZLE) {
+            console.error(`❌ Letter selection failed - expected ${this.LETTERS_PER_PUZZLE} letters, got:`, this.selectedLetters);
+            continue;
           }
+          
+          // Step 2: Filter words to only use those letters
+          console.log('🔍 Starting word filtering...');
+          this.filterWordsByLetters();
+          console.log('✅ Word filtering completed');
+          console.log('Filtered words count:', this.filteredWords.length);
+          console.log('Sample filtered words:', this.filteredWords.slice(0, 10));
+          
+          // Check if we have enough five-letter words specifically - BUT only if max length allows it
+          const fiveLetterWords = this.filteredWords.filter(word => word.length === 5);
+          const maxPossibleLength = Math.min(5, this.wordLimits.maxWordLength);
+          const longestWords = this.filteredWords.filter(word => word.length === maxPossibleLength);
+          console.log(`Five-letter words available: ${fiveLetterWords.length}`);
+          console.log(`Longest possible words (${maxPossibleLength} letters): ${longestWords.length}`);
+          console.log('Sample longest words:', longestWords.slice(0, 5));
+          
+          if (this.filteredWords.length < this.MAX_WORDS) {
+            console.log(`WARNING: Not enough words with selected letters for ${this.MAX_WORDS}-word puzzle:`, this.selectedLetters);
+            console.log('Available filtered words:', this.filteredWords.length);
+            continue; // Try different letters
+          }
+          
+          // Modify the five-letter requirement based on max word length
+          const requiredLongWords = this.wordLimits.maxWordLength >= 5 ? 2 : 0;
+          if (this.wordLimits.maxWordLength >= 5 && fiveLetterWords.length < requiredLongWords) {
+            console.log(`WARNING: Not enough five-letter words with selected letters:`, fiveLetterWords.length);
+            continue; // Try different letters
+          } else if (this.wordLimits.maxWordLength < 5) {
+            console.log(`INFO: Skipping five-letter requirement since max length is ${this.wordLimits.maxWordLength}`);
+          }
+          
+          // Try to build crossword with current letter selection
+          console.log('🔨 Starting crossword building attempts...');
+          for (let attempt = 0; attempt < this.maxAttempts; attempt++) {
+            if (attempt % 100 === 0) {
+              console.log(`Crossword attempt ${attempt}/${this.maxAttempts} with letter set ${letterAttempt + 1}`);
+            }
+            
+            try {
+              const buildStartTime = Date.now();
+              const result = this.buildStructuredCrossword();
+              const buildTime = Date.now() - buildStartTime;
+              
+              if (result && result.words.length >= this.MAX_WORDS) {
+                // Verify the required long words based on language constraints
+                if (this.wordLimits.maxWordLength >= 5) {
+                  const resultFiveLetterWords = result.words.filter(word => word.word.length === 5);
+                  if (resultFiveLetterWords.length >= 2) {
+                    console.log(`✅ CROSSWORD GENERATION SUCCESS in ${buildTime}ms WITH ${result.words.length} WORDS (${resultFiveLetterWords.length} five-letter words)`);
+                    return result;
+                  } else {
+                    console.log(`WARNING: Generated puzzle only has ${resultFiveLetterWords.length} five-letter words, continuing...`);
+                  }
+                } else {
+                  // For languages with shorter max length, just check we have enough words
+                  console.log(`✅ CROSSWORD GENERATION SUCCESS in ${buildTime}ms WITH ${result.words.length} WORDS (max length: ${this.wordLimits.maxWordLength})`);
+                  return result;
+                }
+              }
+              
+              // Add timeout protection for crossword building
+              if (buildTime > 5000) { // 5 second timeout
+                console.log(`⏱️ Crossword building timeout after ${buildTime}ms, trying new letters...`);
+                break; // Break out of attempt loop, try new letters
+              }
+            } catch (buildError) {
+              console.error(`❌ Error during crossword building attempt ${attempt}:`, buildError);
+              break; // Break out of attempt loop, try new letters
+            }
+          }
+          
+          console.log(`Letter set ${letterAttempt + 1} failed to produce ${this.MAX_WORDS}+ words. Trying new letters...`);
+        } catch (error) {
+          console.error(`❌ Error in letter selection/filtering attempt ${letterAttempt + 1}:`, error);
+          continue; // Try next letter attempt
         }
       }
       
-      console.log(`Letter set ${letterAttempt + 1} failed to produce ${this.MAX_WORDS}+ words. Trying new letters...`);
+      const failureReason = this.wordLimits.maxWordLength >= 5 
+        ? `${this.MAX_WORDS} words with 2+ five-letter words`
+        : `${this.MAX_WORDS} words`;
+      console.log(`❌ CROSSWORD GENERATION FAILED - Could not achieve ${failureReason}`);
+      return null;
+    } catch (mainError) {
+      console.error('❌ Fatal error in crossword generation:', mainError);
+      
+      // Fallback: try to generate a simple crossword without error handling
+      console.log('🔄 Attempting fallback generation...');
+      return this.generateFallbackCrossword();
     }
+  }
+
+  /**
+   * Simple fallback crossword generation without complex error handling
+   */
+  private generateFallbackCrossword(): CrosswordGrid | null {
+    console.log('🔄 Attempting fallback crossword generation...');
     
-    const failureReason = this.wordLimits.maxWordLength >= 5 
-      ? `${this.MAX_WORDS} words with 2+ five-letter words`
-      : `${this.MAX_WORDS} words`;
-    console.log(`=== CROSSWORD GENERATION FAILED - Could not achieve ${failureReason} ===`);
-    return null;
+    try {
+      // Use simple letter selection without frequency constraints
+      const vowels = ['a', 'e', 'i', 'o', 'u'];
+      const consonants = this.language === 'mao' 
+        ? ['h', 'k', 'm', 'n', 'p', 'r', 't', 'w']
+        : this.language === 'haw' 
+          ? ['h', 'k', 'l', 'm', 'n', 'p', 'w']
+          : ['f', 'h', 'm', 'n', 'p', 'r', 't', 'v'];
+      
+      // Simple selection: 3 vowels + 4 consonants
+      this.selectedLetters = [
+        ...vowels.sort(() => Math.random() - 0.5).slice(0, 3),
+        ...consonants.sort(() => Math.random() - 0.5).slice(0, 4)
+      ];
+      
+      console.log('Fallback selected letters:', this.selectedLetters);
+      
+      // Filter words
+      this.filterWordsByLetters();
+      console.log('Fallback filtered words:', this.filteredWords.length);
+      
+      if (this.filteredWords.length < 5) {
+        console.log('❌ Fallback failed - not enough words');
+        return null;
+      }
+      
+      // Try simple crossword building
+      return this.buildStructuredCrossword();
+    } catch (error) {
+      console.error('❌ Fallback generation failed:', error);
+      return null;
+    }
   }
 
   /**
