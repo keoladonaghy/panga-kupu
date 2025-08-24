@@ -25,7 +25,7 @@ const AnimatedTitle = () => {
     // Only run animation if shouldAnimate is true
     if (!shouldAnimate) return;
     
-    const candidates = ['ʻŌlelo', 'Kupu', 'Parau', 'Word Finder'];
+    const candidates = ['ʻŌlelo', 'Kupu', 'Parau']; // Only words that cycle in leftBox
     const measureText = (text: string): number => {
       measure.textContent = text;
       return measure.getBoundingClientRect().width;
