@@ -32,7 +32,7 @@ const AnimatedTitle = () => {
     };
 
     // Set the width of the left box to accommodate all possible words
-    leftBox.style.width = Math.ceil(Math.max(...candidates.map(measureText))) + 'px';
+    leftBox.style.width = Math.ceil(Math.max(...candidates.map(measureText))) + 10 + 'px';
     
     // Position container so longest Polynesian word starts 10px from browser edge
     const containerEl = leftBox.parentElement as HTMLElement | null;
