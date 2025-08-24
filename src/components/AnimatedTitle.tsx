@@ -30,6 +30,11 @@ const AnimatedTitle = () => {
     setLeftBoxWidth(calculatedWidth);
     leftBox.style.width = calculatedWidth + 'px';
 
+    // Calculate 2x width of "M" and adjust title position
+    const mWidth = measureText('M');
+    const adjustedTitleX = 35 - (2 * mWidth);
+    document.documentElement.style.setProperty('--title-x', `${adjustedTitleX}px`);
+
     const dissolveCycle = (txt: string, tStart: number) => {
       setTimeout(() => {
         left.textContent = txt;
