@@ -110,9 +110,10 @@ const AnimatedTitle = () => {
             font-size: 16pt;
             font-weight: 800;
             letter-spacing: 0.3px;
-            line-height: 1em;
+            line-height: 20px;
             height: 20px;
             margin: 4px 0 0 0;
+            min-height: 20px;
           }
 
           .title-frame {
