@@ -224,6 +224,7 @@ const AnimatedTitle = () => {
       </style>
       
       <div className="main-animation-container" style={{ '--main-container-width': `${mainContainerWidth}px` } as React.CSSProperties}>
+        &nbsp;
         <div className="title-frame" style={{ '--left-box-width': `${leftBoxWidth}px`, '--title-x': `${titleX}px`, '--moana-position': `${moanaPosition}px` } as React.CSSProperties}>
           <span ref={leftBoxRef} className="animated-title-left-box">
             <span ref={leftRef} className="animated-title-left">ʻŌlelo</span>
