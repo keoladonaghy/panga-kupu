@@ -121,7 +121,7 @@ const AnimatedTitle = () => {
             color: hsl(220 85% 25%);
             position: absolute;
             left: calc(var(--left-box-width) + 0.5em);
-            top: 0;
+            top: -1px;
             font-size: 1em;
             line-height: 1em;
             height: 1em;
