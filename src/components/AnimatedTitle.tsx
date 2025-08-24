@@ -107,11 +107,11 @@ const AnimatedTitle = () => {
             border: 2px solid black;
             position: relative;
             font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-            font-size: 20pt;
+            font-size: 16pt;
             font-weight: 800;
             letter-spacing: 0.3px;
             line-height: 1em;
-            height: 18px;
+            height: 20px;
             margin: 4px 0 0 0;
           }
 
@@ -120,7 +120,7 @@ const AnimatedTitle = () => {
             left: var(--title-x);
             width: fit-content;
             font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-            font-size: 20pt;
+            font-size: 16pt;
             font-weight: 800;
             letter-spacing: 0.3px;
             line-height: 1em;
