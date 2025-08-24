@@ -107,7 +107,7 @@ const AnimatedTitle = () => {
             display: inline-block;
             width: var(--left-box-width);
             text-align: right;
-            height: 1em;
+            height: calc(1em + 1px);
             position: relative;
           }
 
