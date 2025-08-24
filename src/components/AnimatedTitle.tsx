@@ -104,7 +104,7 @@ const AnimatedTitle = () => {
             letter-spacing: 0.3px;
             height: calc(1em + 1px);
             line-height: 1em;
-            margin: 4px 0 0 0;
+            margin: 4px 0 0 calc(6px - 2rem);
             overflow: visible;
             font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
             font-size: 16pt;
