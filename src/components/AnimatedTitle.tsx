@@ -63,7 +63,8 @@ const AnimatedTitle = () => {
       const header = leftBox.parentElement;
       if (header) {
         const gapPx = parseFloat(getComputedStyle(header).columnGap || getComputedStyle(header).gap || '0') || 0;
-        const offset = leftBox.getBoundingClientRect().width + gapPx;
+        // Slide Moana to where the first words appeared (left edge of container)
+        const offset = gapPx; // Only slide by the gap, not the full leftBox width
         moana.style.setProperty('--offset', offset + 'px');
         moana.classList.add('slide-full-left');
 
