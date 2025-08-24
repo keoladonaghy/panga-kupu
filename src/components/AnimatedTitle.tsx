@@ -71,7 +71,7 @@ const AnimatedTitle = () => {
           const headerRect = header.getBoundingClientRect();
           const moanaRect = moana.getBoundingClientRect();
           const fs = parseFloat(getComputedStyle(moana).fontSize);
-          words.style.left = (moanaRect.right - headerRect.left + 0.5 * fs) + 'px';
+          words.style.left = (moanaRect.right - headerRect.left + 0.5 * fs - 3) + 'px';
           words.classList.add('fade-in-1s');
           setAnimationState('complete');
         };
