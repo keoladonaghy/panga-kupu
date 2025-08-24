@@ -67,11 +67,8 @@ const AnimatedTitle = () => {
       setAnimationState('sliding');
       left.style.display = 'none';
       
-      // Reset container transform before slide animation to preserve final positioning
-      const container = leftBox.parentElement as HTMLElement | null;
-      if (container) container.style.transform = 'translateX(0)';
-      
-      const header = container;
+      // Keep container transform to avoid jump; use it as header
+      const header = leftBox.parentElement as HTMLElement | null;
       if (header) {
         const gapPx = parseFloat(getComputedStyle(header).columnGap || getComputedStyle(header).gap || '0') || 0;
         // Slide Moana left by the reserved width of the left-box + the inter-item gap
