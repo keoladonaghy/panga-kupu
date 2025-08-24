@@ -12,46 +12,8 @@ const AnimatedTitle = () => {
   const [leftBoxWidth, setLeftBoxWidth] = useState(0);
 
   useEffect(() => {
-    // Check if animation should run today
-    const today = new Date().toDateString();
-    const lastAnimationDate = localStorage.getItem('animated-title-last-shown');
-    
-    if (lastAnimationDate !== today) {
-      // Show animation and save today's date
-      setShouldAnimate(true);
-      localStorage.setItem('animated-title-last-shown', today);
-    } else {
-      // Skip animation, show final state immediately
-      setShouldAnimate(false);
-      setAnimationState('complete');
-      
-      // Set up final state without animation
-      setTimeout(() => {
-        const left = leftRef.current;
-        const moana = moanaRef.current;
-        const words = wordsRef.current;
-        const measure = measureRef.current;
-        
-        if (!left || !moana || !words || !measure) return;
-        
-        // Calculate width and set it
-        const candidates = ['ʻŌlelo', 'Kupu', 'Parau'];
-        const measureText = (text: string): number => {
-          measure.textContent = text;
-          return measure.getBoundingClientRect().width;
-        };
-        const calculatedWidth = Math.ceil(Math.max(...candidates.map(measureText))) + 10;
-        setLeftBoxWidth(calculatedWidth);
-        
-        // Set final state directly
-        left.style.display = 'none';
-        moana.style.transform = 'translateX(calc(-1 * (var(--left-box-width) + 0.5em)))';
-        words.style.left = '0.5em';
-        words.style.opacity = '1';
-      }, 0);
-      
-      return; // Exit early, don't run animation
-    }
+    // Disable daily check for now - always show animation
+    setShouldAnimate(true);
     
     // Animation code continues below...
     
