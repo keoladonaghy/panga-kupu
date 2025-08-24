@@ -524,12 +524,12 @@ const HawaiianWordGame: React.FC = () => {
               <DialogTrigger asChild>
                 <Button variant="outline" size="sm">
                   <Info className="w-4 h-4 mr-2" />
-                  {t('instructions')}
+                  {t('welcome.helpButton')}
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-md">
                 <DialogHeader>
-                  <DialogTitle>{t('instructions')}</DialogTitle>
+                  <DialogTitle>{t('instructions.title')}</DialogTitle>
                 </DialogHeader>
                 <WelcomeScreen onStart={() => setShowInstructions(false)} />
               </DialogContent>
