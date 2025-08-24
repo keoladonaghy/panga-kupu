@@ -87,8 +87,8 @@ const AnimatedTitle = () => {
       <style>
         {`
           .animated-title-container {
-            --deep-orange: hsl(var(--primary));
-            --dark-blue: hsl(var(--primary-foreground));
+            --deep-orange: 14 85% 50%;
+            --dark-blue: 220 85% 25%;
             position: relative;
             display: flex;
             align-items: flex-start;
@@ -124,16 +124,16 @@ const AnimatedTitle = () => {
           }
 
           .animated-title-left {
-            color: var(--deep-orange);
+            color: hsl(var(--deep-orange));
           }
 
           .animated-title-moana {
-            color: var(--dark-blue);
+            color: hsl(var(--dark-blue));
             position: relative;
           }
 
           .animated-title-words {
-            color: var(--deep-orange);
+            color: hsl(var(--deep-orange));
             opacity: 0;
             position: absolute;
             top: 0;
