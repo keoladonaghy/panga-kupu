@@ -609,56 +609,74 @@ const HawaiianWordGame: React.FC = () => {
           </Card>
         </div>
 
-        {/* Letter Wheel */}
-        <div className="flex justify-center mb-6">
-          <div className="grid grid-cols-4 gap-2 max-w-xs">
+        {/* Letter Picker Wheel with Surrounding Controls */}
+        <div className="flex justify-center mb-10">
+          <div className="relative" style={{ width: '18rem', height: '18rem' }}>
             {gameState.selectedLetters.map((letter, index) => {
               const isAvailable = gameState.availableLetters.includes(letter);
+              const angle = (index / gameState.selectedLetters.length) * 2 * Math.PI - Math.PI / 2; // start at top
+              const radius = 110; // px
+              const x = Math.cos(angle) * radius;
+              const y = Math.sin(angle) * radius;
               return (
                 <Button
                   key={`${letter}-${index}`}
-                  variant={isAvailable ? "default" : "secondary"}
+                  variant={isAvailable ? 'default' : 'secondary'}
                   size="lg"
-                  className="w-12 h-12 text-lg font-bold"
+                  className="absolute w-12 h-12 text-lg font-bold rounded-full"
+                  style={{ left: `calc(50% + ${x}px - 1.5rem)`, top: `calc(50% + ${y}px - 1.5rem)` }}
                   onClick={() => isAvailable && handleLetterClick(letter)}
                   disabled={!isAvailable}
+                  aria-label={`Select letter ${letter}`}
                 >
                   {letter}
                 </Button>
               );
             })}
+
+            {/* Surrounding controls */}
+            <Button
+              variant="outline"
+              className="absolute -top-4 left-1/2 -translate-x-1/2"
+              onClick={handleHint}
+              disabled={gameState.hintAttemptsLeft <= 0}
+            >
+              <Lightbulb className="w-4 h-4 mr-2" />
+              {t('hint')} ({gameState.hintAttemptsLeft})
+            </Button>
+
+            <Button
+              variant="outline"
+              className="absolute top-1/2 -right-4 -translate-y-1/2"
+              onClick={handleBackspaceClick}
+              disabled={gameState.currentWord.length === 0}
+            >
+              <RotateCcw className="w-4 h-4 mr-2" />
+              {t('backspace')}
+            </Button>
+
+            <Button
+              variant="outline"
+              className="absolute -bottom-4 left-1/2 -translate-x-1/2"
+              onClick={handleClearWord}
+              disabled={gameState.currentWord.length === 0}
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              {t('clear')}
+            </Button>
+
+            <Button
+              variant="default"
+              className="absolute top-1/2 -left-4 -translate-y-1/2"
+              onClick={() => loadHawaiianWords(true)}
+            >
+              <RefreshCw className="w-4 h-4 mr-2" />
+              {t('newGame')}
+            </Button>
           </div>
         </div>
 
-        {/* Game Controls */}
-        <div className="flex justify-center gap-2 mb-6">
-          <Button
-            variant="outline"
-            onClick={handleBackspaceClick}
-            disabled={gameState.currentWord.length === 0}
-          >
-            <RotateCcw className="w-4 h-4 mr-2" />
-            {t('backspace')}
-          </Button>
-          
-          <Button
-            variant="outline"
-            onClick={handleClearWord}
-            disabled={gameState.currentWord.length === 0}
-          >
-            <Trash2 className="w-4 h-4 mr-2" />
-            {t('clear')}
-          </Button>
-          
-          <Button
-            variant="outline"
-            onClick={handleHint}
-            disabled={gameState.hintAttemptsLeft <= 0}
-          >
-            <Lightbulb className="w-4 h-4 mr-2" />
-            {t('hint')} ({gameState.hintAttemptsLeft})
-          </Button>
-        </div>
+        {/* Controls moved around the wheel above for better ergonomics */}
 
         {/* New Game Button */}
         <div className="flex justify-center gap-2">
