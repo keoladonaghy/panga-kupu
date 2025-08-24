@@ -9,6 +9,7 @@ const AnimatedTitle = () => {
   
   const [animationState, setAnimationState] = useState<'initial' | 'cycling' | 'sliding' | 'complete'>('initial');
   const [leftBoxWidth, setLeftBoxWidth] = useState(0);
+  const [titleX, setTitleX] = useState(35);
 
   useEffect(() => {
     const left = leftRef.current;
@@ -33,7 +34,7 @@ const AnimatedTitle = () => {
     // Calculate 2x width of "M" and adjust title position
     const mWidth = measureText('M');
     const adjustedTitleX = 35 - (2 * mWidth);
-    document.documentElement.style.setProperty('--title-x', `${adjustedTitleX}px`);
+    setTitleX(adjustedTitleX);
 
     const dissolveCycle = (txt: string, tStart: number) => {
       setTimeout(() => {
@@ -87,7 +88,6 @@ const AnimatedTitle = () => {
       <style>
         {`
           .title-frame {
-            --title-x: 35px;
             position: relative;
             left: var(--title-x);
             width: fit-content;
@@ -98,6 +98,16 @@ const AnimatedTitle = () => {
             line-height: 1em;
             height: calc(1em + 1px);
             margin: 4px 0 0 0;
+            border: 2px solid red; /* DEBUG: Main container */
+          }
+
+          .animated-title-left-box {
+            display: inline-block;
+            width: var(--left-box-width);
+            text-align: right;
+            height: 1em;
+            position: relative;
+            border: 1px solid blue; /* DEBUG: Left box container */
           }
 
           .animated-title-left-box {
