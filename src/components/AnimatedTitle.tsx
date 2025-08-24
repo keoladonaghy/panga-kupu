@@ -98,7 +98,7 @@ const AnimatedTitle = () => {
             font-weight: 800;
             letter-spacing: 0.3px;
             line-height: 1em;
-            height: calc(1em + 1px);
+            /* height: calc(1em + 1px); */ /* Removed - was forcing vertical spacing */
             margin: 4px 0 0 0;
             /* border: 2px solid black; */ /* Hidden */
           }
