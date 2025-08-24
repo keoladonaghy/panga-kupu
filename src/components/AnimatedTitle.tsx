@@ -127,7 +127,7 @@ const AnimatedTitle = () => {
             color: hsl(220 85% 25%);
             position: absolute;
             left: calc(var(--left-box-width) + 0.5em);
-            top: -1px;
+            bottom: 0;
             font-size: 1em;
             line-height: 1em;
             height: 1em;
@@ -141,7 +141,7 @@ const AnimatedTitle = () => {
             color: hsl(14 85% 50%);
             position: absolute;
             left: 80px;
-            top: -1px;
+            bottom: 0;
             opacity: 1; /* Temporarily visible to see positioning */
             font-size: 1em;
             line-height: 1em;
