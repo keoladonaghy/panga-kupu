@@ -27,7 +27,7 @@ const AnimatedTitle = () => {
     };
 
     // Calculate and set left box width
-    const calculatedWidth = Math.ceil(Math.max(...candidates.map(measureText))) + 10;
+    const calculatedWidth = Math.ceil(Math.max(...candidates.map(measureText))) + 20;
     setLeftBoxWidth(calculatedWidth);
     leftBox.style.width = calculatedWidth + 'px';
 
