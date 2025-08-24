@@ -54,8 +54,9 @@ const AnimatedTitle = () => {
     setMainContainerWidth(totalWidth);
 
     // Calculate green box position and width
-    const redBoxWidth = calculatedWidth + moanaWidth + wordFinderWidth + spaceWidth * 2 + 20; // Approximate red box width
-    const greenWidth = redBoxWidth * 1.2; // 20% wider
+    // Red container width is essentially the leftBoxWidth since other elements are absolutely positioned
+    const redBoxWidth = calculatedWidth; // This is the actual width of the red container
+    const greenWidth = redBoxWidth * 1.2; // 20% wider than red container
     const greenPos = adjustedTitleX + redBoxWidth + 12; // 12px to the right of red container
     setGreenBoxPosition(greenPos);
     setGreenBoxWidth(greenWidth);
