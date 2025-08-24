@@ -35,7 +35,7 @@ const AnimatedTitle = () => {
     leftBox.style.width = Math.ceil(Math.max(...candidates.map(measureText))) + 'px';
     
     // Move the first three sequences left during cycling phase
-    leftBox.style.transform = 'translateX(-1rem)';
+    leftBox.style.transform = 'translateX(1.5rem)';
 
     const dissolveCycle = (txt: string, tStart: number) => {
       setTimeout(() => {
