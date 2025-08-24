@@ -119,9 +119,9 @@ const AnimatedTitle = () => {
           }
 
           .title-frame {
-            position: relative;
+            position: absolute;
             left: var(--title-x);
-            top: -4px;
+            bottom: 0;
             width: fit-content;
             font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
             font-size: 16pt;
