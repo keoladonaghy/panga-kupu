@@ -313,7 +313,7 @@ const HawaiianWordGame: React.FC = () => {
         {grid.length > 0 && (
           <div className="mb-6 flex justify-center">
             <div className="inline-block bg-background p-4 rounded-lg shadow-lg">
-              <div className="grid grid-cols-15 gap-0.5">
+              <div className="grid gap-0.5" style={{ gridTemplateColumns: `repeat(${grid[0]?.length || 0}, 2rem)` }}>
                 {grid.map((row, rowIndex) =>
                   row.map((cell, colIndex) => {
                     const wordPositionsAtCell = getWordPositionsAt(gameState.wordPositions, rowIndex, colIndex);
