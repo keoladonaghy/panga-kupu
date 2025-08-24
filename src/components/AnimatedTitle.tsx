@@ -30,10 +30,6 @@ const AnimatedTitle = () => {
     setLeftBoxWidth(calculatedWidth);
     leftBox.style.width = calculatedWidth + 'px';
 
-    // Calculate 2x width of "M" and adjust title position
-    const mWidth = measureText('M');
-    const adjustedTitleX = 35 - (2 * mWidth);
-    document.documentElement.style.setProperty('--title-x', `${adjustedTitleX}px`);
 
     const dissolveCycle = (txt: string, tStart: number) => {
       setTimeout(() => {
@@ -87,7 +83,7 @@ const AnimatedTitle = () => {
       <style>
         {`
           .title-frame {
-            --title-x: 35px;
+            --title-x: 10px;
             position: relative;
             left: var(--title-x);
             width: fit-content;
