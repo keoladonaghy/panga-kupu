@@ -11,61 +11,9 @@ const AnimatedTitle = () => {
   const [shouldAnimate, setShouldAnimate] = useState(false);
 
   useEffect(() => {
-    // Check if animation should run today
-    const today = new Date().toDateString();
-    const lastAnimationDate = localStorage.getItem('animated-title-last-shown');
+    // Temporarily disabled daily check - always show animation
+    setShouldAnimate(true);
     
-    if (lastAnimationDate !== today) {
-      // Show animation and save today's date
-      setShouldAnimate(true);
-      localStorage.setItem('animated-title-last-shown', today);
-    } else {
-      // Skip animation, show final state
-      setShouldAnimate(false);
-      setAnimationState('complete');
-      
-      // Set up final state immediately (no animation)
-      setTimeout(() => {
-        const left = leftRef.current;
-        const leftBox = leftBoxRef.current;
-        const moana = moanaRef.current;
-        const words = wordsRef.current;
-        const measure = measureRef.current;
-        if (!left || !leftBox || !moana || !words || !measure) return;
-
-        // Ensure leftBox has the correct width to compute offset
-        const candidates = ['ʻŌlelo', 'Kupu', 'Parau', 'Word Finder'];
-        const measureText = (text: string): number => {
-          measure.textContent = text;
-          return measure.getBoundingClientRect().width;
-        };
-        leftBox.style.width = Math.ceil(Math.max(...candidates.map(measureText))) + 'px';
-
-        // Compute offset and place Moana to the far left (as if slid)
-        const header = leftBox.parentElement as HTMLElement | null;
-        const gapPx = header ? (parseFloat(getComputedStyle(header).columnGap || getComputedStyle(header).gap || '0') || 0) : 0;
-        const offset = leftBox.getBoundingClientRect().width + gapPx;
-        moana.style.removeProperty('animation');
-        moana.style.removeProperty('--offset');
-        moana.classList.remove('slide-full-left');
-        moana.style.transform = `translateX(-${offset}px)`;
-
-        // Hide the cycling word and show Words at the correct position
-        left.style.display = 'none';
-        // Wait a frame for transform to take effect, then position Words
-        requestAnimationFrame(() => {
-          const headerRect = header?.getBoundingClientRect();
-          const moanaRect = moana.getBoundingClientRect();
-          const fs = parseFloat(getComputedStyle(moana).fontSize);
-          if (headerRect) {
-            words.style.left = (moanaRect.right - headerRect.left + 0.5 * fs) + 'px';
-          }
-          words.style.opacity = '1';
-        });
-      }, 0);
-
-      return; // Exit early, don't run animation
-    }
     const left = leftRef.current;
     const leftBox = leftBoxRef.current;
     const moana = moanaRef.current;
