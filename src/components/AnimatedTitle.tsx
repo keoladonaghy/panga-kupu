@@ -34,12 +34,7 @@ const AnimatedTitle = () => {
     // Set the width of the left box to accommodate all possible words
     leftBox.style.width = Math.ceil(Math.max(...candidates.map(measureText))) + 'px';
     
-    // Move the entire phrase (left words + Moana) left by the width of "Word" at current font size
-    const containerEl = leftBox.parentElement as HTMLElement | null;
-    if (containerEl) {
-      const sampleWidth = Math.ceil(measureText('Word'));
-      containerEl.style.transform = `translateX(-${sampleWidth}px)`;
-    }
+    // (Removed temporary container transform to keep first-sequence positions unchanged)
 
     const dissolveCycle = (txt: string, tStart: number) => {
       setTimeout(() => {
