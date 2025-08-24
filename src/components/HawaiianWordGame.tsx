@@ -2042,7 +2042,7 @@ const HawaiianWordGame: React.FC = () => {
             <div className="flex items-baseline">
               <AnimatedTitle />
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center" style={{ gap: '5px' }}>
               <Button
                 variant="ghost"
                 onClick={() => setShowInstructions(true)}
