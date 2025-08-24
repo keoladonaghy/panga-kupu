@@ -12,11 +12,6 @@ const AnimatedTitle = () => {
   const [leftBoxWidth, setLeftBoxWidth] = useState(0);
 
   useEffect(() => {
-    // Disable daily check for now - always show animation
-    setShouldAnimate(true);
-    
-    // Animation code continues below...
-    
     const left = leftRef.current;
     const leftBox = leftBoxRef.current;
     const moana = moanaRef.current;
@@ -24,9 +19,6 @@ const AnimatedTitle = () => {
     const measure = measureRef.current;
 
     if (!left || !leftBox || !moana || !words || !measure) return;
-    
-    // Only run animation if shouldAnimate is true
-    if (!shouldAnimate) return;
     
     const candidates = ['ʻŌlelo', 'Kupu', 'Parau']; // Only words that cycle in leftBox
     const measureText = (text: string): number => {
@@ -84,7 +76,7 @@ const AnimatedTitle = () => {
         moana.removeEventListener('animationend', () => {});
       }
     };
-  }, [shouldAnimate]);
+  }, []);
 
   return (
     <>
