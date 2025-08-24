@@ -12,6 +12,8 @@ const AnimatedTitle = () => {
   const [titleX, setTitleX] = useState(35);
   const [mainContainerWidth, setMainContainerWidth] = useState(0);
   const [moanaPosition, setMoanaPosition] = useState(0);
+  const [greenBoxPosition, setGreenBoxPosition] = useState(0);
+  const [greenBoxWidth, setGreenBoxWidth] = useState(0);
 
   useEffect(() => {
     const left = leftRef.current;
@@ -50,6 +52,13 @@ const AnimatedTitle = () => {
     const baseWidth = moanaPos + moanaWidth + spaceWidth + wordFinderWidth + 20;
     const totalWidth = baseWidth * 1.6; // 60% wider
     setMainContainerWidth(totalWidth);
+
+    // Calculate green box position and width
+    const redBoxWidth = calculatedWidth + moanaWidth + wordFinderWidth + spaceWidth * 2 + 20; // Approximate red box width
+    const greenWidth = redBoxWidth * 1.2; // 20% wider
+    const greenPos = adjustedTitleX + redBoxWidth + 12; // 12px to the right of red container
+    setGreenBoxPosition(greenPos);
+    setGreenBoxWidth(greenWidth);
 
     const dissolveCycle = (txt: string, tStart: number) => {
       setTimeout(() => {
@@ -225,12 +234,22 @@ const AnimatedTitle = () => {
             line-height: 1em;
             height: 1em;
           }
+
+          .green-box {
+            position: absolute;
+            left: var(--green-box-position);
+            bottom: -1px;
+            width: var(--green-box-width);
+            height: calc(1em + 1px);
+            border: 2px solid green;
+            box-sizing: border-box;
+          }
         `}
       </style>
       
       <div className="main-animation-container" style={{ '--main-container-width': `${mainContainerWidth}px` } as React.CSSProperties}>
         &nbsp;
-        <div className="title-frame" style={{ '--left-box-width': `${leftBoxWidth}px`, '--title-x': `${titleX}px`, '--moana-position': `${moanaPosition}px` } as React.CSSProperties}>
+        <div className="title-frame" style={{ '--left-box-width': `${leftBoxWidth}px`, '--title-x': `${titleX}px`, '--moana-position': `${moanaPosition}px`, '--green-box-position': `${greenBoxPosition}px`, '--green-box-width': `${greenBoxWidth}px` } as React.CSSProperties}>
           <span ref={leftBoxRef} className="animated-title-left-box">
             <span ref={leftRef} className="animated-title-left">ʻŌlelo</span>
           </span>
@@ -239,6 +258,7 @@ const AnimatedTitle = () => {
           </div>
           <span ref={wordsRef} className="animated-title-words">Word Finder</span>
         </div>
+        <div className="green-box"></div>
       </div>
 
       <span ref={measureRef} className="animated-title-measure">X</span>
