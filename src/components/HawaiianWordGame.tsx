@@ -286,12 +286,226 @@ const HawaiianWordGame: React.FC = () => {
     }
   };
 
-  // Rest of the component logic will be implemented similarly with WordPosition tracking...
-  // For now, let's render a basic grid to test the WordPosition system
+  // Clear timeouts helper
+  const clearAllTimeouts = () => {
+    [threeLetterTimeout, wordClearTimeout, hokaTimeout].forEach(timeout => {
+      if (timeout) clearTimeout(timeout);
+    });
+    setThreeLetterTimeout(null);
+    setWordClearTimeout(null);
+    setHokaTimeout(null);
+  };
+
+  // Handle letter click from wheel
+  const handleLetterClick = (letter: string) => {
+    console.log('🔤 Letter clicked:', letter);
+    
+    clearAllTimeouts();
+    
+    const newWord = gameState.currentWord + letter;
+    console.log('📝 New word after letter click:', newWord);
+    
+    // Update available letters and current word
+    const updatedAvailableLetters = [...gameState.availableLetters];
+    const letterIndex = updatedAvailableLetters.indexOf(letter);
+    if (letterIndex > -1) {
+      updatedAvailableLetters.splice(letterIndex, 1);
+    }
+    
+    setGameState(prev => ({
+      ...prev,
+      currentWord: newWord,
+      availableLetters: updatedAvailableLetters,
+      showError: false,
+      showCircleError: false
+    }));
+
+    // Auto-check logic for words that match crossword positions
+    if (newWord.length >= MIN_WORD_LENGTH) {
+      const normalizedWord = toHawaiianUppercase(newWord);
+      
+      // Find matching WordPositions for this word
+      const matchingWordPositions = gameState.wordPositions.filter(wp => 
+        wp.word.toUpperCase() === normalizedWord
+      );
+      
+      if (matchingWordPositions.length > 0) {
+        // Check if any of these positions haven't been found yet
+        const unFoundPositions = matchingWordPositions.filter(wp => 
+          !isWordPositionFound(gameState.foundWordIDs, wp)
+        );
+        
+        if (unFoundPositions.length > 0) {
+          // Word found! Mark the first unfound position as found
+          const foundPosition = unFoundPositions[0];
+          
+          setGameState(prev => ({
+            ...prev,
+            foundWordIDs: [...prev.foundWordIDs, foundPosition.id],
+            currentWord: '',
+            availableLetters: [...prev.selectedLetters],
+            foundThreeLetterWords: newWord.length === 3 ? 
+              [...prev.foundThreeLetterWords, normalizedWord] : 
+              prev.foundThreeLetterWords,
+            showSuccessNotification: true,
+            successMessage: getCelebrationMessage()
+          }));
+
+          // Show success toast
+          toast({
+            title: WORD_FOUND_TOAST_TITLE,
+            description: WORD_FOUND_TOAST_DESCRIPTION(normalizedWord),
+            duration: 2000,
+          });
+
+          // Check if game is complete
+          checkGameCompletion();
+          return;
+        }
+      }
+    }
+  };
+
+  // Handle backspace
+  const handleBackspaceClick = () => {
+    console.log('⬅️ Backspace clicked');
+    
+    clearAllTimeouts();
+    
+    if (gameState.currentWord.length > 0) {
+      const removedLetter = gameState.currentWord.slice(-1);
+      const newCurrentWord = gameState.currentWord.slice(0, -1);
+      
+      setGameState(prev => ({
+        ...prev,
+        currentWord: newCurrentWord,
+        availableLetters: [...prev.availableLetters, removedLetter],
+        showError: false,
+        showCircleError: false
+      }));
+    }
+  };
+
+  // Handle clear word
+  const handleClearWord = () => {
+    console.log('🗑️ Clear word clicked');
+    
+    clearAllTimeouts();
+    
+    setGameState(prev => ({
+      ...prev,
+      currentWord: '',
+      availableLetters: [...prev.selectedLetters],
+      showError: false,
+      showCircleError: false
+    }));
+  };
+
+  // Check if game is complete
+  const checkGameCompletion = () => {
+    const totalWords = gameState.wordPositions.length;
+    const foundWords = gameState.foundWordIDs.length;
+    
+    console.log(`🎯 Game completion check: ${foundWords}/${totalWords} words found`);
+    
+    if (foundWords >= totalWords) {
+      console.log('🎉 Game completed!');
+      setGameState(prev => ({
+        ...prev,
+        showCelebration: true,
+        isManualCelebration: false
+      }));
+    }
+  };
+
+  // Handle celebration completion
+  const handleCelebrationComplete = () => {
+    setGameState(prev => ({
+      ...prev,
+      showCelebration: false,
+      isManualCelebration: false
+    }));
+  };
+
+  // Handle manual celebration
+  const handleManualCelebration = () => {
+    setGameState(prev => ({
+      ...prev,
+      showCelebration: true,
+      isManualCelebration: true
+    }));
+  };
+
+  // Handle hints
+  const handleHint = () => {
+    console.log('💡 Hint clicked, attempts left:', gameState.hintAttemptsLeft);
+    
+    if (gameState.hintAttemptsLeft <= 0) {
+      setGameState(prev => ({
+        ...prev,
+        showHintMessage: true,
+        hintMessage: t('hint.noAttemptsLeft')
+      }));
+      return;
+    }
+
+    // Find an unfound word to hint
+    const unfoundPositions = gameState.wordPositions.filter(wp => 
+      !isWordPositionFound(gameState.foundWordIDs, wp)
+    );
+
+    if (unfoundPositions.length === 0) {
+      setGameState(prev => ({
+        ...prev,
+        showHintMessage: true,
+        hintMessage: t('hint.allWordsFound')
+      }));
+      return;
+    }
+
+    // Choose a random unfound word
+    const randomPosition = unfoundPositions[Math.floor(Math.random() * unfoundPositions.length)];
+    
+    setGameState(prev => ({
+      ...prev,
+      lastHintedWordPosition: randomPosition,
+      lastHintedLetterIndex: 0,
+      hintAttemptsLeft: prev.hintAttemptsLeft - 1,
+      hintsUsed: prev.hintsUsed + 1,
+      showHintMessage: true,
+      hintMessage: t('hint.revealedLetter', { letter: randomPosition.word[0].toUpperCase() })
+    }));
+  };
+
+  // Check if a grid cell should be displayed (found word or hint)
+  const isGridCellInFoundWord = (row: number, col: number): boolean => {
+    const wordPositionsAtCell = getWordPositionsAt(gameState.wordPositions, row, col);
+    
+    // Check if any WordPosition at this cell is found
+    const hasFoundWord = wordPositionsAtCell.some(wp => 
+      isWordPositionFound(gameState.foundWordIDs, wp)
+    );
+    
+    if (hasFoundWord) return true;
+
+    // Check for hints
+    if (gameState.lastHintedWordPosition) {
+      const hintedPosition = gameState.lastHintedWordPosition;
+      if (hintedPosition.containsCell(row, col)) {
+        // Get the index of this cell within the hinted word
+        const cellIndex = hintedPosition.occupiedCells.findIndex(cell => 
+          cell.row === row && cell.col === col
+        );
+        return cellIndex >= 0 && cellIndex <= gameState.lastHintedLetterIndex;
+      }
+    }
+
+    return false;
+  };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-primary/20 via-background to-secondary/20">
         <Loader2 className="h-8 w-8 animate-spin" />
         <span className="ml-2">{t('loading')}</span>
       </div>
@@ -300,65 +514,241 @@ const HawaiianWordGame: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/20 via-background to-secondary/20">
-      <div className="container mx-auto p-4">
-        <AnimatedTitle />
-        
+      <div className="container mx-auto p-4 max-w-4xl">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <AnimatedTitle />
+          <div className="flex gap-2">
+            <LanguageDropdown />
+            <Dialog open={showInstructions} onOpenChange={setShowInstructions}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Info className="w-4 h-4 mr-2" />
+                  {t('instructions')}
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-md">
+                <DialogHeader>
+                  <DialogTitle>{t('instructions')}</DialogTitle>
+                </DialogHeader>
+                <WelcomeScreen onStart={() => setShowInstructions(false)} />
+              </DialogContent>
+            </Dialog>
+          </div>
+        </div>
+
+        {/* Error Display */}
         {gameState.showError && (
           <div className="mb-4 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
             <p className="text-destructive">{gameState.errorMessage}</p>
           </div>
         )}
-        
-        {/* Grid Display */}
+
+        {/* Success Notification */}
+        {gameState.showSuccessNotification && (
+          <NotificationBox
+            message={gameState.successMessage}
+            isVisible={gameState.showSuccessNotification}
+          />
+        )}
+
+        {/* Game Stats */}
+        <div className="flex justify-center gap-4 mb-6">
+          <Badge variant="secondary">
+            {t('wordsFound')}: {gameState.foundWordIDs.length}/{gameState.wordPositions.length}
+          </Badge>
+          <Badge variant="secondary">
+            {t('hintsUsed')}: {gameState.hintsUsed}
+          </Badge>
+        </div>
+
+        {/* Crossword Grid */}
         {grid.length > 0 && (
           <div className="mb-6 flex justify-center">
-            <div className="inline-block bg-background p-4 rounded-lg shadow-lg">
+            <Card className="p-4">
               <div className="grid gap-0.5" style={{ gridTemplateColumns: `repeat(${grid[0]?.length || 0}, 2rem)` }}>
                 {grid.map((row, rowIndex) =>
                   row.map((cell, colIndex) => {
-                    const wordPositionsAtCell = getWordPositionsAt(gameState.wordPositions, rowIndex, colIndex);
                     const hasContent = cell !== '';
-                    const isFound = wordPositionsAtCell.some(wp => isWordPositionFound(gameState.foundWordIDs, wp));
+                    const shouldDisplay = isGridCellInFoundWord(rowIndex, colIndex);
+                    const wordPositionsAtCell = getWordPositionsAt(gameState.wordPositions, rowIndex, colIndex);
+                    const isWordStart = getWordPositionsStartingAt(gameState.wordPositions, rowIndex, colIndex).length > 0;
                     
                     return (
                       <div
                         key={`${rowIndex}-${colIndex}`}
                         className={`
                           w-8 h-8 border border-border flex items-center justify-center text-xs font-bold
-                          ${hasContent ? 'bg-background' : 'bg-muted'}
-                          ${isFound ? 'bg-primary text-primary-foreground' : ''}
+                          ${hasContent ? 'bg-background' : 'bg-muted/30'}
+                          ${shouldDisplay ? 'bg-primary text-primary-foreground' : ''}
+                          ${isWordStart && hasContent ? 'relative' : ''}
                         `}
                       >
-                        {hasContent ? cell : ''}
+                        {hasContent && shouldDisplay ? cell : (hasContent ? '' : '')}
+                        {isWordStart && hasContent && (
+                          <div className="absolute -top-1 -left-1 w-2 h-2 bg-accent rounded-full text-[6px] flex items-center justify-center">
+                            {getWordPositionsStartingAt(gameState.wordPositions, rowIndex, colIndex)[0]?.number || ''}
+                          </div>
+                        )}
                       </div>
                     );
                   })
                 )}
               </div>
-            </div>
+            </Card>
           </div>
         )}
-        
-        {/* Debug Info */}
-        <div className="mt-4 p-4 bg-muted rounded-lg">
-          <h3 className="font-bold mb-2">WordPosition Debug Info:</h3>
-          <p>Total WordPositions: {gameState.wordPositions.length}</p>
-          <p>Found WordIDs: {gameState.foundWordIDs.length}</p>
-          {gameState.wordPositions.slice(0, 3).map(wp => (
-            <div key={wp.id} className="text-sm">
-              {wp.toString()} - Found: {isWordPositionFound(gameState.foundWordIDs, wp) ? 'Yes' : 'No'}
+
+        {/* Current Word Display */}
+        <div className="text-center mb-6">
+          <Card className="inline-block p-4 min-w-[200px]">
+            <h3 className="text-lg font-bold mb-2">{t('currentWord')}</h3>
+            <div className="text-2xl font-mono tracking-wider min-h-[2rem] flex items-center justify-center">
+              {gameState.currentWord || '___'}
             </div>
-          ))}
+          </Card>
         </div>
-        
-        {/* Controls */}
-        <div className="flex gap-2 justify-center mt-4">
-          <Button onClick={() => loadHawaiianWords(true)}>
-            <RefreshCw className="w-4 h-4 mr-2" />
-            New Game
+
+        {/* Letter Wheel */}
+        <div className="flex justify-center mb-6">
+          <div className="grid grid-cols-4 gap-2 max-w-xs">
+            {gameState.selectedLetters.map((letter, index) => {
+              const isAvailable = gameState.availableLetters.includes(letter);
+              return (
+                <Button
+                  key={`${letter}-${index}`}
+                  variant={isAvailable ? "default" : "secondary"}
+                  size="lg"
+                  className="w-12 h-12 text-lg font-bold"
+                  onClick={() => isAvailable && handleLetterClick(letter)}
+                  disabled={!isAvailable}
+                >
+                  {letter}
+                </Button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Game Controls */}
+        <div className="flex justify-center gap-2 mb-6">
+          <Button
+            variant="outline"
+            onClick={handleBackspaceClick}
+            disabled={gameState.currentWord.length === 0}
+          >
+            <RotateCcw className="w-4 h-4 mr-2" />
+            {t('backspace')}
+          </Button>
+          
+          <Button
+            variant="outline"
+            onClick={handleClearWord}
+            disabled={gameState.currentWord.length === 0}
+          >
+            <Trash2 className="w-4 h-4 mr-2" />
+            {t('clear')}
+          </Button>
+          
+          <Button
+            variant="outline"
+            onClick={handleHint}
+            disabled={gameState.hintAttemptsLeft <= 0}
+          >
+            <Lightbulb className="w-4 h-4 mr-2" />
+            {t('hint')} ({gameState.hintAttemptsLeft})
           </Button>
         </div>
+
+        {/* New Game Button */}
+        <div className="flex justify-center gap-2">
+          <Button onClick={() => loadHawaiianWords(true)}>
+            <RefreshCw className="w-4 h-4 mr-2" />
+            {t('newGame')}
+          </Button>
+          
+          <Dialog open={showUploader} onOpenChange={setShowUploader}>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Upload className="w-4 h-4 mr-2" />
+                {t('uploadWords')}
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>{t('uploadWordList')}</DialogTitle>
+              </DialogHeader>
+              <WordListUploader 
+                onWordsUpdated={(words) => {
+                  setCustomWords(words);
+                  setCustomWordsLoaded(true);
+                  setShowUploader(false);
+                  generateCrosswordLayout(words);
+                }}
+                onClose={() => setShowUploader(false)}
+              />
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        {/* Hint Message */}
+        {gameState.showHintMessage && (
+          <div className="mt-4 p-4 bg-primary/10 border border-primary/20 rounded-lg text-center">
+            <p className="text-primary">{gameState.hintMessage}</p>
+            <Button
+              variant="outline"
+              size="sm"
+              className="mt-2"
+              onClick={() => setGameState(prev => ({ ...prev, showHintMessage: false }))}
+            >
+              {t('close')}
+            </Button>
+          </div>
+        )}
+
+        {/* Debug Info (only in development) */}
+        {process.env.NODE_ENV === 'development' && (
+          <Collapsible open={debuggingOpen} onOpenChange={setDebuggingOpen}>
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" size="sm" className="mt-4">
+                <ChevronDown className="w-4 h-4 mr-2" />
+                Debug Info
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-2 p-4 bg-muted rounded-lg text-sm">
+              <div>
+                <p><strong>WordPositions:</strong> {gameState.wordPositions.length}</p>
+                <p><strong>Found IDs:</strong> {gameState.foundWordIDs.length}</p>
+                <p><strong>Available Letters:</strong> {gameState.availableLetters.join(', ')}</p>
+                {gameState.wordPositions.slice(0, 3).map(wp => (
+                  <div key={wp.id}>
+                    {wp.toString()} - Found: {isWordPositionFound(gameState.foundWordIDs, wp) ? 'Yes' : 'No'}
+                  </div>
+                ))}
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+        )}
       </div>
+
+      {/* Celebration Modal */}
+      {gameState.showCelebration && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <Card className="p-8 text-center max-w-md">
+            <h2 className="text-3xl font-bold mb-4 text-primary">🎉 {t('congratulations')} 🎉</h2>
+            <p className="mb-6">{getCelebrationMessage()}</p>
+            <div className="flex gap-2 justify-center">
+              <Button onClick={handleCelebrationComplete}>
+                {t('close')}
+              </Button>
+              <Button variant="outline" onClick={() => loadHawaiianWords(true)}>
+                <RefreshCw className="w-4 h-4 mr-2" />
+                {t('newGame')}
+              </Button>
+            </div>
+          </Card>
+        </div>
+      )}
     </div>
   );
 };

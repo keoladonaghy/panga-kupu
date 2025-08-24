@@ -9,6 +9,7 @@ export class WordPosition {
   public readonly startCol: number;
   public readonly direction: 'across' | 'down';
   public readonly length: number;
+  public readonly number: number; // Word number for display
   public readonly occupiedCells: Array<{ row: number; col: number }>;
 
   constructor(
@@ -23,6 +24,7 @@ export class WordPosition {
     this.startCol = startCol;
     this.direction = direction;
     this.length = word.length;
+    this.number = wordNumber;
     
     // Create unique ID: DIRECTION_ROW-COL_LENGTH_NUMBER
     this.id = `${direction.toUpperCase()}_${startRow}-${startCol}_${this.length}_${wordNumber}`;
