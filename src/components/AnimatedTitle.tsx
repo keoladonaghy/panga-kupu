@@ -34,7 +34,7 @@ const AnimatedTitle = () => {
         if (!left || !leftBox || !moana || !words || !measure) return;
 
         // Ensure leftBox has the correct width to compute offset
-        const candidates = ['ʻŌlelo', 'Kupu', 'Parau'];
+        const candidates = ['ʻŌlelo', 'Kupu', 'Parau', 'Word Finder'];
         const measureText = (text: string): number => {
           measure.textContent = text;
           return measure.getBoundingClientRect().width;
@@ -77,7 +77,7 @@ const AnimatedTitle = () => {
     // Only run animation if shouldAnimate is true
     if (!shouldAnimate) return;
     
-    const candidates = ['ʻŌlelo', 'Kupu', 'Parau'];
+    const candidates = ['ʻŌlelo', 'Kupu', 'Parau', 'Word Finder'];
     const measureText = (text: string): number => {
       measure.textContent = text;
       return measure.getBoundingClientRect().width;
@@ -158,7 +158,7 @@ const AnimatedTitle = () => {
             margin: 4px 0 0 12px;
             overflow: visible;
             font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
-            font-size: 14pt;
+            font-size: 16pt;
           }
 
           .animated-title-left-box {
@@ -244,7 +244,7 @@ const AnimatedTitle = () => {
           <span ref={leftRef} className="animated-title-left">ʻŌlelo</span>
         </span>
         <span ref={moanaRef} className="animated-title-moana">Moana</span>
-        <span ref={wordsRef} className="animated-title-words">Words</span>
+        <span ref={wordsRef} className="animated-title-words">Word Finder</span>
       </header>
 
       <span ref={measureRef} className="animated-title-measure">X</span>
