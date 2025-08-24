@@ -278,7 +278,11 @@ const HawaiianWordGame: React.FC = () => {
 
   // Function to properly uppercase Hawaiian/Māori words while preserving diacritical marks and 'okina
   const toHawaiianUppercase = (word: string): string => {
+    console.log('🔤 toHawaiianUppercase input:', word, 'gameLanguage:', gameLanguage);
+    
     const result = word
+      // First normalize Unicode characters to avoid encoding mismatches
+      .normalize('NFD') // Decompose characters
       .replace(/ā/g, 'Ā')
       .replace(/ē/g, 'Ē') 
       .replace(/ī/g, 'Ī')
@@ -289,8 +293,10 @@ const HawaiianWordGame: React.FC = () => {
       .replace(/`/g, gameLanguage === 'haw' ? 'ʻ' : '') // Convert or remove backticks
       .replace(/'/g, gameLanguage === 'haw' ? 'ʻ' : '') // Convert or remove right single quotes
       .replace(/'/g, gameLanguage === 'haw' ? 'ʻ' : '') // Convert or remove left single quotes
-      .toUpperCase(); // This will handle regular letters but preserve 'okina
+      .toUpperCase() // This will handle regular letters but preserve 'okina
+      .normalize('NFC'); // Recompose characters for consistent storage
     
+    console.log('🔤 toHawaiianUppercase output:', result);
     return result;
   };
 
@@ -1192,10 +1198,19 @@ const HawaiianWordGame: React.FC = () => {
     if (!word) return;
 
     // Check if the word is in the crossword puzzle
-    const matchingCrosswordWords = gameState.crosswordWords.filter(crosswordWord => 
-      toHawaiianUppercase(crosswordWord.word) === word && 
-      crosswordWord.word.length === word.length
-    );
+    console.log('🔍 VALIDATION DEBUG - Input word:', word);
+    console.log('🔍 VALIDATION DEBUG - Crossword words:', gameState.crosswordWords.map(cw => ({ 
+      original: cw.word, 
+      normalized: toHawaiianUppercase(cw.word),
+      length: cw.word.length 
+    })));
+    
+    const matchingCrosswordWords = gameState.crosswordWords.filter(crosswordWord => {
+      const normalizedCrosswordWord = toHawaiianUppercase(crosswordWord.word);
+      const matches = normalizedCrosswordWord === word && crosswordWord.word.length === word.length;
+      console.log(`🔍 VALIDATION DEBUG - Comparing "${word}" with "${normalizedCrosswordWord}" (original: "${crosswordWord.word}") = ${matches}`);
+      return matches;
+    });
 
     if (matchingCrosswordWords.length > 0 && !isWordFound(word, word.length)) {
       // Word found! Add to found words with length suffix for consistency
@@ -2120,29 +2135,32 @@ const HawaiianWordGame: React.FC = () => {
                   // Always render full 12x11 grid for consistent dimensions
                   for (let rowIndex = 0; rowIndex < 11; rowIndex++) {
                     for (let colIndex = 0; colIndex < 12; colIndex++) {
-                      const letter = grid[rowIndex]?.[colIndex] || '';
-                      const hasLetter = letter !== '';
-                      const isFound = isGridCellInFoundWord(rowIndex, colIndex);
-                      
-                      cells.push(
-                        <div
-                          key={`${rowIndex}-${colIndex}`}
-                           className={`
-                             crossword-cell aspect-square flex items-center justify-center font-bold transition-all duration-300
-                             ${hasLetter 
-                               ? isFound 
-                                 ? 'bg-white text-black border border-gray-400 animate-fade-in' 
-                                 : revealMode
-                                   ? 'bg-white text-red-500 border border-gray-400'  // Show letters in red during reveal mode
-                                   : 'bg-white text-transparent border border-gray-400'  // Hide letters until found
-                               : 'bg-transparent'  // No border for empty cells
-                             }
-                           `}
-                           style={{
-                             fontSize: 'clamp(12px, 2.5vw + 8px, 28px)'
-                           }}
-                         >
-                           {hasLetter && (isFound || revealMode) ? letter : ''}
+                       const letter = grid[rowIndex]?.[colIndex] || '';
+                       const normalizedLetter = letter ? toHawaiianUppercase(letter) : '';
+                       const hasLetter = letter !== '';
+                       const isFound = isGridCellInFoundWord(rowIndex, colIndex);
+                       
+                       console.log(`Grid cell [${rowIndex}][${colIndex}]: raw="${letter}", normalized="${normalizedLetter}", hasLetter=${hasLetter}, isFound=${isFound}`);
+                       
+                       cells.push(
+                         <div
+                           key={`${rowIndex}-${colIndex}`}
+                            className={`
+                              crossword-cell aspect-square flex items-center justify-center font-bold transition-all duration-300
+                              ${hasLetter 
+                                ? isFound 
+                                  ? 'bg-white text-black border border-gray-400 animate-fade-in' 
+                                  : revealMode
+                                    ? 'bg-white text-red-500 border border-gray-400'  // Show letters in red during reveal mode
+                                    : 'bg-white text-transparent border border-gray-400'  // Hide letters until found
+                                : 'bg-transparent'  // No border for empty cells
+                              }
+                            `}
+                            style={{
+                              fontSize: 'clamp(12px, 2.5vw + 8px, 28px)'
+                            }}
+                          >
+                            {hasLetter && (isFound || revealMode) ? normalizedLetter : ''}
                         </div>
                       );
                     }
