@@ -1,5 +1,6 @@
 
 import { getWordLimitsForLanguage, type LanguageWordLimits } from '@/config/languageWordLimits';
+import { WordPosition } from '@/types/WordPosition';
 
 export interface CrosswordWord {
   word: string;
@@ -11,6 +12,7 @@ export interface CrosswordWord {
 
 export interface CrosswordGrid {
   words: CrosswordWord[];
+  wordPositions: WordPosition[]; // New: Array of WordPosition objects for precise tracking
   grid: string[][];
   gridSize: number;
   selectedLetters: string[]; // Add the selected letters to the result
@@ -751,9 +753,15 @@ export class CrosswordGenerator {
     
     console.log(`=== POST-PROCESSING COMPLETE - Final count: ${placedWords.length} words ===`);
 
+    // Create WordPosition objects for precise word tracking
+    const wordPositions = placedWords.map(word => 
+      new WordPosition(word.word, word.row, word.col, word.direction, word.number)
+    );
+
     // Only return success if we have at least MAX_WORDS words
     return placedWords.length >= this.MAX_WORDS ? {
       words: placedWords,
+      wordPositions,
       grid,
       gridSize: this.gridSize,
       selectedLetters: this.selectedLetters
