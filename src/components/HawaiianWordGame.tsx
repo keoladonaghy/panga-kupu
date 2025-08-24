@@ -1299,6 +1299,9 @@ const HawaiianWordGame: React.FC = () => {
     }));
   };
 
+  // Define common digraphs for Hawaiian, Māori, and Tahitian
+  const digraphs = ['ng', 'wh', 'th', 'ch', 'ph'];
+
   const handleHint = () => {
     console.log('🎯 Hint button clicked, attempts left:', gameState.hintAttemptsLeft);
     
@@ -1374,12 +1377,32 @@ const HawaiianWordGame: React.FC = () => {
       console.log('🎲 Selected new word for hint:', wordToReveal.word);
     }
 
+    // Check if this letter starts a digraph and should reveal both letters
+    const wordLower = wordToReveal.word.toLowerCase();
+    let lettersToReveal = 1;
+    let isDigraphHint = false;
+    let digraphFound = '';
+    
+    for (const digraph of digraphs) {
+      if (letterIndex < wordToReveal.word.length - 1 && 
+          wordLower.slice(letterIndex, letterIndex + 2) === digraph) {
+        lettersToReveal = 2;
+        isDigraphHint = true;
+        digraphFound = digraph;
+        console.log(`🔗 Detected digraph "${digraph}" at position ${letterIndex}, revealing both letters`);
+        break;
+      }
+    }
+
     const letter = wordToReveal.word[letterIndex];
 
-    console.log('💡 Revealing letter:', {
+    console.log('💡 Revealing letter(s):', {
       word: wordToReveal.word,
       letter: letter,
       letterIndex: letterIndex,
+      lettersToReveal: lettersToReveal,
+      isDigraphHint: isDigraphHint,
+      digraph: digraphFound,
       position: { row: letterRow, col: letterCol },
       gridLetter: grid[letterRow]?.[letterCol]
     });
@@ -1480,15 +1503,36 @@ const HawaiianWordGame: React.FC = () => {
       }
     }
 
-    // Create a special hint word that will mark this single cell as revealed
-    const hintWord = `HINT_${letterRow}_${letterCol}`;
+    // Create hint markers for all letters to be revealed
+    const hintMarkers = [];
+    let adjustedLetterIndex = letterIndex;
+    
+    for (let i = 0; i < lettersToReveal; i++) {
+      let hintRow, hintCol;
+      
+      if (wordToReveal.direction === 'across') {
+        hintRow = letterRow;
+        hintCol = letterCol + i;
+      } else {
+        hintRow = letterRow + i;
+        hintCol = letterCol;
+      }
+      
+      const hintWord = `HINT_${hintRow}_${hintCol}`;
+      hintMarkers.push(hintWord);
+      
+      // If revealing a digraph, advance the letter index by one more
+      if (isDigraphHint && i === 1) {
+        adjustedLetterIndex = letterIndex + 1;
+      }
+    }
     
     setGameState(prev => ({
       ...prev,
-      foundWords: [...prev.foundWords, hintWord],
+      foundWords: [...prev.foundWords, ...hintMarkers],
       hintAttemptsLeft: prev.hintAttemptsLeft - 1,
       lastHintedWord: wordToReveal,
-      lastHintedLetterIndex: letterIndex
+      lastHintedLetterIndex: adjustedLetterIndex
     }));
 
     // Show reminder toast after first hint usage
@@ -1500,7 +1544,11 @@ const HawaiianWordGame: React.FC = () => {
       });
     }
 
-    console.log('✅ Added hint marker:', hintWord);
+    console.log('✅ Added hint markers:', hintMarkers);
+    
+    if (isDigraphHint) {
+      console.log(`🔗 Revealed digraph "${digraphFound}" covering positions:`, hintMarkers);
+    }
   };
 
   const isGridCellInFoundWord = (row: number, col: number) => {
