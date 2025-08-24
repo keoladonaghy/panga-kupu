@@ -98,6 +98,7 @@ const AnimatedTitle = () => {
             line-height: 1em;
             height: calc(1em + 1px);
             margin: 4px 0 0 0;
+            border: 2px solid black;
           }
 
           .animated-title-left-box {
