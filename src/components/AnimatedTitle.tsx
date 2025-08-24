@@ -121,7 +121,7 @@ const AnimatedTitle = () => {
           .title-frame {
             position: absolute;
             left: var(--title-x);
-            bottom: 0;
+            bottom: -1px; /* Nudge to align borders visually across browsers */
             width: fit-content;
             font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
             font-size: 16pt;
@@ -131,6 +131,7 @@ const AnimatedTitle = () => {
             height: calc(1em + 1px);
             margin: 0;
             border: 2px solid red; /* DEBUG: Inner container */
+            box-sizing: border-box;
           }
 
           .animated-title-left-box {
