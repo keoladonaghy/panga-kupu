@@ -2050,7 +2050,6 @@ const HawaiianWordGame: React.FC = () => {
                 <HelpCircle className="h-5 w-5" />
               </Button>
             </div>
-            </div>
             <div className="flex items-center">
               <LanguageDropdown />
             </div>
