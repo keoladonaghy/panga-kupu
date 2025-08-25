@@ -1659,7 +1659,11 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
       const gridLetter = grid[row]?.[col] ? toHawaiianUppercase(grid[row][col]) : '';
       const letterMatches = expectedLetter === gridLetter;
       
-      console.log(`🔍 Grid cell [${row}][${col}] checking word "${crosswordWord.word}" at (${crosswordWord.row},${crosswordWord.col}) ${crosswordWord.direction}: found=${isFound}, letterIndex=${letterIndex}, wordLength=${crosswordWord.word.length}, isValidIndex=${isValidIndex}, expectedLetter=${expectedLetter}, gridLetter=${gridLetter}, letterMatches=${letterMatches}`);
+      // Enhanced debugging for ATA placement issues
+      if (normalizedCrosswordWord === 'ATA' || normalizedCrosswordWord === 'RATA') {
+        console.log(`🚨 PLACEMENT DEBUG [${row}][${col}] word="${crosswordWord.word}" at (${crosswordWord.row},${crosswordWord.col}) ${crosswordWord.direction}: found=${isFound}, letterIndex=${letterIndex}, wordLength=${crosswordWord.word.length}, isValidIndex=${isValidIndex}, expectedLetter="${expectedLetter}", gridLetter="${gridLetter}", letterMatches=${letterMatches}, wordWithPosition="${wordWithPosition}"`);
+        console.log(`🚨 FOUND WORDS LIST:`, gameState.foundWords);
+      }
       
       return letterMatches;
     });
