@@ -1400,7 +1400,7 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
       const nextLetterIndex = gameState.lastHintedLetterIndex + 1;
       
       // Check if the last hinted word is still unsolved and has more letters
-      const isStillUnsolved = !gameState.foundWords.includes(toHawaiianUppercase(lastWord.word));
+      const isStillUnsolved = !isWordFound(lastWord.word, lastWord.word.length, lastWord.row, lastWord.col, lastWord.direction);
       
       if (isStillUnsolved && nextLetterIndex < lastWord.word.length) {
         wordToReveal = lastWord;
@@ -1422,7 +1422,7 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
     // If no previous word or it's finished, find a new word
     if (!wordToReveal) {
       const remainingWords = gameState.crosswordWords.filter(crosswordWord => 
-        !gameState.foundWords.includes(toHawaiianUppercase(crosswordWord.word))
+        !isWordFound(crosswordWord.word, crosswordWord.word.length, crosswordWord.row, crosswordWord.col, crosswordWord.direction)
       );
 
       console.log('🔍 Remaining words for hint:', remainingWords.map(w => w.word));
@@ -1506,10 +1506,10 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
         console.log('⏭️ All letters revealed in this word, trying different word');
         
         const remainingWords = gameState.crosswordWords.filter(crosswordWord => {
-          if (gameState.foundWords.includes(toHawaiianUppercase(crosswordWord.word))) {
+          if (isWordFound(crosswordWord.word, crosswordWord.word.length, crosswordWord.row, crosswordWord.col, crosswordWord.direction)) {
             return false;
           }
-          
+
           // Check if this word has any unrevealed letters
           for (let i = 0; i < crosswordWord.word.length; i++) {
             let testRow, testCol;
