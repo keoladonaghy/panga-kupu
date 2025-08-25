@@ -1801,6 +1801,9 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
       const wordWithPosition = `${wordUpper}_${crosswordWord.word.length}_${crosswordWord.row}_${crosswordWord.col}_${crosswordWord.direction}`;
       if (gameState.foundWords.includes(wordWithPosition)) return; // Skip already found words
       
+      // Only consider words that match the exact length of what the user typed
+      if (crosswordWord.word.length !== currentWord.length) return;
+      
       const existingLetters = getExistingLettersInWord(crosswordWord);
       const wordLower = crosswordWord.word.toLowerCase();
       
