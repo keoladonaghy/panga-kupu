@@ -1038,6 +1038,7 @@ export class CrosswordGenerator {
     }
 
     let hasIntersection = false;
+    let intersectionCount = 0;
 
     // Check each position of the word
     for (let i = 0; i < word.length; i++) {
@@ -1052,6 +1053,7 @@ export class CrosswordGenerator {
           return false;
         }
         hasIntersection = true;
+        intersectionCount++;
       } else {
         // For empty cells, check that no adjacent letters touch unless intersecting
         if (!this.hasProperSpacingForNewLetter(grid, checkRow, checkCol, direction)) {
@@ -1060,8 +1062,8 @@ export class CrosswordGenerator {
       }
     }
 
-    // Must have at least one intersection with existing letters
-    if (!hasIntersection) {
+    // Must have exactly one intersection with existing letters to avoid embedding/overlap
+    if (!hasIntersection || intersectionCount !== 1) {
       return false;
     }
 
