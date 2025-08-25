@@ -1668,7 +1668,10 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
       return letterMatches;
     });
 
-    return validMatches.length > 0;
+    // PRIORITY 1: Show letters only for exact word matches with correct positions
+    if (validMatches.length > 0) {
+      return true;
+    }
 
     // PRIORITY 2: Check if this position should only show letters from words that start here
     // This prevents substring highlighting when a dedicated word should occupy this space
@@ -1677,71 +1680,31 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
     );
     
     if (potentialDedicatedWords.length > 0) {
-      // Allow intersecting letters to show even if there's a potential word starting here
-      // Only block if ALL intersecting words are unfound
-      const allIntersectingWordsUnfound = wordsAtPosition.every(crosswordWord => {
+      // Position is reserved for a word that starts here - only show if that exact word is found
+      const dedicatedWordFound = potentialDedicatedWords.some(crosswordWord => {
         const normalizedCrosswordWord = toHawaiianUppercase(crosswordWord.word);
         const wordWithPosition = `${normalizedCrosswordWord}_${crosswordWord.word.length}_${crosswordWord.row}_${crosswordWord.col}_${crosswordWord.direction}`;
-        return !gameState.foundWords.includes(wordWithPosition);
+        return gameState.foundWords.includes(wordWithPosition);
       });
       
-      if (allIntersectingWordsUnfound) {
-        console.log('🚫 PRIORITY 2: Position reserved for dedicated word (no intersecting words found):', {
+      if (dedicatedWordFound) {
+        console.log('✅ PRIORITY 2: Showing dedicated word letter at position:', {
+          position: { row, col },
+          words: potentialDedicatedWords.map(w => w.word)
+        });
+        return true;
+      } else {
+        console.log('🚫 PRIORITY 2: Position reserved for unfound dedicated word:', {
           position: { row, col },
           potentialWords: potentialDedicatedWords.map(w => w.word)
         });
         return false;
       }
-      
-      console.log('✅ PRIORITY 2: Allowing intersection display despite potential dedicated word:', {
-        position: { row, col },
-        potentialWords: potentialDedicatedWords.map(w => w.word)
-      });
     }
 
-    // PRIORITY 3: Allow substring matches only in positions that aren't word starting positions
-    const foundWordsAtPosition = wordsAtPosition.filter(crosswordWord => {
-      const normalizedCrosswordWord = toHawaiianUppercase(crosswordWord.word);
-      const wordWithPosition = `${normalizedCrosswordWord}_${crosswordWord.word.length}_${crosswordWord.row}_${crosswordWord.col}_${crosswordWord.direction}`;
-      const isExactWordFound = gameState.foundWords.includes(wordWithPosition);
-      
-      console.log('🔍 PRIORITY 3: Checking substring match:', {
-        word: normalizedCrosswordWord,
-        wordLength: crosswordWord.word.length,
-        wordWithPosition,
-        isFound: isExactWordFound,
-        position: { row, col },
-        wordPosition: { row: crosswordWord.row, col: crosswordWord.col },
-        direction: crosswordWord.direction
-      });
-      
-      return isExactWordFound;
-    });
-
-    if (foundWordsAtPosition.length === 0) return false;
-
-    // Prioritize by word specificity - shorter words and closer to word start
-    if (foundWordsAtPosition.length > 1) {
-      console.log('🎯 Multiple substring matches at position:', { row, col }, 
-        'Words:', foundWordsAtPosition.map(w => ({ word: w.word, length: w.word.length })));
-      
-      foundWordsAtPosition.sort((a, b) => {
-        const distanceA = a.direction === 'across' ? (col - a.col) : (row - a.row);
-        const distanceB = b.direction === 'across' ? (col - b.col) : (row - b.row);
-        
-        // Prioritize words where this position is closer to the start
-        if (distanceA !== distanceB) {
-          return distanceA - distanceB;
-        }
-        
-        // If same distance, prioritize shorter words
-        return a.word.length - b.word.length;
-      });
-      
-      console.log('🎯 Prioritizing substring match:', foundWordsAtPosition[0].word);
-    }
-
-    return true;
+    // PRIORITY 3: No exact matches and no dedicated words starting here - don't show anything
+    console.log('🚫 PRIORITY 3: No valid matches for position:', { row, col });
+    return false;
   };
 
   // Helper function to count only actual found words (not hint markers)
