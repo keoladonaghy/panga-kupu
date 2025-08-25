@@ -664,10 +664,18 @@ const HawaiianWordGame: React.FC = () => {
       const shouldAutoCheck = word.length === longestRemainingLength && longestRemainingLength > 0;
       
       if (shouldAutoCheck) {
-        if (isWordInCrossword && !gameState.foundWords.includes(normalizedWord)) {
-          // Correct word of longest length - reveal it
+        // Find the exact crossword word that matches
+        const matchingCrosswordWord = gameState.crosswordWords.find(crosswordWord => 
+          toHawaiianUppercase(crosswordWord.word) === normalizedWord && 
+          crosswordWord.word.length === normalizedWord.length &&
+          !isWordFound(normalizedWord, normalizedWord.length, crosswordWord.row, crosswordWord.col, crosswordWord.direction)
+        );
+
+        if (matchingCrosswordWord) {
+          // Correct word of longest length - reveal it with position data
           clearHokaTimeout(); // Clear any pending HOKA timeouts
-          const newFoundWords = [...gameState.foundWords, normalizedWord];
+          const wordWithPosition = `${normalizedWord}_${normalizedWord.length}_${matchingCrosswordWord.row}_${matchingCrosswordWord.col}_${matchingCrosswordWord.direction}`;
+          const newFoundWords = [...gameState.foundWords, wordWithPosition];
           
           setGameState(prev => ({
             ...prev,
@@ -696,32 +704,48 @@ const HawaiianWordGame: React.FC = () => {
               setGameState(prev => ({ ...prev, showCelebration: true, isManualCelebration: false }));
             }, 1000);
           }
-        } else if (!gameState.foundWords.includes(normalizedWord)) {
-          // Incorrect word of longest length - show HOKA!
-          setGameState(prev => ({
-            ...prev,
-            typedWord: 'HOKA!',
-            showError: true,
-            errorMessage: 'HOKA!'
-          }));
+        } else {
+          // Check if word was already found but user trying again
+          const alreadyFound = gameState.crosswordWords.some(crosswordWord => 
+            toHawaiianUppercase(crosswordWord.word) === normalizedWord && 
+            crosswordWord.word.length === normalizedWord.length &&
+            isWordFound(normalizedWord, normalizedWord.length, crosswordWord.row, crosswordWord.col, crosswordWord.direction)
+          );
           
-          // Clear the HOKA! after 1.5 seconds
-          setHokaTimeoutHelper(() => {
+          if (!alreadyFound) {
+            // Incorrect word of longest length - show HOKA!
             setGameState(prev => ({
               ...prev,
-              typedWord: '',
-              showError: false,
-              errorMessage: ''
+              typedWord: 'HOKA!',
+              showError: true,
+              errorMessage: 'HOKA!'
             }));
-          });
+            
+            // Clear the HOKA! after 1.5 seconds
+            setHokaTimeoutHelper(() => {
+              setGameState(prev => ({
+                ...prev,
+                typedWord: '',
+                showError: false,
+                errorMessage: ''
+              }));
+            });
+          }
         }
       }
     } else {
-      // For circle-selected words, check immediately
-      if (isWordInCrossword && !gameState.foundWords.includes(normalizedWord)) {
-        // Word found! Add to found words and clear the current input
+      // For circle-selected words, find the exact crossword word that matches
+      const matchingCrosswordWord = gameState.crosswordWords.find(crosswordWord => 
+        toHawaiianUppercase(crosswordWord.word) === normalizedWord && 
+        crosswordWord.word.length === normalizedWord.length &&
+        !isWordFound(normalizedWord, normalizedWord.length, crosswordWord.row, crosswordWord.col, crosswordWord.direction)
+      );
+
+      if (matchingCrosswordWord) {
+        // Word found! Add to found words with position data and clear the current input
         clearHokaTimeout(); // Clear any pending HOKA timeouts
-        const newFoundWords = [...gameState.foundWords, normalizedWord];
+        const wordWithPosition = `${normalizedWord}_${normalizedWord.length}_${matchingCrosswordWord.row}_${matchingCrosswordWord.col}_${matchingCrosswordWord.direction}`;
+        const newFoundWords = [...gameState.foundWords, wordWithPosition];
         
         setGameState(prev => ({
           ...prev,
@@ -1613,7 +1637,7 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
 
     if (wordsAtPosition.length === 0) return false;
 
-    // CRITICAL FIX: Only show letters for words that are found AND at the correct letter index
+    // CRITICAL FIX: Only show letters for words that are found AND at the correct letter index with exact letter match
     const validMatches = wordsAtPosition.filter(crosswordWord => {
       const normalizedCrosswordWord = toHawaiianUppercase(crosswordWord.word);
       const wordWithPosition = `${normalizedCrosswordWord}_${crosswordWord.word.length}_${crosswordWord.row}_${crosswordWord.col}_${crosswordWord.direction}`;
@@ -1628,10 +1652,16 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
       
       // Only show this cell if it's within the bounds of the actual found word
       const isValidIndex = letterIndex >= 0 && letterIndex < crosswordWord.word.length;
+      if (!isValidIndex) return false;
+
+      // CRITICAL: Verify the letter at this position matches the found word's letter
+      const expectedLetter = toHawaiianUppercase(crosswordWord.word[letterIndex]);
+      const gridLetter = grid[row]?.[col] ? toHawaiianUppercase(grid[row][col]) : '';
+      const letterMatches = expectedLetter === gridLetter;
       
-      console.log(`🔍 Grid cell [${row}][${col}] checking word "${crosswordWord.word}" at (${crosswordWord.row},${crosswordWord.col}) ${crosswordWord.direction}: found=${isFound}, letterIndex=${letterIndex}, wordLength=${crosswordWord.word.length}, isValidIndex=${isValidIndex}`);
+      console.log(`🔍 Grid cell [${row}][${col}] checking word "${crosswordWord.word}" at (${crosswordWord.row},${crosswordWord.col}) ${crosswordWord.direction}: found=${isFound}, letterIndex=${letterIndex}, wordLength=${crosswordWord.word.length}, isValidIndex=${isValidIndex}, expectedLetter=${expectedLetter}, gridLetter=${gridLetter}, letterMatches=${letterMatches}`);
       
-      return isValidIndex;
+      return letterMatches;
     });
 
     return validMatches.length > 0;
