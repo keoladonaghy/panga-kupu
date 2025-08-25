@@ -1124,13 +1124,18 @@ const HawaiianWordGame: React.FC = () => {
     const word = toHawaiianUppercase(gameState.currentWord.trim());
     if (!word) return;
 
-    // Check if the word is in the crossword puzzle
-    const matchingCrosswordWord = gameState.crosswordWords.find(crosswordWord => 
+    // Check if the word is in the crossword puzzle - find ALL matching words first
+    const allMatchingWords = gameState.crosswordWords.filter(crosswordWord => 
       toHawaiianUppercase(crosswordWord.word) === word && 
       crosswordWord.word.length === word.length
     );
 
-    if (matchingCrosswordWord && !isWordFound(word, word.length, matchingCrosswordWord.row, matchingCrosswordWord.col, matchingCrosswordWord.direction)) {
+    // Find the first matching word that hasn't been found yet
+    const matchingCrosswordWord = allMatchingWords.find(crosswordWord => 
+      !isWordFound(word, word.length, crosswordWord.row, crosswordWord.col, crosswordWord.direction)
+    );
+
+    if (matchingCrosswordWord) {
       // Word found! Add to found words and clear current word
       clearHokaTimeout(); // Clear any pending HOKA timeouts
       const wordWithPosition = `${word}_${word.length}_${matchingCrosswordWord.row}_${matchingCrosswordWord.col}_${matchingCrosswordWord.direction}`;
