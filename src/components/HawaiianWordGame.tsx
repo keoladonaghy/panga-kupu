@@ -1613,25 +1613,19 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
 
     if (wordsAtPosition.length === 0) return false;
 
-    // PRIORITY 1: Check for exact position matches using the new identifier system
-    // This ensures words only display in their precise intended positions
+    // CRITICAL FIX: Only show letters for words that are found AND match the exact position
     const exactMatches = wordsAtPosition.filter(crosswordWord => {
       const normalizedCrosswordWord = toHawaiianUppercase(crosswordWord.word);
       const wordWithPosition = `${normalizedCrosswordWord}_${crosswordWord.word.length}_${crosswordWord.row}_${crosswordWord.col}_${crosswordWord.direction}`;
       const isFound = gameState.foundWords.includes(wordWithPosition);
       
+      console.log(`🔍 Grid cell [${row}][${col}] checking word "${crosswordWord.word}" at (${crosswordWord.row},${crosswordWord.col}) ${crosswordWord.direction}: found=${isFound}`);
+      
       return isFound;
     });
 
-    if (exactMatches.length > 0) {
-      console.log('🎯 PRIORITY 1: Exact position match found:', {
-        position: { row, col },
-        word: exactMatches[0].word,
-        length: exactMatches[0].word.length
-      });
-      
-      return true;
-    }
+    // RETURN TRUE ONLY IF THERE'S AN EXACT MATCH - this prevents partial word display
+    return exactMatches.length > 0;
 
     // PRIORITY 2: Check if this position should only show letters from words that start here
     // This prevents substring highlighting when a dedicated word should occupy this space
