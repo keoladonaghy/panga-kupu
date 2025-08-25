@@ -1798,7 +1798,8 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
     
     gameState.crosswordWords.forEach(crosswordWord => {
       const wordUpper = toHawaiianUppercase(crosswordWord.word);
-      if (gameState.foundWords.includes(wordUpper)) return; // Skip already found words
+      const wordWithPosition = `${wordUpper}_${crosswordWord.word.length}_${crosswordWord.row}_${crosswordWord.col}_${crosswordWord.direction}`;
+      if (gameState.foundWords.includes(wordWithPosition)) return; // Skip already found words
       
       const existingLetters = getExistingLettersInWord(crosswordWord);
       const wordLower = crosswordWord.word.toLowerCase();
