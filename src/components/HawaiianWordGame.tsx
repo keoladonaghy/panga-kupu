@@ -1613,19 +1613,28 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
 
     if (wordsAtPosition.length === 0) return false;
 
-    // CRITICAL FIX: Only show letters for words that are found AND match the exact position
-    const exactMatches = wordsAtPosition.filter(crosswordWord => {
+    // CRITICAL FIX: Only show letters for words that are found AND at the correct letter index
+    const validMatches = wordsAtPosition.filter(crosswordWord => {
       const normalizedCrosswordWord = toHawaiianUppercase(crosswordWord.word);
       const wordWithPosition = `${normalizedCrosswordWord}_${crosswordWord.word.length}_${crosswordWord.row}_${crosswordWord.col}_${crosswordWord.direction}`;
       const isFound = gameState.foundWords.includes(wordWithPosition);
       
-      console.log(`🔍 Grid cell [${row}][${col}] checking word "${crosswordWord.word}" at (${crosswordWord.row},${crosswordWord.col}) ${crosswordWord.direction}: found=${isFound}`);
+      if (!isFound) return false;
       
-      return isFound;
+      // Calculate which letter index this position corresponds to in the word
+      const letterIndex = crosswordWord.direction === 'across' 
+        ? col - crosswordWord.col 
+        : row - crosswordWord.row;
+      
+      // Only show this cell if it's within the bounds of the actual found word
+      const isValidIndex = letterIndex >= 0 && letterIndex < crosswordWord.word.length;
+      
+      console.log(`🔍 Grid cell [${row}][${col}] checking word "${crosswordWord.word}" at (${crosswordWord.row},${crosswordWord.col}) ${crosswordWord.direction}: found=${isFound}, letterIndex=${letterIndex}, wordLength=${crosswordWord.word.length}, isValidIndex=${isValidIndex}`);
+      
+      return isValidIndex;
     });
 
-    // RETURN TRUE ONLY IF THERE'S AN EXACT MATCH - this prevents partial word display
-    return exactMatches.length > 0;
+    return validMatches.length > 0;
 
     // PRIORITY 2: Check if this position should only show letters from words that start here
     // This prevents substring highlighting when a dedicated word should occupy this space
