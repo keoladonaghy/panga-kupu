@@ -781,8 +781,10 @@ const HawaiianWordGame: React.FC = () => {
       // Only accept words that have an exact match (same text AND same length)
       const validWord = exactMatchingWords.length > 0 ? normalizedWord : null;
       
-      const matchingWord = exactMatchingWords[0];
-      if (validWord && !isWordFound(validWord, currentWord.length, matchingWord?.row, matchingWord?.col, matchingWord?.direction)) {
+const unmatchedCandidate = validWord
+  ? exactMatchingWords.find(w => !isWordFound(validWord, currentWord.length, w.row, w.col, w.direction))
+  : undefined;
+if (validWord && unmatchedCandidate) {
         console.log('✅ Manual check - Valid word found:', validWord);
         
         // Check if this is a 3-letter word that should be excluded from re-triggering
@@ -792,7 +794,7 @@ const HawaiianWordGame: React.FC = () => {
         }
         
         // Store the found word with position information
-        const wordWithPosition = `${validWord}_${currentWord.length}_${matchingWord.row}_${matchingWord.col}_${matchingWord.direction}`;
+        const wordWithPosition = `${validWord}_${currentWord.length}_${unmatchedCandidate.row}_${unmatchedCandidate.col}_${unmatchedCandidate.direction}`;
         const newFoundWords = [...gameState.foundWords, wordWithPosition];
         const newFoundThreeLetterWords = currentWord.length === 3 ? 
           [...gameState.foundThreeLetterWords, validWord] : 
@@ -934,7 +936,11 @@ const HawaiianWordGame: React.FC = () => {
       console.log('  - exactMatchingWords.length:', exactMatchingWords.length);
       console.log('  - validWord:', validWord);
       
-      if (validWord && !isWordFound(validWord, newWord.length)) {
+const unmatchedCandidate = validWord
+  ? exactMatchingWords.find(w => !isWordFound(validWord, newWord.length, w.row, w.col, w.direction))
+  : undefined;
+
+if (validWord && unmatchedCandidate) {
         console.log('✅ Valid word found:', validWord);
         console.log('📍 Matching crossword words:', exactMatchingWords.map(w => ({ word: w.word, length: w.word.length, row: w.row, col: w.col, direction: w.direction })));
         
@@ -946,7 +952,7 @@ const HawaiianWordGame: React.FC = () => {
         
         // Store the found word with unique position identifier to ensure correct placement
         // Format: "WORD_LENGTH_ROW_COL_DIRECTION" for precise word identification
-        const matchingWord = exactMatchingWords[0]; // Use the first exact match
+        const matchingWord = unmatchedCandidate; // Use the first unmatched exact match
         const wordWithPosition = `${validWord}_${newWord.length}_${matchingWord.row}_${matchingWord.col}_${matchingWord.direction}`;
         const newFoundWords = [...gameState.foundWords, wordWithPosition];
         const newFoundThreeLetterWords = newWord.length === 3 ? 
@@ -1000,7 +1006,7 @@ const HawaiianWordGame: React.FC = () => {
         }
         
         return; // Stop here, don't continue to check for HOKA!
-      } else if (validWord && isWordFound(validWord, newWord.length, exactMatchingWords[0]?.row, exactMatchingWords[0]?.col, exactMatchingWords[0]?.direction)) {
+      } else if (validWord && !unmatchedCandidate) {
         // Only show UA LOA'A MUA! if this is the maximum word length possible with current letters
         // This allows players to discover for themselves if longer words exist
         const maxPossibleLength = gameState.availableLetters.length;
@@ -1226,11 +1232,15 @@ const HawaiianWordGame: React.FC = () => {
       return matches;
     });
 
-    if (matchingCrosswordWords.length > 0 && !isWordFound(word, word.length)) {
+const unmatchedCandidate = matchingCrosswordWords.find(crosswordWord => 
+  !isWordFound(word, word.length, crosswordWord.row, crosswordWord.col, crosswordWord.direction)
+);
+
+if (unmatchedCandidate) {
       // Word found! Add to found words with length suffix for consistency
       clearHokaTimeout(); // Clear any pending HOKA timeouts
-      const wordWithLength = `${word}_${word.length}`;
-      const newFoundWords = [...gameState.foundWords, wordWithLength];
+const wordWithPosition = `${word}_${word.length}_${unmatchedCandidate.row}_${unmatchedCandidate.col}_${unmatchedCandidate.direction}`;
+const newFoundWords = [...gameState.foundWords, wordWithPosition];
       
       setGameState(prev => ({
         ...prev,
@@ -1269,7 +1279,7 @@ const HawaiianWordGame: React.FC = () => {
       } else {
         console.log('🔄 Still missing words:', totalWordsCount - actualFoundCount);
       }
-    } else if (isWordFound(word, word.length)) {
+    } else if (matchingCrosswordWords.length > 0) {
       // Already found this word
       console.log('🔄 TYPED WORD ALREADY FOUND:', word, 'length:', word.length);
       setGameState(prev => ({
@@ -1634,8 +1644,8 @@ const HawaiianWordGame: React.FC = () => {
       // Only block if ALL intersecting words are unfound
       const allIntersectingWordsUnfound = wordsAtPosition.every(crosswordWord => {
         const normalizedCrosswordWord = toHawaiianUppercase(crosswordWord.word);
-        const wordWithLength = `${normalizedCrosswordWord}_${crosswordWord.word.length}`;
-        return !gameState.foundWords.includes(wordWithLength);
+        const wordWithPosition = `${normalizedCrosswordWord}_${crosswordWord.word.length}_${crosswordWord.row}_${crosswordWord.col}_${crosswordWord.direction}`;
+        return !gameState.foundWords.includes(wordWithPosition);
       });
       
       if (allIntersectingWordsUnfound) {
@@ -1655,13 +1665,13 @@ const HawaiianWordGame: React.FC = () => {
     // PRIORITY 3: Allow substring matches only in positions that aren't word starting positions
     const foundWordsAtPosition = wordsAtPosition.filter(crosswordWord => {
       const normalizedCrosswordWord = toHawaiianUppercase(crosswordWord.word);
-      const wordWithLength = `${normalizedCrosswordWord}_${crosswordWord.word.length}`;
-      const isExactWordFound = gameState.foundWords.includes(wordWithLength);
+      const wordWithPosition = `${normalizedCrosswordWord}_${crosswordWord.word.length}_${crosswordWord.row}_${crosswordWord.col}_${crosswordWord.direction}`;
+      const isExactWordFound = gameState.foundWords.includes(wordWithPosition);
       
       console.log('🔍 PRIORITY 3: Checking substring match:', {
         word: normalizedCrosswordWord,
         wordLength: crosswordWord.word.length,
-        wordWithLength,
+        wordWithPosition,
         isFound: isExactWordFound,
         position: { row, col },
         wordPosition: { row: crosswordWord.row, col: crosswordWord.col },
@@ -2552,10 +2562,9 @@ const HawaiianWordGame: React.FC = () => {
                     console.log('🔤 Normalized word:', normalizedWord);
                     
                     // Check if current typed word exactly matches any previously found word
-                    const matchingFoundWord = gameState.foundWords.find(foundWord => {
-                      const foundWordWithoutLength = foundWord.replace(/_\d+$/, '');
-                      return foundWordWithoutLength === normalizedWord && foundWordWithoutLength.length === normalizedWord.length;
-                    });
+const matchingFoundWord = gameState.crosswordWords
+  .filter(crosswordWord => toHawaiianUppercase(crosswordWord.word) === normalizedWord && crosswordWord.word.length === normalizedWord.length)
+  .every(crosswordWord => isWordFound(normalizedWord, normalizedWord.length, crosswordWord.row, crosswordWord.col, crosswordWord.direction));
                     
                     const isWordInCrossword = gameState.crosswordWords.some(crosswordWord => 
                       toHawaiianUppercase(crosswordWord.word) === normalizedWord && 
@@ -2563,11 +2572,18 @@ const HawaiianWordGame: React.FC = () => {
                     );
                     
                     // If it's a valid word that hasn't been found yet
-                    if (isWordInCrossword && !matchingFoundWord) {
+if (isWordInCrossword && !matchingFoundWord) {
+  const unmatchedCandidate = gameState.crosswordWords.find(crosswordWord => 
+    toHawaiianUppercase(crosswordWord.word) === normalizedWord && 
+    crosswordWord.word.length === normalizedWord.length &&
+    !isWordFound(normalizedWord, normalizedWord.length, crosswordWord.row, crosswordWord.col, crosswordWord.direction)
+  );
+
+  if (unmatchedCandidate) {
                       // Valid word found - trigger success immediately
                       clearHokaTimeout(); // Clear any pending HOKA timeouts
-                      const wordWithLength = `${normalizedWord}_${normalizedWord.length}`;
-                      const newFoundWords = [...gameState.foundWords, wordWithLength];
+const wordWithPosition = `${normalizedWord}_${normalizedWord.length}_${unmatchedCandidate.row}_${unmatchedCandidate.col}_${unmatchedCandidate.direction}`;
+const newFoundWords = [...gameState.foundWords, wordWithPosition];
                       
                       setGameState(prev => ({
                         ...prev,
@@ -2596,7 +2612,8 @@ const HawaiianWordGame: React.FC = () => {
                       }
                       
                       return; // Stop here
-                    } else if (matchingFoundWord) {
+                    }
+                  } else if (matchingFoundWord) {
                       // User has typed a word that exactly matches a previously found word
                       // Show "already found" message but allow continued typing for longer words
                       console.log('🔄 User typed previously found word:', normalizedWord, 'allowing continued typing...');
@@ -2639,9 +2656,9 @@ const HawaiianWordGame: React.FC = () => {
                        crosswordWord.word.length === normalizedWord.length
                      );
                     console.log('🎯 Is word in crossword?', isWordInCrossword);
-                    console.log('📝 Already found?', gameState.foundWords.includes(normalizedWord));
-                    
-                    if (!isWordInCrossword && !gameState.foundWords.includes(normalizedWord)) {
+console.log('📝 Already found?', isWordFound(normalizedWord, normalizedWord.length));
+
+if (!isWordInCrossword && !isWordFound(normalizedWord, normalizedWord.length)) {
                       console.log(`🕐 Setting 3-second timeout for ${newValue.length}-letter word: ${normalizedWord}`);
                       const timeout = setTimeout(() => {
                         console.log(`⏰ 3-second timeout triggered for: ${normalizedWord}`);
@@ -2718,7 +2735,7 @@ const HawaiianWordGame: React.FC = () => {
                             typedWord: ''
                           }));
                         });
-                      } else if (gameState.foundWords.includes(normalizedWord)) {
+                      } else if (isWordFound(normalizedWord, normalizedWord.length)) {
                         setGameState(prev => ({
                           ...prev,
                           typedWord: 'UA LOA\'A MUA!'
