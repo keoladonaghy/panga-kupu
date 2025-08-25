@@ -1616,6 +1616,9 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
   };
 
   const isGridCellInFoundWord = (row: number, col: number) => {
+    // Add comprehensive debugging for ATA/TATA issue
+    const debugInfo = { row, col, foundWords: gameState.foundWords };
+    console.log(`🔍 CELL CHECK [${row}][${col}]:`, debugInfo);
     // Check for hint markers first - simplified format
     const hintMarker = gameState.foundWords.find(word => 
       word === `HINT_${row}_${col}`
@@ -1635,6 +1638,13 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
       return isInWordArea;
     });
 
+    console.log(`🔍 WORDS AT POSITION [${row}][${col}]:`, wordsAtPosition.map(w => ({
+      word: w.word,
+      length: w.word.length,
+      position: `(${w.row},${w.col})`,
+      direction: w.direction
+    })));
+
     if (wordsAtPosition.length === 0) return false;
 
     // CRITICAL FIX: Only show letters for words that are found AND at the correct letter index with exact letter match
@@ -1643,7 +1653,17 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
       const wordWithPosition = `${normalizedCrosswordWord}_${crosswordWord.word.length}_${crosswordWord.row}_${crosswordWord.col}_${crosswordWord.direction}`;
       const isFound = gameState.foundWords.includes(wordWithPosition);
       
-      if (!isFound) return false;
+      console.log(`🔍 VALIDATING [${row}][${col}] word="${crosswordWord.word}":`, {
+        normalizedWord: normalizedCrosswordWord,
+        wordWithPosition,
+        isFound,
+        foundWordsList: gameState.foundWords
+      });
+      
+      if (!isFound) {
+        console.log(`❌ WORD NOT FOUND: ${crosswordWord.word}`);
+        return false;
+      }
       
       // Calculate which letter index this position corresponds to in the word
       const letterIndex = crosswordWord.direction === 'across' 
@@ -1652,18 +1672,23 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
       
       // Only show this cell if it's within the bounds of the actual found word
       const isValidIndex = letterIndex >= 0 && letterIndex < crosswordWord.word.length;
-      if (!isValidIndex) return false;
+      if (!isValidIndex) {
+        console.log(`❌ INVALID INDEX: letterIndex=${letterIndex}, wordLength=${crosswordWord.word.length}`);
+        return false;
+      }
 
       // CRITICAL: Verify the letter at this position matches the found word's letter
       const expectedLetter = toHawaiianUppercase(crosswordWord.word[letterIndex]);
       const gridLetter = grid[row]?.[col] ? toHawaiianUppercase(grid[row][col]) : '';
       const letterMatches = expectedLetter === gridLetter;
       
-      // Enhanced debugging for ATA placement issues
-      if (normalizedCrosswordWord === 'ATA' || normalizedCrosswordWord === 'RATA') {
-        console.log(`🚨 PLACEMENT DEBUG [${row}][${col}] word="${crosswordWord.word}" at (${crosswordWord.row},${crosswordWord.col}) ${crosswordWord.direction}: found=${isFound}, letterIndex=${letterIndex}, wordLength=${crosswordWord.word.length}, isValidIndex=${isValidIndex}, expectedLetter="${expectedLetter}", gridLetter="${gridLetter}", letterMatches=${letterMatches}, wordWithPosition="${wordWithPosition}"`);
-        console.log(`🚨 FOUND WORDS LIST:`, gameState.foundWords);
-      }
+      console.log(`🔍 LETTER MATCH CHECK [${row}][${col}]:`, {
+        word: crosswordWord.word,
+        letterIndex,
+        expectedLetter,
+        gridLetter,
+        letterMatches
+      });
       
       return letterMatches;
     });
