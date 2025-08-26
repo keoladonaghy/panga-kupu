@@ -1079,7 +1079,7 @@ if (validWord && unmatchedCandidate) {
           if (!hasSeenExplanation) {
             toast({
               title: "Word Detection Explanation",
-              description: `If you type any word that is shorter than the maximum word length, wait three seconds and I will automatically determine if it is correct. Otherwise, click on the enter key to the right of where your word appears.`,
+              description: t('game.messages.wordDetectionExplanation'),
               duration: 4000,
             });
             localStorage.setItem('wordDetectionExplanationShown', 'true');
