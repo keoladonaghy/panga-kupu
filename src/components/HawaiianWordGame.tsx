@@ -1079,7 +1079,7 @@ if (validWord && unmatchedCandidate) {
           if (!hasSeenExplanation) {
             toast({
               title: "Word Detection Explanation",
-              description: `I am programmed to wait three seconds after you have selected a ${newWord.length} letter word, and will assume that is what you wanted. I will then clear your attempt and you can try again with a new word.`,
+              description: `If you type any word that is shorter than the maximum word length, wait three seconds and I will automatically determine if it is correct. Otherwise, click on the enter key to the right of where your word appears.`,
               duration: 4000,
             });
             localStorage.setItem('wordDetectionExplanationShown', 'true');
