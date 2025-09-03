@@ -334,13 +334,13 @@ const HawaiianWordGame: React.FC = () => {
       let words: string[];
       
       if (gameLanguage === 'mao') {
-        fileName = '/KupuMaori.txt';
+        fileName = 'KupuMaori.txt';
       } else if (gameLanguage === 'tah') {
         // For Tahitian, use the imported word list (for now)
         const { tahitianWords } = await import('../data/tahitianWords');
         words = tahitianWords;
       } else {
-        fileName = '/HawaiianWords.txt';
+        fileName = 'HawaiianWords.txt';
       }
       
       if (gameLanguage !== 'tah') {
