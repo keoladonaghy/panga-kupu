@@ -15,14 +15,16 @@ const App = () => (
       <LanguageProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter basename="/panga-kupu">
-           <Routes>
-           <Route ... />
-         </Routes>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
         </BrowserRouter>
-     </LanguageProvider>
-     </TooltipProvider>
-     </QueryClientProvider>
+        <LanguageProvider>
+    </TooltipProvider>
+  </QueryClientProvider>
 );
 
 export default App;
