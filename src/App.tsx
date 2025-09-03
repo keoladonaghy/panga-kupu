@@ -17,7 +17,8 @@ const App = () => (
           <Toaster />
           <Sonner />
           <Routes>
-            <Route ... />
+            <Route path="/" element={<Index />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
       </LanguageProvider>
