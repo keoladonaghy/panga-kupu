@@ -32,12 +32,11 @@ export class CrosswordGenerator {
   private filteredWords: string[] = [];
   private language: 'haw' | 'mao' | 'tah' | 'en'; // Add language parameter
   private wordLimits: LanguageWordLimits; // Add word limits
-  private readonly MAX_WORDS = 12; // Increased from 8 to 12
-  private readonly MIN_FOUNDATION_WORDS = 2; 
-  private readonly MAX_MEDIUM_WORDS = 8;  
-  private readonly MAX_SHORT_WORDS = 6; 
-  private readonly LETTERS_PER_PUZZLE = 7; 
-
+  private readonly MAX_WORDS = 8; // Centralized word count limit
+  private readonly MIN_FOUNDATION_WORDS = 2; // Minimum foundation words needed
+  private readonly MAX_MEDIUM_WORDS = 7; // Maximum medium words to add
+  private readonly MAX_SHORT_WORDS = 4; // Maximum short words to add
+  private readonly LETTERS_PER_PUZZLE = 7; // Number of letters selected for each puzzle
   
   // Word category constraints
 
@@ -120,11 +119,11 @@ export class CrosswordGenerator {
           console.log(`Longest possible words (${maxPossibleLength} letters): ${longestWords.length}`);
           console.log('Sample longest words:', longestWords.slice(0, 5));
           
-if (this.filteredWords.length < this.MAX_WORDS) {
-          console.log(`WARNING: Not enough words with selected letters for ${this.MAX_WORDS}-word puzzle:`, this.selectedLetters);
-          console.log('Available filtered words:', this.filteredWords.length);
-          continue; // Try different letters
-}
+          if (this.filteredWords.length < this.MAX_WORDS) {
+            console.log(`WARNING: Not enough words with selected letters for ${this.MAX_WORDS}-word puzzle:`, this.selectedLetters);
+            console.log('Available filtered words:', this.filteredWords.length);
+            continue; // Try different letters
+          }
           
           // Modify the five-letter requirement based on max word length
           const requiredLongWords = this.wordLimits.maxWordLength >= 5 ? 2 : 0;

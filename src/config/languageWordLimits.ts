@@ -14,7 +14,7 @@ export interface AllLanguageLimits {
 export const DEFAULT_WORD_LIMITS: AllLanguageLimits = {
   haw: {
     minWordLength: 3,
-    maxWordLength: 4  // Reset back to 4
+    maxWordLength: 5  // Reset back to 4
   },
   mao: {
     minWordLength: 3,
