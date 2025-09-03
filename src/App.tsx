@@ -13,16 +13,14 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <LanguageProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
+        <BrowserRouter basename="/panga-kupu">
+          <Toaster />
+          <Sonner />
           <Routes>
-            <Route path="/" element={<Index />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
+            <Route ... />
           </Routes>
         </BrowserRouter>
-        <LanguageProvider>
+      </LanguageProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
