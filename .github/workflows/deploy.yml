@@ -33,6 +33,12 @@ jobs:
       - name: Build
         run: npm run build
       
+      - name: List build output
+        run: ls -la dist/
+      
+      - name: List assets
+        run: ls -la dist/assets/
+      
       - name: Setup Pages
         uses: actions/configure-pages@v4
       
