@@ -264,7 +264,7 @@ const HawaiianWordGame: React.FC = () => {
         console.log('Crossword generation failed completely, using fallback');
         // Complete fallback
         const fallbackWords = allWords.slice(0, 12);
-        const newGrid: string[][] = Array(12).fill(null).map(() => Array(12).fill(''));
+        const newGrid: string[][] = Array(10).fill(null).map(() => Array(12).fill(''));
         setGrid(newGrid);
         setGameState(prev => ({
           ...prev,
@@ -431,7 +431,7 @@ const HawaiianWordGame: React.FC = () => {
         console.log('🧪 TEST MODE: Creating manual crossword with "ake" and "akea"');
         
         // Create a simple manual crossword with both words
-        const testGrid: string[][] = Array(12).fill(null).map(() => Array(12).fill(''));
+        const testGrid: string[][] = Array(10).fill(null).map(() => Array(12).fill(''));
         
         // Place "akea" horizontally at row 7, col 5
         const akeaWord = 'akea';
@@ -2188,11 +2188,11 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
           <div className="flex justify-center flex-shrink-0" style={{ marginBottom: '10px' }}>
             {/* Mobile-safe container with simplified responsive dimensions */}
             <div className="crossword-container kimi-kupu-crossword-grid w-full max-w-[min(95vw,500px)] flex justify-center items-center mx-auto relative" style={{ height: 'clamp(350px, 87vw, 458px)' }}>
-              <div className="crossword-grid w-full h-full grid grid-cols-12 gap-0" style={{ gridTemplateRows: 'repeat(11, 1fr)' }}>
+              <div className="crossword-grid w-full h-full grid grid-cols-12 gap-0" style={{ gridTemplateRows: 'repeat(10, 1fr)' }}>
                 {(() => {
                   const cells = [];
-                  // Always render full 12x11 grid for consistent dimensions
-                  for (let rowIndex = 0; rowIndex < 11; rowIndex++) {
+                  // Always render full 12x10 grid for consistent dimensions
+                  for (let rowIndex = 0; rowIndex < 10; rowIndex++) {
                     for (let colIndex = 0; colIndex < 12; colIndex++) {
                        const letter = grid[rowIndex]?.[colIndex] || '';
                        const normalizedLetter = letter ? toHawaiianUppercase(letter) : '';

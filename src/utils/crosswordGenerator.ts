@@ -665,7 +665,7 @@ if (this.filteredWords.length < this.MAX_WORDS) {
   }
 
   private buildStructuredCrossword(): CrosswordGrid | null {
-    const grid: string[][] = Array(11).fill(null).map(() => 
+    const grid: string[][] = Array(10).fill(null).map(() => 
       Array(12).fill('')
     );
     
@@ -919,11 +919,11 @@ if (this.filteredWords.length < this.MAX_WORDS) {
   ): boolean {
     // Check bounds
     if (direction === 'across') {
-      if (row < 0 || row >= 11 || col < 0 || col + word.length > 12) {
+      if (row < 0 || row >= 10 || col < 0 || col + word.length > 12) {
         return false;
       }
     } else {
-      if (col < 0 || col >= 12 || row < 0 || row + word.length > 11) {
+      if (col < 0 || col >= 12 || row < 0 || row + word.length > 10) {
         return false;
       }
     }
@@ -983,7 +983,7 @@ if (this.filteredWords.length < this.MAX_WORDS) {
         return false;
       }
       // Check space below word
-      if (row + word.length < 11 && grid[row + word.length][col] !== '') {
+      if (row + word.length < 10 && grid[row + word.length][col] !== '') {
         return false;
       }
     }
@@ -1004,7 +1004,7 @@ if (this.filteredWords.length < this.MAX_WORDS) {
       if (row > 0 && grid[row - 1][col] !== '') {
         return false; // Letter above would touch without intersecting
       }
-      if (row < 11 - 1 && grid[row + 1][col] !== '') {
+      if (row < 10 - 1 && grid[row + 1][col] !== '') {
         return false; // Letter below would touch without intersecting
       }
     } else {
@@ -1036,7 +1036,7 @@ if (this.filteredWords.length < this.MAX_WORDS) {
     const maxDigraphWords = this.language === 'mao' ? Math.ceil(this.MAX_WORDS * 0.5) : 0;
 
     // For each existing letter in the grid, try to find words that use it
-    for (let row = 0; row < 11 && wordsAdded < maxAdditionalWords; row++) {
+    for (let row = 0; row < 10 && wordsAdded < maxAdditionalWords; row++) {
       for (let col = 0; col < 12 && wordsAdded < maxAdditionalWords; col++) {
         const existingLetter = grid[row][col];
         
@@ -1109,11 +1109,11 @@ if (this.filteredWords.length < this.MAX_WORDS) {
   ): boolean {
     // Check bounds
     if (direction === 'across') {
-      if (row < 0 || row >= 11 || col < 0 || col + word.length > 12) {
+      if (row < 0 || row >= 10 || col < 0 || col + word.length > 12) {
         return false;
       }
     } else {
-      if (col < 0 || col >= 12 || row < 0 || row + word.length > 11) {
+      if (col < 0 || col >= 12 || row < 0 || row + word.length > 10) {
         return false;
       }
     }
@@ -1166,7 +1166,7 @@ if (this.filteredWords.length < this.MAX_WORDS) {
       if (row > 0 && grid[row - 1][col] !== '') {
         return false; // Letter above would touch without intersecting
       }
-      if (row < 11 - 1 && grid[row + 1][col] !== '') {
+      if (row < 10 - 1 && grid[row + 1][col] !== '') {
         return false; // Letter below would touch without intersecting
       }
     } else {
