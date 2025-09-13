@@ -1,15 +1,6 @@
-/**
- * KimiKupu-style Header Component for PangaKupu
- * 
- * This is a port of KimiKupu's beautiful header design with:
- * - Diagonal gradient background
- * - Animated title transitions
- * - Enhanced icon styling
- */
+import { useEffect, useState } from 'react'
 
-import { useEffect, useState } from 'react';
-
-// StyleSheet-like approach (matching KimiKupu pattern)
+// StyleSheet-like approach for easier React Native conversion
 const createStyles = (animationState: string, longestWidth: number) => ({
   headerGradient: {
     position: 'fixed' as const,
@@ -105,82 +96,131 @@ const createStyles = (animationState: string, longestWidth: number) => ({
     color: 'hsl(0 0% 96%)'
   },
   gameNameText: {
-    position: 'absolute' as const,
-    left: 0,
-    top: 0,
+    position: 'relative' as const,
     transition: 'opacity 1s ease-in-out',
-    opacity: animationState === 'showing' || animationState === 'complete' ? 1 : 0,
+    opacity: animationState === 'sliding' || animationState === 'complete'
+      ? 1
+      : 0,
     color: 'hsl(35, 85%, 58%)'
+  },
+  finalText: {
+    transform: animationState === 'sliding' || animationState === 'complete'
+      ? 'translateX(0)'
+      : 'translateX(20px)',
+    opacity: animationState === 'complete' ? 1 : 0,
+    transition: 'all 0.5s ease-in-out',
+    display: 'flex',
+    alignItems: 'baseline' as const
+  },
+  finalLeftText: {
+    color: 'hsl(0 0% 96%)'
+  },
+  finalRightText: {
+    color: 'hsl(35, 85%, 58%)',
+    textAlign: 'left' as const
   },
   iconsContainer: {
     display: 'flex',
     alignItems: 'center' as const,
     gap: '4px'
   }
-});
+})
 
 interface HeaderIcon {
-  icon: React.ComponentType<{ className?: string; onClick?: () => void }> | string;
-  onClick: () => void;
+  icon: React.ComponentType<{ className?: string; onClick?: () => void }> | string
+  onClick: () => void
 }
 
 interface HeaderProps {
-  // Game-specific config
-  gameName?: string;
-  
-  // Icons for right side menu
-  icons?: HeaderIcon[];
+  // Language animation config
+  languages: string[] // e.g., ['Olelo Hawaii', 'Reo Maori', 'Parau Tahiti', 'Gagana Samoa']
+  languageDuration?: number // ms per language (default: 1000)
+
+  // Right-side text config
+  rightText: string // e.g., 'Tech Workshop'
+  gameName: string // e.g., 'Word Finder'
+
+  // Icons config (completely customizable per game)
+  icons: HeaderIcon[] // Array of icon components with their click handlers
+
+  // Optional styling
+  centerAxisOffset?: string // CSS value for center axis position (default: '50%')
 }
 
-const KimiKupuHeader: React.FC<HeaderProps> = ({
-  gameName = "Panga Kupu",
-  icons = []
-}) => {
-  const [animationState, setAnimationState] = useState<'initial' | 'fading' | 'showing' | 'complete'>('initial');
-  const [hasAnimated, setHasAnimated] = useState(false);
+const Header = ({
+  languages,
+  languageDuration = 700,
+  rightText,
+  gameName,
+  icons,
+  centerAxisOffset = '50%',
+}: HeaderProps) => {
+  // Calculate the axis position based on the longest language name
+  const longestLanguage = languages.reduce(
+    (longest, current) => (current.length > longest.length ? current : longest),
+    ''
+  )
 
-  // Calculate longest width for proper alignment
-  const longestWidth = Math.max('Reo Moana'.length, gameName.length) * 0.6;
+  // Approximate character width calculation (adjust multiplier as needed)
+  const charWidth = 0.65 // roughly 0.65em per character for bold font with letter spacing
+  const longestWidth = longestLanguage.length * charWidth
+  const gapWidth = 0.5 // 0.5em gap between blocks
+  const [animationState, setAnimationState] = useState<
+    'initial' | 'fading' | 'sliding' | 'complete'
+  >('initial')
+  const [currentLanguageIndex, setCurrentLanguageIndex] = useState(0)
+  const [hasAnimated, setHasAnimated] = useState(false)
+
+  // Create styles object (similar to StyleSheet.create in React Native)
+  const styles = createStyles(animationState, longestWidth)
 
   useEffect(() => {
-    // Check if animation has already been shown
-    const hasShownAnimation = sessionStorage.getItem('kimiKupuHeaderAnimationShown');
-    
-    if (hasShownAnimation) {
-      setAnimationState('complete');
-      setHasAnimated(true);
-      return;
+    // Check if animation has already played this session
+    const animationPlayed = sessionStorage.getItem('headerAnimationPlayed')
+    if (animationPlayed) {
+      setHasAnimated(true)
+      setAnimationState('complete')
+      return
     }
 
-    // Animation sequence
-    const timer1 = setTimeout(() => {
-      setAnimationState('fading');
-    }, 2000);
+    // Start the animation sequence
+    let timeoutId: NodeJS.Timeout
 
-    const timer2 = setTimeout(() => {
-      setAnimationState('showing');
-    }, 3000);
+    const runAnimation = () => {
+      // Start with "Reo Moana Code Works" for 2 seconds
+      setAnimationState('initial')
+      
+      setTimeout(() => {
+        // Fade out "Code Works"
+        setAnimationState('fading')
+        
+        setTimeout(() => {
+          // Fade in "[Game Name]"
+          setAnimationState('sliding')
+          
+          setTimeout(() => {
+            // Complete the animation and stay on final state
+            setAnimationState('complete')
+            setHasAnimated(true)
+            sessionStorage.setItem('headerAnimationPlayed', 'true')
+          }, 1000) // 1 second for fade in transition
+        }, 500) // 0.5 second fade out
+      }, 2000) // 2 seconds hold on "Code Works"
+    }
 
-    const timer3 = setTimeout(() => {
-      setAnimationState('complete');
-      setHasAnimated(true);
-      sessionStorage.setItem('kimiKupuHeaderAnimationShown', 'true');
-    }, 4000);
+    timeoutId = setTimeout(runAnimation, 100)
 
     return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-      clearTimeout(timer3);
-    };
-  }, []);
+      if (timeoutId) clearTimeout(timeoutId)
+    }
+  }, [languages, languageDuration])
 
-  const styles = createStyles(animationState, longestWidth);
-
-  // Show static version after animation completes
-  if (hasAnimated) {
+  // Static version for return visits
+  if (hasAnimated || sessionStorage.getItem('headerAnimationPlayed')) {
     return (
       <>
         <div style={styles.headerGradient} />
+
         <div style={styles.staticHeaderContainer}>
           <div style={styles.staticTextContainer}>
             <div style={styles.staticLeftTextBlock}>
@@ -190,25 +230,18 @@ const KimiKupuHeader: React.FC<HeaderProps> = ({
           </div>
           <div style={styles.staticIconsContainer}>
             {icons.map((iconConfig, index) => {
-              const IconComponent = iconConfig.icon;
+              const IconComponent = iconConfig.icon
               if (typeof IconComponent === 'string') {
                 return (
                   <span
                     key={index}
                     className="text-2xl cursor-pointer hover:opacity-75"
                     onClick={iconConfig.onClick}
-                    style={{ 
-                      lineHeight: '32px', 
-                      width: '32px', 
-                      height: '32px', 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'center' 
-                    }}
+                    style={{ lineHeight: '32px', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   >
                     {IconComponent}
                   </span>
-                );
+                )
               }
               return (
                 <IconComponent
@@ -216,13 +249,15 @@ const KimiKupuHeader: React.FC<HeaderProps> = ({
                   className="h-8 w-8 cursor-pointer text-blue-400 hover:text-blue-300"
                   onClick={iconConfig.onClick}
                 />
-              );
+              )
             })}
           </div>
         </div>
       </>
-    );
+    )
   }
+
+  const currentLanguage = languages[currentLanguageIndex]
 
   return (
     <>
@@ -244,25 +279,18 @@ const KimiKupuHeader: React.FC<HeaderProps> = ({
 
         <div style={styles.iconsContainer}>
           {icons.map((iconConfig, index) => {
-            const IconComponent = iconConfig.icon;
+            const IconComponent = iconConfig.icon
             if (typeof IconComponent === 'string') {
               return (
                 <span
                   key={index}
                   className="text-2xl cursor-pointer hover:opacity-75"
                   onClick={iconConfig.onClick}
-                  style={{ 
-                    lineHeight: '32px', 
-                    width: '32px', 
-                    height: '32px', 
-                    display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'center' 
-                  }}
+                  style={{ lineHeight: '32px', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
                   {IconComponent}
                 </span>
-              );
+              )
             }
             return (
               <IconComponent
@@ -270,12 +298,12 @@ const KimiKupuHeader: React.FC<HeaderProps> = ({
                 className="h-8 w-8 cursor-pointer text-blue-400 hover:text-blue-300"
                 onClick={iconConfig.onClick}
               />
-            );
+            )
           })}
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default KimiKupuHeader;
+export default Header

@@ -4,7 +4,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
-import KimiKupuHeader from "@/shared/components/KimiKupuHeader";
+import '@bcgov/bc-sans/css/BCSans.css';
+import './styles/scrollPrevention.css';
+import Header from './Header';
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
@@ -14,22 +16,19 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <LanguageProvider>
-        <div className="kimi-kupu-app">
-          {/* KimiKupu Background Gradient */}
-          <div className="kimi-kupu-background" />
+        <div style={{ minHeight: '100vh' }}>
+          <Header 
+            languages={['ʻŌlelo', 'Kupu', 'Parau']}
+            rightText="Code Works"
+            gameName="Panga Kupu"
+            icons={[
+              { icon: "ℹ️", onClick: () => console.log('Info modal') },
+              { icon: "🌐", onClick: () => console.log('Language selector') }
+            ]}
+          />
           
           <BrowserRouter basename={import.meta.env.PROD ? "/panga-kupu" : "/"}>
-            {/* KimiKupu Header */}
-            <KimiKupuHeader 
-              gameName="Panga Kupu"
-              icons={[
-                { icon: "ℹ️", onClick: () => console.log('Info modal') },
-                { icon: "🌐", onClick: () => console.log('Language selector') }
-              ]}
-            />
-            
-            {/* Game Content */}
-            <div className="kimi-kupu-game-container">
+            <div className="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8">
               <Toaster />
               <Sonner />
               <Routes>

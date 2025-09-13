@@ -2036,8 +2036,8 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
       )}
       
       <div className="max-w-6xl mx-auto">
-        {/* Header - HIDDEN (using KimiKupu header instead) */}
-        <div className="text-center" style={{ display: 'none', visibility: 'hidden', opacity: 0, height: 0, overflow: 'hidden' }}>
+        {/* Original Header Container - COMPLETELY REMOVED */}
+        {false && <div className="text-center" style={{ display: 'none', visibility: 'hidden', opacity: 0, height: 0, overflow: 'hidden' }}>
           <div className="flex justify-between items-center">
             <div className="flex gap-2 hidden">
               <Button
@@ -2179,10 +2179,10 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
               <span className="text-white/70 ml-2 text-sm">(Custom word list)</span>
             )}
           </div>
-        </div>
+        </div>}
 
         {/* Game Play Area - Compact mobile layout */}
-        <div className="flex flex-col items-center pt-4">
+        <div className="flex flex-col items-center">
           
           {/* Crossword Grid - positioned close to header */}
           <div className="flex justify-center flex-shrink-0" style={{ marginBottom: '10px' }}>
