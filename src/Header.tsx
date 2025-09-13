@@ -17,10 +17,10 @@ const createStyles = (animationState: string, longestWidth: number) => ({
     justifyContent: 'space-between' as const,
     alignItems: 'baseline' as const,
     width: '100%',
-    padding: '6px 20px 12px 4px',
+    padding: '8px 20px 16px 4px',
     fontFamily: 'BCSans, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif',
-    fontSize: 16,
-    fontWeight: '800',
+    fontSize: 14,
+    fontWeight: 800,
     letterSpacing: 0.3,
     lineHeight: 1,
     minHeight: '1.2em',
@@ -56,10 +56,10 @@ const createStyles = (animationState: string, longestWidth: number) => ({
     justifyContent: 'space-between' as const,
     alignItems: 'baseline' as const,
     width: '100%',
-    padding: '6px 20px 12px 4px',
+    padding: '8px 20px 16px 4px',
     fontFamily: 'BCSans, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif',
-    fontSize: 16,
-    fontWeight: '800',
+    fontSize: 14,
+    fontWeight: 800,
     letterSpacing: 0.3,
     lineHeight: 1,
     minHeight: '1.2em',
@@ -161,8 +161,8 @@ const Header = ({
     ''
   )
 
-  // More precise character width calculation to prevent text overlap
-  const charWidth = 0.85 // increased from 0.75 to ensure proper spacing
+  // Use KK's proven character width calculation that prevents overlap
+  const charWidth = 0.65 // KK's working value that maintains proper text spacing
   const longestWidth = longestLanguage.length * charWidth
   const gapWidth = 0.5 // 0.5em gap between blocks
   const [animationState, setAnimationState] = useState<
