@@ -1,0 +1,299 @@
+/* KimiKupu Visual Design System for PangaKupu */
+
+/* Scroll Prevention (from KimiKupu) */
+.scroll-prevention {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  touch-action: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* KimiKupu Background Gradient System */
+.kimi-kupu-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #061428 0%, #0b2a3c 5%, #6d949e 50%, #07253a 80%, #020a14 100%);
+  z-index: -10;
+}
+
+/* KimiKupu App Container */
+.kimi-kupu-app {
+  min-height: 100vh;
+  position: relative;
+  color: white;
+}
+
+/* Enhanced Game Container */
+.kimi-kupu-game-container {
+  padding: 2rem 1rem;
+  max-width: 7xl;
+  margin: 0 auto;
+  min-height: calc(100vh - 80px); /* Account for header */
+}
+
+/* KimiKupu Button Styling */
+.kimi-kupu-button {
+  background: rgba(99, 102, 241, 0.8);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.kimi-kupu-button:hover {
+  background: rgba(99, 102, 241, 0.9);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Modal styling to match KimiKupu */
+.kimi-kupu-modal {
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  color: white;
+}
+
+.kimi-kupu-modal-header {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.kimi-kupu-modal-content {
+  padding: 1.5rem;
+}
+
+/* Enhanced crossword grid styling */
+.kimi-kupu-crossword-grid {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+}
+
+.kimi-kupu-crossword-cell {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  color: #000000;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+}
+
+.kimi-kupu-crossword-cell.filled {
+  background: rgba(255, 255, 255, 1);
+  border-color: rgba(99, 102, 241, 0.8);
+  box-shadow: 0 0 8px rgba(99, 102, 241, 0.3);
+  color: #000000;
+}
+
+.kimi-kupu-crossword-cell.numbered::before {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  font-size: 0.6rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: normal;
+}
+
+/* Letter wheel styling */
+.kimi-kupu-letter-wheel {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.kimi-kupu-letter-button {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  font-weight: 700;
+  font-size: 1.5rem;
+  border-radius: 50%;
+  width: 3rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.kimi-kupu-letter-button:hover {
+  background: rgba(99, 102, 241, 0.4);
+  border-color: rgba(99, 102, 241, 0.6);
+  transform: scale(1.05);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+}
+
+.kimi-kupu-letter-button:active {
+  transform: scale(0.95);
+}
+
+.kimi-kupu-letter-button.selected {
+  background: rgba(99, 102, 241, 0.6);
+  border-color: rgba(99, 102, 241, 0.8);
+  box-shadow: 0 0 16px rgba(99, 102, 241, 0.5);
+}
+
+/* Found words list styling */
+.kimi-kupu-found-words {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.75rem;
+  padding: 1rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.kimi-kupu-found-word {
+  background: rgba(34, 197, 94, 0.2);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  margin: 0.25rem;
+  font-weight: 600;
+  display: inline-block;
+  animation: kimiKupuWordFound 0.5s ease-out;
+}
+
+@keyframes kimiKupuWordFound {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Current word display */
+.kimi-kupu-current-word {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  min-height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Game controls styling */
+.kimi-kupu-controls {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin: 1rem 0;
+}
+
+.kimi-kupu-control-button {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.kimi-kupu-control-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.kimi-kupu-control-button.danger {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.kimi-kupu-control-button.danger:hover {
+  background: rgba(239, 68, 68, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .kimi-kupu-game-container {
+    padding: 1rem 0.5rem;
+  }
+  
+  .kimi-kupu-letter-button {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.25rem;
+  }
+  
+  .kimi-kupu-current-word {
+    font-size: 1.25rem;
+    padding: 0.75rem;
+  }
+  
+  .kimi-kupu-controls {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+/* Typography enhancements */
+.kimi-kupu-text-primary {
+  color: hsl(0 0% 96%);
+}
+
+.kimi-kupu-text-secondary {
+  color: hsl(35, 85%, 58%);
+}
+
+.kimi-kupu-text-muted {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Focus states for accessibility */
+.kimi-kupu-letter-button:focus,
+.kimi-kupu-button:focus,
+.kimi-kupu-control-button:focus {
+  outline: 2px solid rgba(99, 102, 241, 0.6);
+  outline-offset: 2px;
+}
+
+/* Loading states */
+.kimi-kupu-loading {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: kimiKupuSpin 1s ease-in-out infinite;
+}
+
+@keyframes kimiKupuSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}

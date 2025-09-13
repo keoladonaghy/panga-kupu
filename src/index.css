@@ -1,3 +1,6 @@
+/* Import KimiKupu visual design system */
+@import './styles/kimiKupuStyles.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
