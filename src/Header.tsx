@@ -18,11 +18,11 @@ const createStyles = (animationState: string, longestWidth: number) => ({
     alignItems: 'baseline' as const,
     width: '100%',
     padding: '6px 20px 12px 4px',
-    fontFamily: 'BCSans, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
-    fontSize: '14pt',
-    fontWeight: 800,
-    letterSpacing: '0.3px',
-    lineHeight: '1em',
+    fontFamily: 'BCSans, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif',
+    fontSize: 16,
+    fontWeight: '800',
+    letterSpacing: 0.3,
+    lineHeight: 1,
     minHeight: '1.2em',
     position: 'relative' as const
   },
@@ -57,11 +57,11 @@ const createStyles = (animationState: string, longestWidth: number) => ({
     alignItems: 'baseline' as const,
     width: '100%',
     padding: '6px 20px 12px 4px',
-    fontFamily: 'BCSans, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
-    fontSize: '14pt',
-    fontWeight: 800,
-    letterSpacing: '0.3px',
-    lineHeight: '1em',
+    fontFamily: 'BCSans, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif',
+    fontSize: 16,
+    fontWeight: '800',
+    letterSpacing: 0.3,
+    lineHeight: 1,
     minHeight: '1.2em',
     position: 'relative' as const
   },
@@ -161,8 +161,8 @@ const Header = ({
     ''
   )
 
-  // Approximate character width calculation (adjust multiplier as needed)
-  const charWidth = 0.65 // roughly 0.65em per character for bold font with letter spacing
+  // More precise character width calculation to prevent text overlap
+  const charWidth = 0.85 // increased from 0.75 to ensure proper spacing
   const longestWidth = longestLanguage.length * charWidth
   const gapWidth = 0.5 // 0.5em gap between blocks
   const [animationState, setAnimationState] = useState<
@@ -235,20 +235,39 @@ const Header = ({
                 return (
                   <span
                     key={index}
-                    className="text-2xl cursor-pointer hover:opacity-75"
                     onClick={iconConfig.onClick}
-                    style={{ lineHeight: '30px', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    style={{ 
+                      fontSize: '24px',
+                      cursor: 'pointer', 
+                      opacity: 1,
+                      lineHeight: '30px', 
+                      width: '30px', 
+                      height: '30px', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'center'
+                    }}
                   >
                     {IconComponent}
                   </span>
                 )
               }
               return (
-                <IconComponent
+                <div
                   key={index}
-                  className="h-8 w-8 cursor-pointer text-blue-400 hover:text-blue-300"
                   onClick={iconConfig.onClick}
-                />
+                  style={{
+                    width: '30px',
+                    height: '30px',
+                    cursor: 'pointer',
+                    color: '#60A5FA',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
+                >
+                  <IconComponent />
+                </div>
               )
             })}
           </div>
@@ -284,20 +303,39 @@ const Header = ({
               return (
                 <span
                   key={index}
-                  className="text-2xl cursor-pointer hover:opacity-75"
                   onClick={iconConfig.onClick}
-                  style={{ lineHeight: '30px', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  style={{ 
+                    fontSize: '24px',
+                    cursor: 'pointer', 
+                    opacity: 1,
+                    lineHeight: '30px', 
+                    width: '30px', 
+                    height: '30px', 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center'
+                  }}
                 >
                   {IconComponent}
                 </span>
               )
             }
             return (
-              <IconComponent
+              <div
                 key={index}
-                className="h-8 w-8 cursor-pointer text-blue-400 hover:text-blue-300"
                 onClick={iconConfig.onClick}
-              />
+                style={{
+                  width: '30px',
+                  height: '30px',
+                  cursor: 'pointer',
+                  color: '#60A5FA',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}
+              >
+                <IconComponent />
+              </div>
             )
           })}
         </div>
