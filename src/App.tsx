@@ -28,7 +28,7 @@ const App = () => (
           />
           
           <BrowserRouter basename={import.meta.env.PROD ? "/panga-kupu" : "/"}>
-            <div className="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto sm:px-6 lg:px-8" style={{ paddingTop: '10px' }}>
               <Toaster />
               <Sonner />
               <Routes>
