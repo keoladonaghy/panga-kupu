@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx tsc:*)",
+      "Read(//Users/keola/Documents/GitHub/KimiKupu/src/**)",
+      "Read(//Users/keola/Documents/GitHub/KimiKupu/src/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

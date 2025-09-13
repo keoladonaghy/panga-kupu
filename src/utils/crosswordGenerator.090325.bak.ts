@@ -306,22 +306,20 @@ if (this.filteredWords.length < this.MAX_WORDS) {
     if (this.language === 'mao') {
       // Māori: Systematic approach based on word distribution
       
-      // Step 1: Determine if puzzle should contain digraphs 
-      // Updated statistics based on actual word list analysis: 
-      // ng words: 141/1186 = 11.9%, wh words: 127/1186 = 10.7%, total ~20.4%
-      const shouldHaveDigraphs = Math.random() < 0.204;
+      // Step 1: Determine if puzzle should contain digraphs (22% of words have them)
+      const shouldHaveDigraphs = Math.random() < 0.22;
       const digraphsToInclude: string[] = [];
       
       if (shouldHaveDigraphs) {
-        // Updated frequencies based on actual data
-        const ngChance = 0.119; // 11.9% actual ng frequency
-        const whChance = 0.107; // 10.7% actual wh frequency  
-        const bothChance = 0.015; // Estimated overlap ~1.5%
+        // ng: 12.41%, wh: 10.89%, both: 1.12%
+        const ngChance = 12.41 / 22; // ~56% of digraph puzzles should have ng
+        const whChance = 10.89 / 22; // ~49% of digraph puzzles should have wh
+        const bothChance = 1.12 / 22; // ~5% should have both
         
         const random = Math.random();
         if (random < bothChance) {
           digraphsToInclude.push('ng', 'wh');
-        } else if (random < (bothChance + ngChance)) {
+        } else if (random < ngChance) {
           digraphsToInclude.push('ng');
         } else {
           digraphsToInclude.push('wh');
@@ -607,63 +605,6 @@ if (this.filteredWords.length < this.MAX_WORDS) {
     return word.includes('wh') || word.includes('ng');
   }
 
-  /**
-   * Diversity filter to reduce repetitive simple words
-   * Returns false for overly simple or repetitive patterns
-   */
-  private isDiverseWord(word: string): boolean {
-    if (!this.USE_DIVERSITY_FILTER) return true; // Feature flag check
-    
-    // Allow most words, only filter obvious repetitive patterns
-    if (word.length <= 2) return true; // Keep very short words
-    
-    // Filter pure vowel words (like "auau", "aua") 
-    if (/^[aeiouāēīōū]+$/.test(word)) {
-      console.log(`📝 Diversity filter: Excluding pure vowel word "${word}"`);
-      return false;
-    }
-    
-    // Filter obvious repetitive syllables
-    if (word.includes('auau') || (word.length === 3 && word.includes('aua'))) {
-      console.log(`📝 Diversity filter: Excluding repetitive word "${word}"`);
-      return false;
-    }
-    
-    // Filter simple ABA patterns in 3-letter words (like "ana", "aha")  
-    if (word.length === 3 && word[0] === word[2] && /^[aeiouāēīōū]/.test(word[0])) {
-      console.log(`📝 Diversity filter: Excluding ABA pattern "${word}"`);
-      return false;
-    }
-    
-    return true;
-  }
-
-  /**
-   * Apply weighted selection to prioritize diverse words while maintaining fallbacks
-   */
-  private applyDiversitySelection(words: string[]): string[] {
-    if (!this.USE_DIVERSITY_FILTER) return words; // Feature flag check
-    
-    const diverseWords = words.filter(word => this.isDiverseWord(word));
-    const simpleWords = words.filter(word => !this.isDiverseWord(word));
-    
-    console.log(`📊 Diversity analysis: ${diverseWords.length} diverse + ${simpleWords.length} simple = ${words.length} total words`);
-    
-    // Only apply diversity preference if we have abundant diverse words
-    if (diverseWords.length >= this.MAX_WORDS * this.DIVERSITY_BUFFER_RATIO) {
-      console.log(`✅ Sufficient diverse words (${diverseWords.length} >= ${this.MAX_WORDS * this.DIVERSITY_BUFFER_RATIO}), prioritizing diversity`);
-      
-      // Shuffle diverse words for variety, add shuffled simple words as fallback
-      const shuffledDiverse = [...diverseWords].sort(() => Math.random() - 0.5);
-      const shuffledSimple = [...simpleWords].sort(() => Math.random() - 0.5);
-      
-      return [...shuffledDiverse, ...shuffledSimple];
-    } else {
-      console.log(`⚠️ Insufficient diverse words (${diverseWords.length} < ${this.MAX_WORDS * this.DIVERSITY_BUFFER_RATIO}), using all words`);
-      return words.sort(() => Math.random() - 0.5); // Just shuffle for variety
-    }
-  }
-
   private buildStructuredCrossword(): CrosswordGrid | null {
     const grid: string[][] = Array(11).fill(null).map(() => 
       Array(12).fill('')
@@ -685,8 +626,7 @@ if (this.filteredWords.length < this.MAX_WORDS) {
     let selectedFoundation: string[];
     
     if (this.wordLimits.maxWordLength >= 5) {
-      const fiveLetterWordsFiltered = this.filteredWords.filter(word => word.length === 5);
-      const fiveLetterWords = this.applyDiversitySelection(fiveLetterWordsFiltered);
+      const fiveLetterWords = this.filteredWords.filter(word => word.length === 5);
       if (fiveLetterWords.length < 2) {
         console.log(`Not enough five-letter words available: ${fiveLetterWords.length}`);
         return null;
@@ -705,9 +645,8 @@ if (this.filteredWords.length < this.MAX_WORDS) {
       }
       console.log('Foundation words selected (ensuring mix if possible):', selectedFoundation);
     } else {
-      // For shorter max lengths, use the longest available words with diversity
-      const longestWordsFiltered = this.filteredWords.filter(word => word.length === maxFoundationLength);
-      const longestWords = this.applyDiversitySelection(longestWordsFiltered);
+      // For shorter max lengths, use the longest available words
+      const longestWords = this.filteredWords.filter(word => word.length === maxFoundationLength);
       if (longestWords.length < 2) {
         console.log(`Not enough ${maxFoundationLength}-letter words available: ${longestWords.length}`);
         return null;
@@ -744,11 +683,10 @@ if (this.filteredWords.length < this.MAX_WORDS) {
       }
     }
 
-    // Step 2: Add medium words with diversity selection
-    const mediumWordsFiltered = this.filteredWords.filter(word => 
+    // Step 2: Add medium words
+    const mediumWords = this.filteredWords.filter(word => 
       word.length >= this.wordLimits.minWordLength && word.length <= this.wordLimits.maxWordLength && !usedWords.has(word)
     );
-    const mediumWords = this.applyDiversitySelection(mediumWordsFiltered);
     console.log('Available medium words:', mediumWords.length, mediumWords.slice(0, 10));
     
     let mediumWordsAdded = 0;
@@ -768,11 +706,10 @@ if (this.filteredWords.length < this.MAX_WORDS) {
       }
     }
 
-    // Step 3: Add short words with diversity selection
-    const shortWordsFiltered = this.filteredWords.filter(word => 
+    // Step 3: Add short words
+    const shortWords = this.filteredWords.filter(word => 
       word.length === 3 && !usedWords.has(word)
     );
-    const shortWords = this.applyDiversitySelection(shortWordsFiltered);
     console.log('Available short words:', shortWords.length, shortWords.slice(0, 10));
     
     let shortWordsAdded = 0;
@@ -820,25 +757,12 @@ if (this.filteredWords.length < this.MAX_WORDS) {
     console.log(`=== POST-PROCESSING COMPLETE - Final count: ${placedWords.length} words ===`);
 
     // Only return success if we have at least MAX_WORDS words
-    if (placedWords.length >= this.MAX_WORDS) {
-      // Enhanced logging for diversity monitoring
-      const diverseWordsPlaced = placedWords.filter(word => this.isDiverseWord(word.word)).length;
-      const simpleWordsPlaced = placedWords.length - diverseWordsPlaced;
-      
-      console.log(`📊 PUZZLE DIVERSITY REPORT:`);
-      console.log(`  • Total words placed: ${placedWords.length}`);
-      console.log(`  • Diverse words: ${diverseWordsPlaced} (${(diverseWordsPlaced/placedWords.length*100).toFixed(1)}%)`);
-      console.log(`  • Simple words: ${simpleWordsPlaced} (${(simpleWordsPlaced/placedWords.length*100).toFixed(1)}%)`);
-      console.log(`  • Words: ${placedWords.map(w => w.word).join(', ')}`);
-      
-      return {
-        words: placedWords,
-        grid,
-        gridSize: this.gridSize,
-        selectedLetters: this.selectedLetters
-      };
-    }
-    return null;
+    return placedWords.length >= this.MAX_WORDS ? {
+      words: placedWords,
+      grid,
+      gridSize: this.gridSize,
+      selectedLetters: this.selectedLetters
+    } : null;
   }
 
   private tryPlaceIntersectingWord(

@@ -23,9 +23,8 @@ const App = () => (
             <KimiKupuHeader 
               gameName="Panga Kupu"
               icons={[
-                { icon: "🌐", onClick: () => console.log('Language selector') },
-                { icon: "ℹ️", onClick: () => console.log('Info') },
-                { icon: "📊", onClick: () => console.log('Stats') }
+                { icon: "ℹ️", onClick: () => console.log('Info modal') },
+                { icon: "🌐", onClick: () => console.log('Language selector') }
               ]}
             />
             

@@ -113,7 +113,7 @@ const AnimatedTitle = () => {
 
           .animated-title-left {
             display: inline-block;
-            color: hsl(14 85% 50%);
+            color: hsl(0 0% 96%);
             position: absolute;
             right: 0;
             bottom: 0;
@@ -127,7 +127,7 @@ const AnimatedTitle = () => {
 
           .animated-title-moana {
             display: inline-block;
-            color: hsl(220 85% 25%);
+            color: hsl(0 0% 96%);
             position: absolute;
             left: calc(var(--left-box-width) + 0.5em);
             bottom: 0;
@@ -141,7 +141,7 @@ const AnimatedTitle = () => {
 
           .animated-title-words {
             display: inline-block;
-            color: hsl(14 85% 50%);
+            color: hsl(35, 85%, 58%);
             position: absolute;
             left: 95px;
             bottom: -1px;

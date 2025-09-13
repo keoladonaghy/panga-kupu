@@ -16,7 +16,7 @@ import { hawaiianWords } from '@/data/hawaiianWords';
 import { maoriWords } from '@/data/maoriWords';
 import WordListUploader from './WordListUploader';
 import LanguageDropdown from './LanguageDropdown';
-// import AnimatedTitle from './AnimatedTitle'; // REMOVED - using KimiKupu header instead
+import AnimatedTitle from './AnimatedTitle';
 
 // Updated language dropdown implementation
 import { getWordLimitsForLanguage } from '@/config/languageWordLimits';
@@ -2003,14 +2003,14 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
 
   if (loading) {
     return (
-      <div className="min-h-screen kimi-kupu-game-container flex items-center justify-center">
-        <div className="kimi-kupu-text-primary text-2xl text-center whitespace-pre-line max-w-[75%]">{t('loading')}</div>
+      <div className="min-h-screen bg-gradient-hawaiian flex items-center justify-center">
+        <div className="text-white text-2xl text-center whitespace-pre-line max-w-[75%]">{t('loading')}</div>
       </div>
     );
   }
 
   return (
-    <div className="kimi-kupu-game-container relative">
+    <div className="min-h-screen bg-gradient-hawaiian relative">
       {/* Celebration Animation Overlay */}
       {gameState.showCelebration && (
         <div className="fixed inset-0 z-50 pointer-events-none">
@@ -2035,9 +2035,9 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
         </div>
       )}
       
-      <div className="max-w-6xl mx-auto">
-        {/* Header - HIDDEN (using KimiKupu header instead) */}
-        <div className="text-center" style={{ display: 'none', visibility: 'hidden', opacity: 0, height: 0, overflow: 'hidden' }}>
+      <div className="max-w-6xl mx-auto px-4">
+        {/* Header */}
+        <div className="text-center">
           <div className="flex justify-between items-center">
             <div className="flex gap-2 hidden">
               <Button
@@ -2114,7 +2114,7 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
               )}
             </div>
             <div className="flex items-baseline">
-              {/* <AnimatedTitle /> - REMOVED: Using KimiKupu header instead */}
+              <AnimatedTitle />
             </div>
             <div className="flex items-center">
               <Button
@@ -2187,7 +2187,7 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
           {/* Crossword Grid - positioned close to header */}
           <div className="flex justify-center flex-shrink-0" style={{ marginBottom: '10px' }}>
             {/* Mobile-safe container with simplified responsive dimensions */}
-            <div className="crossword-container kimi-kupu-crossword-grid w-full max-w-[min(95vw,500px)] flex justify-center items-center mx-auto relative" style={{ height: 'clamp(350px, 87vw, 458px)' }}>
+            <div className="crossword-container w-full max-w-[min(95vw,500px)] flex justify-center items-center mx-auto relative" style={{ height: 'clamp(350px, 87vw, 458px)' }}>
               <div className="crossword-grid w-full h-full grid grid-cols-12 gap-0" style={{ gridTemplateRows: 'repeat(11, 1fr)' }}>
                 {(() => {
                   const cells = [];
@@ -2205,14 +2205,14 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
                          <div
                            key={`${rowIndex}-${colIndex}`}
                             className={`
-                              crossword-cell kimi-kupu-crossword-cell aspect-square flex items-center justify-center font-bold transition-all duration-300
+                              crossword-cell aspect-square flex items-center justify-center font-bold transition-all duration-300
                               ${hasLetter 
                                 ? isFound 
-                                  ? 'filled animate-fade-in' 
+                                  ? 'bg-white text-black border border-gray-400 animate-fade-in' 
                                   : revealMode
-                                    ? 'filled'  // Show letters during reveal mode
-                                    : ''  // Hide letters until found but keep cell visible
-                                : 'bg-transparent border-transparent'  // No border for empty cells
+                                    ? 'bg-white text-red-500 border border-gray-400'  // Show letters in red during reveal mode
+                                    : 'bg-white text-transparent border border-gray-400'  // Hide letters until found
+                                : 'bg-transparent'  // No border for empty cells
                               }
                             `}
                             style={{
@@ -2233,7 +2233,7 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
           {/* Typed word display above letter wheel */}
           <div className="flex justify-center relative" style={{ marginBottom: '18px' }}>
             <div className="text-center">
-              <div className="kimi-kupu-current-word" style={{ height: '40px', width: '160px' }}>
+              <div className="font-bold text-black backdrop-fallback-dark rounded-lg px-6 py-2 text-lg flex items-center justify-center" style={{ height: '40px', width: '160px' }}>
                 {gameState.currentWord.toUpperCase() || "\u00A0"}
               </div>
             </div>
@@ -2253,10 +2253,10 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
             </button>
           </div>
 
-          {/* Circular Letter Selection with Hint Button */}
+          {/* Circular Letter Selection with Hint Button - fixed at bottom */}
           <div className="relative flex justify-center" style={{ marginBottom: 'calc(1rem - 35px)' }}>
-          <div className="relative w-64 h-64 mx-auto letter-wheel kimi-kupu-letter-wheel">
-            <div className="absolute inset-0 rounded-full border-4 border-white/60 shadow-lg"></div>
+          <div className="relative w-64 h-64 mx-auto letter-wheel">
+            <div className="absolute inset-0 rounded-full backdrop-fallback-dark border-4 border-white/60 shadow-lg"></div>
             
             {/* Left side buttons group - positioned 15px from circle edge */}
             <div className="absolute left-0 top-1/2 transform -translate-y-1/2" 
@@ -2501,8 +2501,10 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
                     }
                   }}
                   disabled={buttonsDisabled || gameState.showCircleError || gameState.showError || gameState.typedWord === 'HOKA!' || gameState.typedWord === 'UA LOA\'A MUA!'}
-                  className="absolute kimi-kupu-letter-button w-12 h-12 uppercase transform -translate-x-1/2 -translate-y-1/2
-                           disabled:opacity-50 disabled:cursor-not-allowed select-none touch-none"
+                  className="absolute w-12 h-12 bg-gray-300 hover:bg-gray-200 disabled:bg-gray-400 rounded-lg border-2 border-white/40 
+                           text-black font-bold text-lg uppercase transition-all duration-200 hover:scale-110 disabled:scale-100 disabled:cursor-not-allowed
+                           flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2
+                           select-none touch-none"
                   style={{
                     left: `calc(50% + ${x}px)`,
                     top: `calc(50% + ${y}px)`,
