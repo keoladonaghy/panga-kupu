@@ -17,7 +17,7 @@ const createStyles = (animationState: string, longestWidth: number) => ({
     justifyContent: 'space-between' as const,
     alignItems: 'baseline' as const,
     width: '100%',
-    padding: '8px 20px 16px 4px',
+    padding: '6px 20px 12px 4px',
     fontFamily: 'BCSans, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
     fontSize: '14pt',
     fontWeight: 800,
@@ -56,7 +56,7 @@ const createStyles = (animationState: string, longestWidth: number) => ({
     justifyContent: 'space-between' as const,
     alignItems: 'baseline' as const,
     width: '100%',
-    padding: '8px 20px 16px 4px',
+    padding: '6px 20px 12px 4px',
     fontFamily: 'BCSans, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial',
     fontSize: '14pt',
     fontWeight: 800,
@@ -237,7 +237,7 @@ const Header = ({
                     key={index}
                     className="text-2xl cursor-pointer hover:opacity-75"
                     onClick={iconConfig.onClick}
-                    style={{ lineHeight: '32px', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    style={{ lineHeight: '30px', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   >
                     {IconComponent}
                   </span>
@@ -286,7 +286,7 @@ const Header = ({
                   key={index}
                   className="text-2xl cursor-pointer hover:opacity-75"
                   onClick={iconConfig.onClick}
-                  style={{ lineHeight: '32px', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  style={{ lineHeight: '30px', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
                   {IconComponent}
                 </span>

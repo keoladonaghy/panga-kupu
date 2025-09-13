@@ -2185,7 +2185,7 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
         <div className="flex flex-col items-center">
           
           {/* Crossword Grid - positioned close to header */}
-          <div className="flex justify-center flex-shrink-0" style={{ marginBottom: '10px' }}>
+          <div className="flex justify-center flex-shrink-0" style={{ marginBottom: '6px' }}>
             {/* Mobile-safe container with simplified responsive dimensions */}
             <div className="crossword-container kimi-kupu-crossword-grid w-full max-w-[min(95vw,500px)] flex justify-center items-center mx-auto relative" style={{ height: 'clamp(350px, 87vw, 458px)' }}>
               <div className="crossword-grid w-full h-full grid grid-cols-12 gap-0" style={{ gridTemplateRows: 'repeat(10, 1fr)' }}>
@@ -2231,9 +2231,9 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
           </div>
 
           {/* Typed word display above letter wheel */}
-          <div className="flex justify-center relative" style={{ marginBottom: '18px' }}>
+          <div className="flex justify-center relative" style={{ marginBottom: '12px' }}>
             <div className="text-center">
-              <div className="kimi-kupu-current-word" style={{ height: '40px', width: '160px' }}>
+              <div className="kimi-kupu-current-word" style={{ height: '32px', width: '160px' }}>
                 {gameState.currentWord.toUpperCase() || "\u00A0"}
               </div>
             </div>
