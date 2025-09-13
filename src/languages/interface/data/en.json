@@ -1,0 +1,34 @@
+{
+  "loading": "Loading...",
+  "game": {
+    "title": "Panga Kupu",
+    "subtitle": "Pacific Language Crossword",
+    "messages": {
+      "notEnoughLetters": "Not enough letters",
+      "wordNotFound": "Word not found",
+      "gameLost": "Game over! The solution was:",
+      "gameWon": "Congratulations! You found all the words!"
+    }
+  },
+  "instructions": {
+    "title": "How to Play",
+    "howToPlay": "Find words in the crossword by tapping letters. Long-press vowels for macrons.",
+    "examples": "Examples",
+    "close": "Close"
+  },
+  "languageDropdown": {
+    "interfaceLanguage": "Interface Language",
+    "gameLanguage": "Word List Language",
+    "ok": "OK",
+    "cancel": "Cancel"
+  },
+  "stats": {
+    "title": "Statistics",
+    "totalGames": "Total Games",
+    "successRate": "Success Rate",
+    "currentStreak": "Current Streak",
+    "bestStreak": "Best Streak",
+    "distribution": "Guess Distribution",
+    "share": "Share"
+  }
+}
