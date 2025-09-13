@@ -132,17 +132,21 @@
   justify-content: center;
   transition: all 0.2s ease-in-out;
   cursor: pointer;
+  transform: translate(-50%, -50%);
 }
 
-.kimi-kupu-letter-button:hover {
-  background: rgba(99, 102, 241, 0.4);
-  border-color: rgba(99, 102, 241, 0.6);
-  transform: scale(1.05);
-  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+/* Only apply hover effects on non-touch devices to prevent mobile positioning issues */
+@media (hover: hover) and (pointer: fine) {
+  .kimi-kupu-letter-button:hover {
+    background: rgba(99, 102, 241, 0.4);
+    border-color: rgba(99, 102, 241, 0.6);
+    transform: translate(-50%, -50%) scale(1.05);
+    box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+  }
 }
 
 .kimi-kupu-letter-button:active {
-  transform: scale(0.95);
+  transform: translate(-50%, -50%) scale(0.95);
 }
 
 .kimi-kupu-letter-button.selected {

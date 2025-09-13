@@ -2501,7 +2501,7 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
                     }
                   }}
                   disabled={buttonsDisabled || gameState.showCircleError || gameState.showError || gameState.typedWord === 'HOKA!' || gameState.typedWord === 'UA LOA\'A MUA!'}
-                  className="absolute kimi-kupu-letter-button w-12 h-12 uppercase transform -translate-x-1/2 -translate-y-1/2
+                  className="absolute kimi-kupu-letter-button w-12 h-12 uppercase
                            disabled:opacity-50 disabled:cursor-not-allowed select-none touch-none"
                   style={{
                     left: `calc(50% + ${x}px)`,
