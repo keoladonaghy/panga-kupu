@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 
 // StyleSheet-like approach for easier React Native conversion
-const createStyles = (animationState: string, longestWidth: number) => ({
+const createStyles = (animationState: string) => ({
   headerGradient: {
     position: 'fixed' as const,
     top: 0,
@@ -29,22 +29,7 @@ const createStyles = (animationState: string, longestWidth: number) => ({
   staticTextContainer: {
     display: 'flex',
     alignItems: 'baseline' as const,
-    position: 'relative' as const
-  },
-  staticLeftTextBlock: {
-    width: `${longestWidth}em`,
-    textAlign: 'right' as const,
-    marginRight: '0.5em',
-    display: 'inline-block',
-    whiteSpace: 'nowrap' as const,
-    overflow: 'visible' as const
-  },
-  staticLeftText: {
-    color: 'hsl(0 0% 96%)'
-  },
-  staticRightText: {
-    color: 'hsl(35, 85%, 58%)',
-    textAlign: 'left' as const
+    whiteSpace: 'nowrap' as const
   },
   staticIconsContainer: {
     display: 'flex',
@@ -68,40 +53,28 @@ const createStyles = (animationState: string, longestWidth: number) => ({
   animatedTextContainer: {
     display: 'flex',
     alignItems: 'baseline' as const,
-    position: 'relative' as const
+    whiteSpace: 'nowrap' as const
   },
-  leftTextBlock: {
-    width: `${longestWidth}em`,
-    textAlign: 'right' as const,
-    marginRight: '0.5em',
-    display: 'inline-block',
-    whiteSpace: 'nowrap' as const,
-    overflow: 'visible' as const
-  },
-  persistentLeftText: {
+  staticReoMoana: {
     color: 'hsl(0 0% 96%)'
   },
-  rightTextContainer: {
-    position: 'relative' as const,
-    textAlign: 'left' as const
+  staticGameName: {
+    color: 'hsl(35, 85%, 58%)'
+  },
+  reoMoanaText: {
+    color: 'hsl(0 0% 96%)'
   },
   codeWorksText: {
-    position: 'absolute' as const,
-    left: 0,
-    top: 0,
-    transition: 'opacity 1s ease-in-out',
-    opacity: animationState === 'initial' || animationState === 'fading' 
-      ? (animationState === 'fading' ? 0 : 1)
-      : 0,
-    color: 'hsl(0 0% 96%)'
+    color: animationState === 'initial' || animationState === 'fading' 
+      ? (animationState === 'fading' ? 'transparent' : 'hsl(0 0% 96%)')
+      : 'transparent',
+    transition: 'color 1s ease-in-out'
   },
   gameNameText: {
-    position: 'relative' as const,
-    transition: 'opacity 1s ease-in-out',
-    opacity: animationState === 'sliding' || animationState === 'complete'
-      ? 1
-      : 0,
-    color: 'hsl(35, 85%, 58%)'
+    color: animationState === 'sliding' || animationState === 'complete'
+      ? 'hsl(35, 85%, 58%)'
+      : 'transparent',
+    transition: 'color 1s ease-in-out'
   },
   finalText: {
     transform: animationState === 'sliding' || animationState === 'complete'
@@ -155,16 +128,7 @@ const Header = ({
   icons,
   centerAxisOffset = '50%',
 }: HeaderProps) => {
-  // Calculate the axis position based on the longest language name
-  const longestLanguage = languages.reduce(
-    (longest, current) => (current.length > longest.length ? current : longest),
-    ''
-  )
-
-  // Use KK's proven character width calculation that prevents overlap
-  const charWidth = 0.65 // KK's working value that maintains proper text spacing
-  const longestWidth = longestLanguage.length * charWidth
-  const gapWidth = 0.5 // 0.5em gap between blocks
+  // No longer need complex width calculations with single container approach
   const [animationState, setAnimationState] = useState<
     'initial' | 'fading' | 'sliding' | 'complete'
   >('initial')
@@ -172,7 +136,7 @@ const Header = ({
   const [hasAnimated, setHasAnimated] = useState(false)
 
   // Create styles object (similar to StyleSheet.create in React Native)
-  const styles = createStyles(animationState, longestWidth)
+  const styles = createStyles(animationState)
 
   useEffect(() => {
     // Check if animation has already played this session
@@ -223,10 +187,8 @@ const Header = ({
 
         <div style={styles.staticHeaderContainer}>
           <div style={styles.staticTextContainer}>
-            <div style={styles.staticLeftTextBlock}>
-              <span style={styles.staticLeftText}>Reo Moana</span>
-            </div>
-            <span style={styles.staticRightText}>{gameName}</span>
+            <span style={styles.staticReoMoana}>Reo Moana </span>
+            <span style={styles.staticGameName}>{gameName}</span>
           </div>
           <div style={styles.staticIconsContainer}>
             {icons.map((iconConfig, index) => {
@@ -284,16 +246,9 @@ const Header = ({
 
       <div style={styles.animatedHeaderContainer}>
         <div style={styles.animatedTextContainer}>
-          {/* Always show Reo Moana */}
-          <div style={styles.leftTextBlock}>
-            <span style={styles.persistentLeftText}>Reo Moana</span>
-          </div>
-          
-          {/* Overlapping right text for smooth transitions */}
-          <div style={styles.rightTextContainer}>
-            <span style={styles.codeWorksText}>Code Works</span>
-            <span style={styles.gameNameText}>{gameName}</span>
-          </div>
+          <span style={styles.reoMoanaText}>Reo Moana </span>
+          <span style={styles.codeWorksText}>Code Works</span>
+          <span style={styles.gameNameText}>{gameName}</span>
         </div>
 
         <div style={styles.iconsContainer}>
