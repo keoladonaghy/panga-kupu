@@ -2267,10 +2267,13 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
               {/* Refresh Button */}
               <button
                 onClick={handleReloadWords}
-                className="w-12 h-12 bg-green-500 hover:bg-green-400 
-                         rounded-lg border-2 border-white/40 text-white font-bold text-sm 
+                className="w-12 h-12 rounded-lg border border-white/60 font-bold text-sm 
                          transition-all duration-200 hover:scale-110
                          flex items-center justify-center mb-2"
+                style={{
+                  backgroundColor: 'hsl(210, 30%, 75%)',
+                  color: 'hsl(210, 30%, 20%)'
+                }}
                 title="Refresh Game"
               >
                 <RefreshCcw className="w-8 h-8" />
@@ -2324,10 +2327,13 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
                   }));
                 }}
                 disabled={!gameState.currentWord || buttonsDisabled}
-                className="w-12 h-12 bg-hawaiian-purple hover:bg-hawaiian-purple-hover disabled:bg-gray-400 
-                         rounded-lg border-2 border-white/40 text-white font-bold text-sm 
+                className="w-12 h-12 rounded-lg border border-white/60 font-bold text-sm 
                          transition-all duration-200 hover:scale-110 disabled:scale-100 disabled:cursor-not-allowed
                          flex items-center justify-center"
+                style={{
+                  backgroundColor: (!gameState.currentWord || buttonsDisabled) ? 'hsl(210, 15%, 50%)' : 'hsl(210, 30%, 75%)',
+                  color: (!gameState.currentWord || buttonsDisabled) ? 'hsl(0, 0%, 70%)' : 'hsl(210, 30%, 20%)'
+                }}
                 title="Clear current word"
               >
                 <Trash2 className="w-8 h-8" />
@@ -2345,10 +2351,13 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
                 <button
                   onClick={handleHint}
                   disabled={gameState.hintAttemptsLeft <= 0 || buttonsDisabled}
-                  className="w-12 h-12 bg-yellow-400 hover:bg-yellow-300 disabled:bg-gray-400 
-                           rounded-lg border-2 border-white/40 text-black font-bold text-sm 
+                  className="w-12 h-12 rounded-lg border border-white/60 font-bold text-sm 
                            transition-all duration-200 hover:scale-110 disabled:scale-100 disabled:cursor-not-allowed
                            flex items-center justify-center mb-2"
+                  style={{
+                    backgroundColor: (gameState.hintAttemptsLeft <= 0 || buttonsDisabled) ? 'hsl(210, 15%, 50%)' : 'hsl(210, 30%, 75%)',
+                    color: (gameState.hintAttemptsLeft <= 0 || buttonsDisabled) ? 'hsl(0, 0%, 70%)' : 'hsl(210, 30%, 20%)'
+                  }}
                   title={gameState.hintAttemptsLeft > 0 ? `Hint (${gameState.hintAttemptsLeft} left)` : 'No hints left'}
                 >
                   <Lightbulb className="w-8 h-8" />
@@ -2382,10 +2391,13 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
                 <button
                   onClick={handleRevealWords}
                   disabled={buttonsDisabled}
-                  className="w-12 h-12 bg-blue-500 hover:bg-blue-400 disabled:bg-gray-400 
-                           rounded-lg border-2 border-white/40 text-white font-bold text-sm 
+                  className="w-12 h-12 rounded-lg border border-white/60 font-bold text-sm 
                            transition-all duration-200 hover:scale-110 disabled:scale-100 disabled:cursor-not-allowed
                            flex items-center justify-center mb-2"
+                  style={{
+                    backgroundColor: buttonsDisabled ? 'hsl(210, 15%, 50%)' : 'hsl(210, 30%, 75%)',
+                    color: buttonsDisabled ? 'hsl(0, 0%, 70%)' : 'hsl(210, 30%, 20%)'
+                  }}
                   title="Reveal all words"
                 >
                   <Eye className="w-8 h-8" />
@@ -2435,13 +2447,14 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
             <button
               onClick={handleBackspaceClick}
               disabled={!gameState.currentWord || buttonsDisabled}
-              className="absolute w-16 h-16 bg-red-600 hover:bg-red-700 disabled:bg-red-400 
-                       rounded-lg border-2 border-white/40 text-white font-bold text-sm 
+              className="absolute w-16 h-16 rounded-lg border border-white/60 font-bold text-sm 
                        transition-all duration-200 hover:scale-110 disabled:scale-100 disabled:cursor-not-allowed
                        flex items-center justify-center transform -translate-x-1/2 -translate-y-1/2"
               style={{
                 left: '50%',
-                top: '50%'
+                top: '50%',
+                backgroundColor: (!gameState.currentWord || buttonsDisabled) ? 'hsl(210, 15%, 50%)' : 'hsl(210, 30%, 75%)',
+                color: (!gameState.currentWord || buttonsDisabled) ? 'hsl(0, 0%, 70%)' : 'hsl(210, 30%, 20%)'
               }}
               title="Backspace (Delete key)"
             >
