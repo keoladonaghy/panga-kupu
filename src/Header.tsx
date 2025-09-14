@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
-// StyleSheet-like approach for easier React Native conversion
-const createStyles = (animationState: string) => ({
+// Simple header with just background and icons
+const createStyles = () => ({
   headerGradient: {
     position: 'fixed' as const,
     top: 0,
@@ -12,89 +12,46 @@ const createStyles = (animationState: string) => ({
     pointerEvents: 'none' as const,
     background: 'linear-gradient(135deg, #061428 0%, #0b2a3c 5%, #6d949e 50%, #07253a 80%, #020a14 100%)'
   },
-  staticHeaderContainer: {
+  headerContainer: {
     display: 'flex',
     justifyContent: 'space-between' as const,
     alignItems: 'baseline' as const,
     width: '100%',
-    padding: '8px 20px 16px 4px',
-    fontFamily: 'BCSans, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif',
-    fontSize: 14,
-    fontWeight: 800,
-    letterSpacing: 0.3,
-    lineHeight: 1,
-    minHeight: '1.2em',
-    position: 'relative' as const
-  },
-  staticTextContainer: {
-    display: 'flex',
-    alignItems: 'baseline' as const,
-    whiteSpace: 'nowrap' as const
-  },
-  staticIconsContainer: {
-    display: 'flex',
-    alignItems: 'center' as const,
-    gap: '4px'
-  },
-  animatedHeaderContainer: {
-    display: 'flex',
-    justifyContent: 'space-between' as const,
-    alignItems: 'baseline' as const,
-    width: '100%',
-    padding: '8px 20px 16px 4px',
-    fontFamily: 'BCSans, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif',
-    fontSize: 14,
-    fontWeight: 800,
-    letterSpacing: 0.3,
-    lineHeight: 1,
-    minHeight: '1.2em',
-    position: 'relative' as const
-  },
-  animatedTextContainer: {
-    display: 'flex',
-    alignItems: 'baseline' as const,
-    whiteSpace: 'nowrap' as const
-  },
-  staticReoMoana: {
-    color: 'hsl(0 0% 96%)'
-  },
-  staticGameName: {
-    color: 'hsl(35, 85%, 58%)'
+    paddingTop: '2px',
+    paddingBottom: '16px',
+    paddingLeft: '8px',
+    paddingRight: '20px',
+    minHeight: '1.2em'
   },
   reoMoanaText: {
-    color: 'hsl(0 0% 96%)'
+    color: 'hsl(0 0% 96%)',
+    fontFamily: 'BCSans, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif',
+    fontSize: 14,
+    fontWeight: 800,
+    letterSpacing: 0.3,
+    lineHeight: 1
   },
   codeWorksText: {
-    color: animationState === 'initial' || animationState === 'fading' 
-      ? (animationState === 'fading' ? 'transparent' : 'hsl(0 0% 96%)')
-      : 'transparent',
-    transition: 'color 1s ease-in-out'
+    color: 'hsl(0 0% 96%)',
+    fontFamily: 'BCSans, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif',
+    fontSize: 14,
+    fontWeight: 800,
+    letterSpacing: 0.3,
+    lineHeight: 1,
+    transition: 'opacity 1s ease-in-out'
   },
-  gameNameText: {
-    color: animationState === 'sliding' || animationState === 'complete'
-      ? 'hsl(35, 85%, 58%)'
-      : 'transparent',
-    transition: 'color 1s ease-in-out'
-  },
-  finalText: {
-    transform: animationState === 'sliding' || animationState === 'complete'
-      ? 'translateX(0)'
-      : 'translateX(20px)',
-    opacity: animationState === 'complete' ? 1 : 0,
-    transition: 'all 0.5s ease-in-out',
-    display: 'flex',
-    alignItems: 'baseline' as const
-  },
-  finalLeftText: {
-    color: 'hsl(0 0% 96%)'
-  },
-  finalRightText: {
+  gameTitleText: {
     color: 'hsl(35, 85%, 58%)',
-    textAlign: 'left' as const
+    fontFamily: 'BCSans, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif',
+    fontSize: 14,
+    fontWeight: 800,
+    letterSpacing: 0.3,
+    lineHeight: 1,
+    transition: 'opacity 1s ease-in-out'
   },
   iconsContainer: {
     display: 'flex',
-    alignItems: 'center' as const,
+    alignItems: 'baseline' as const,
     gap: '4px'
   }
 })
@@ -105,38 +62,18 @@ interface HeaderIcon {
 }
 
 interface HeaderProps {
-  // Language animation config
-  languages: string[] // e.g., ['Olelo Hawaii', 'Reo Maori', 'Parau Tahiti', 'Gagana Samoa']
-  languageDuration?: number // ms per language (default: 1000)
-
-  // Right-side text config
-  rightText: string // e.g., 'Tech Workshop'
-  gameName: string // e.g., 'Word Finder'
-
   // Icons config (completely customizable per game)
   icons: HeaderIcon[] // Array of icon components with their click handlers
-
-  // Optional styling
-  centerAxisOffset?: string // CSS value for center axis position (default: '50%')
+  // Game title for animation
+  gameTitle: string // e.g., 'Panga Kupu'
 }
 
-const Header = ({
-  languages,
-  languageDuration = 700,
-  rightText,
-  gameName,
-  icons,
-  centerAxisOffset = '50%',
-}: HeaderProps) => {
-  // No longer need complex width calculations with single container approach
-  const [animationState, setAnimationState] = useState<
-    'initial' | 'fading' | 'sliding' | 'complete'
-  >('initial')
-  const [currentLanguageIndex, setCurrentLanguageIndex] = useState(0)
+const Header = ({ icons, gameTitle }: HeaderProps) => {
+  const [animationState, setAnimationState] = useState<'initial' | 'fading' | 'complete'>('initial')
   const [hasAnimated, setHasAnimated] = useState(false)
 
   // Create styles object (similar to StyleSheet.create in React Native)
-  const styles = createStyles(animationState)
+  const styles = createStyles()
 
   useEffect(() => {
     // Check if animation has already played this session
@@ -155,20 +92,15 @@ const Header = ({
       setAnimationState('initial')
       
       setTimeout(() => {
-        // Fade out "Code Works"
+        // Fade out "Code Works" over 1 second
         setAnimationState('fading')
         
         setTimeout(() => {
-          // Fade in "[Game Name]"
-          setAnimationState('sliding')
-          
-          setTimeout(() => {
-            // Complete the animation and stay on final state
-            setAnimationState('complete')
-            setHasAnimated(true)
-            sessionStorage.setItem('headerAnimationPlayed', 'true')
-          }, 1000) // 1 second for fade in transition
-        }, 500) // 0.5 second fade out
+          // Complete animation and fade in game title
+          setAnimationState('complete')
+          setHasAnimated(true)
+          sessionStorage.setItem('headerAnimationPlayed', 'true')
+        }, 1000) // 1 second fade out
       }, 2000) // 2 seconds hold on "Code Works"
     }
 
@@ -177,7 +109,7 @@ const Header = ({
     return () => {
       if (timeoutId) clearTimeout(timeoutId)
     }
-  }, [languages, languageDuration])
+  }, [])
 
   // Static version for return visits
   if (hasAnimated || sessionStorage.getItem('headerAnimationPlayed')) {
@@ -185,12 +117,12 @@ const Header = ({
       <>
         <div style={styles.headerGradient} />
 
-        <div style={styles.staticHeaderContainer}>
-          <div style={styles.staticTextContainer}>
-            <span style={styles.staticReoMoana}>Reo Moana </span>
-            <span style={styles.staticGameName}>{gameName}</span>
+        <div style={styles.headerContainer}>
+          <div>
+            <span style={styles.reoMoanaText}>Reo Moana </span>
+            <span style={styles.gameTitleText}>{gameTitle}</span>
           </div>
-          <div style={styles.staticIconsContainer}>
+          <div style={styles.iconsContainer}>
             {icons.map((iconConfig, index) => {
               const IconComponent = iconConfig.icon
               if (typeof IconComponent === 'string') {
@@ -199,12 +131,12 @@ const Header = ({
                     key={index}
                     onClick={iconConfig.onClick}
                     style={{ 
-                      fontSize: '24px',
+                      fontSize: 18,
                       cursor: 'pointer', 
                       opacity: 1,
-                      lineHeight: '30px', 
-                      width: '30px', 
-                      height: '30px', 
+                      lineHeight: '32px', 
+                      width: '32px', 
+                      height: '32px', 
                       display: 'flex', 
                       alignItems: 'center', 
                       justifyContent: 'center'
@@ -219,8 +151,8 @@ const Header = ({
                   key={index}
                   onClick={iconConfig.onClick}
                   style={{
-                    width: '30px',
-                    height: '30px',
+                    width: '32px',
+                    height: '32px',
                     cursor: 'pointer',
                     color: '#60A5FA',
                     display: 'flex',
@@ -238,19 +170,22 @@ const Header = ({
     )
   }
 
-  const currentLanguage = languages[currentLanguageIndex]
-
   return (
     <>
       <div style={styles.headerGradient} />
 
-      <div style={styles.animatedHeaderContainer}>
-        <div style={styles.animatedTextContainer}>
+      <div style={styles.headerContainer}>
+        <div>
           <span style={styles.reoMoanaText}>Reo Moana </span>
-          <span style={styles.codeWorksText}>Code Works</span>
-          <span style={styles.gameNameText}>{gameName}</span>
+          <span style={{
+            ...styles.codeWorksText,
+            opacity: animationState === 'fading' ? 0 : 1
+          }}>Code Works</span>
+          <span style={{
+            ...styles.gameTitleText,
+            opacity: animationState === 'complete' ? 1 : 0
+          }}>{gameTitle}</span>
         </div>
-
         <div style={styles.iconsContainer}>
           {icons.map((iconConfig, index) => {
             const IconComponent = iconConfig.icon
@@ -260,12 +195,12 @@ const Header = ({
                   key={index}
                   onClick={iconConfig.onClick}
                   style={{ 
-                    fontSize: '24px',
+                    fontSize: 18,
                     cursor: 'pointer', 
                     opacity: 1,
-                    lineHeight: '30px', 
-                    width: '30px', 
-                    height: '30px', 
+                    lineHeight: '32px', 
+                    width: '32px', 
+                    height: '32px', 
                     display: 'flex', 
                     alignItems: 'center', 
                     justifyContent: 'center'
@@ -280,8 +215,8 @@ const Header = ({
                 key={index}
                 onClick={iconConfig.onClick}
                 style={{
-                  width: '30px',
-                  height: '30px',
+                  width: '32px',
+                  height: '32px',
                   cursor: 'pointer',
                   color: '#60A5FA',
                   display: 'flex',

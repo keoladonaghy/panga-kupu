@@ -18,9 +18,7 @@ const App = () => (
       <LanguageProvider>
         <div style={{ minHeight: '100vh' }}>
           <Header 
-            languages={['ʻŌlelo', 'Kupu', 'Parau']}
-            rightText="Code Works"
-            gameName="Panga Kupu"
+            gameTitle="Panga Kupu"
             icons={[
               { icon: "ℹ️", onClick: () => console.log('Info modal') },
               { icon: "🌐", onClick: () => console.log('Language selector') }
