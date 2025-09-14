@@ -10,12 +10,15 @@ import Header from './Header';
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import ReactLanguageSelector from "./components/ReactLanguageSelector";
+import ReactInfoModal from "./components/ReactInfoModal";
+import { GAME_CONFIG } from "@/config/gameConfig";
 import { useState } from "react";
 
 const queryClient = new QueryClient();
 
 const App = () => {
   const [isLanguageSelectorOpen, setIsLanguageSelectorOpen] = useState(false);
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -25,8 +28,8 @@ const App = () => {
             <Header 
               gameTitle="Panga Kupu"
               icons={[
-                { icon: "ℹ️", onClick: () => console.log('Info modal - needs React-only implementation') },
-                { icon: "🌐", onClick: () => setIsLanguageSelectorOpen(true) }
+                { icon: GAME_CONFIG.icons.info, onClick: () => setIsInfoModalOpen(true) },
+                { icon: GAME_CONFIG.icons.language, onClick: () => setIsLanguageSelectorOpen(true) }
               ]}
             />
             
@@ -44,6 +47,11 @@ const App = () => {
             <ReactLanguageSelector 
               isOpen={isLanguageSelectorOpen}
               onClose={() => setIsLanguageSelectorOpen(false)}
+            />
+            
+            <ReactInfoModal 
+              isOpen={isInfoModalOpen}
+              onClose={() => setIsInfoModalOpen(false)}
             />
           </div>
         </LanguageProvider>

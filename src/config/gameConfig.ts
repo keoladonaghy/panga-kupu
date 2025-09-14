@@ -139,7 +139,7 @@ export const GAME_CONFIG = {
   // Icon Configuration
   icons: {
     // Shared icons across both games
-    info: 'ℹ️',
+    info: '📖',
     language: '🌐',
     hint: '💡',      // Lightbulb
     reveal: '👁️',    // Eye
