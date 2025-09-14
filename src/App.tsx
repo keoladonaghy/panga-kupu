@@ -9,14 +9,13 @@ import './styles/scrollPrevention.css';
 import Header from './Header';
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import { InfoModal } from "./components/modals/InfoModal";
-import LanguageDropdown from "./components/LanguageDropdown";
+import ReactLanguageSelector from "./components/ReactLanguageSelector";
 import { useState } from "react";
 
 const queryClient = new QueryClient();
 
 const App = () => {
-  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+  const [isLanguageSelectorOpen, setIsLanguageSelectorOpen] = useState(false);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -26,8 +25,8 @@ const App = () => {
             <Header 
               gameTitle="Panga Kupu"
               icons={[
-                { icon: "ℹ️", onClick: () => setIsInfoModalOpen(true) },
-                { icon: LanguageDropdown, onClick: () => {} }
+                { icon: "ℹ️", onClick: () => console.log('Info modal - needs React-only implementation') },
+                { icon: "🌐", onClick: () => setIsLanguageSelectorOpen(true) }
               ]}
             />
             
@@ -42,9 +41,9 @@ const App = () => {
               </div>
             </BrowserRouter>
             
-            <InfoModal 
-              isOpen={isInfoModalOpen}
-              handleClose={() => setIsInfoModalOpen(false)}
+            <ReactLanguageSelector 
+              isOpen={isLanguageSelectorOpen}
+              onClose={() => setIsLanguageSelectorOpen(false)}
             />
           </div>
         </LanguageProvider>

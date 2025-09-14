@@ -1,60 +1,65 @@
 import React, { useEffect, useState } from 'react'
+import { GAME_CONFIG, createHeaderStyle } from '@/config/gameConfig'
 
 // Simple header with just background and icons
-const createStyles = () => ({
-  headerGradient: {
-    position: 'fixed' as const,
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: -1,
-    pointerEvents: 'none' as const,
-    background: 'linear-gradient(135deg, #061428 0%, #0b2a3c 5%, #6d949e 50%, #07253a 80%, #020a14 100%)'
-  },
-  headerContainer: {
-    display: 'flex',
-    justifyContent: 'space-between' as const,
-    alignItems: 'baseline' as const,
-    width: '100%',
-    paddingTop: '2px',
-    paddingBottom: '16px',
-    paddingLeft: '8px',
-    paddingRight: '20px',
-    minHeight: '1.2em'
-  },
-  reoMoanaText: {
-    color: 'hsl(0 0% 96%)',
-    fontFamily: 'BCSans, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif',
-    fontSize: 14,
-    fontWeight: 800,
-    letterSpacing: 0.3,
-    lineHeight: 1
-  },
-  codeWorksText: {
-    color: 'hsl(0 0% 96%)',
-    fontFamily: 'BCSans, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif',
-    fontSize: 14,
-    fontWeight: 800,
-    letterSpacing: 0.3,
-    lineHeight: 1,
-    transition: 'opacity 1s ease-in-out'
-  },
-  gameTitleText: {
-    color: 'hsl(35, 85%, 58%)',
-    fontFamily: 'BCSans, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif',
-    fontSize: 14,
-    fontWeight: 800,
-    letterSpacing: 0.3,
-    lineHeight: 1,
-    transition: 'opacity 1s ease-in-out'
-  },
-  iconsContainer: {
-    display: 'flex',
-    alignItems: 'baseline' as const,
-    gap: '4px'
+const createStyles = () => {
+  const headerStyle = createHeaderStyle()
+  
+  return {
+    headerGradient: {
+      position: 'fixed' as const,
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      zIndex: -1,
+      pointerEvents: 'none' as const,
+      background: GAME_CONFIG.header.background
+    },
+    headerContainer: {
+      display: 'flex',
+      justifyContent: 'space-between' as const,
+      alignItems: 'baseline' as const,
+      width: '100%',
+      paddingTop: GAME_CONFIG.header.padding.top,
+      paddingBottom: GAME_CONFIG.header.padding.bottom,
+      paddingLeft: GAME_CONFIG.header.padding.left,
+      paddingRight: GAME_CONFIG.header.padding.right,
+      minHeight: '1.2em'
+    },
+    reoMoanaText: {
+      color: GAME_CONFIG.brand.backgroundColor,
+      fontFamily: GAME_CONFIG.typography.fontFamily,
+      fontSize: GAME_CONFIG.typography.header.fontSize,
+      fontWeight: GAME_CONFIG.typography.header.fontWeight,
+      letterSpacing: GAME_CONFIG.typography.header.letterSpacing,
+      lineHeight: GAME_CONFIG.typography.header.lineHeight
+    },
+    codeWorksText: {
+      color: GAME_CONFIG.brand.backgroundColor,
+      fontFamily: GAME_CONFIG.typography.fontFamily,
+      fontSize: GAME_CONFIG.typography.header.fontSize,
+      fontWeight: GAME_CONFIG.typography.header.fontWeight,
+      letterSpacing: GAME_CONFIG.typography.header.letterSpacing,
+      lineHeight: GAME_CONFIG.typography.header.lineHeight,
+      transition: GAME_CONFIG.animations.headerTransition
+    },
+    gameTitleText: {
+      color: GAME_CONFIG.brand.primaryColor,
+      fontFamily: GAME_CONFIG.typography.fontFamily,
+      fontSize: GAME_CONFIG.typography.header.fontSize,
+      fontWeight: GAME_CONFIG.typography.header.fontWeight,
+      letterSpacing: GAME_CONFIG.typography.header.letterSpacing,
+      lineHeight: GAME_CONFIG.typography.header.lineHeight,
+      transition: GAME_CONFIG.animations.headerTransition
+    },
+    iconsContainer: {
+      display: 'flex',
+      alignItems: 'baseline' as const,
+      gap: GAME_CONFIG.layout.iconGap
+    }
   }
-})
+}
 
 interface HeaderIcon {
   icon: React.ComponentType<{ className?: string; onClick?: () => void }> | string
@@ -100,8 +105,8 @@ const Header = ({ icons, gameTitle }: HeaderProps) => {
           setAnimationState('complete')
           setHasAnimated(true)
           sessionStorage.setItem('headerAnimationPlayed', 'true')
-        }, 1000) // 1 second fade out
-      }, 2000) // 2 seconds hold on "Code Works"
+        }, GAME_CONFIG.header.animation.fadeTime) // fade out time
+      }, GAME_CONFIG.header.animation.holdTime) // hold time for "Code Works"
     }
 
     timeoutId = setTimeout(runAnimation, 100)
@@ -131,12 +136,12 @@ const Header = ({ icons, gameTitle }: HeaderProps) => {
                     key={index}
                     onClick={iconConfig.onClick}
                     style={{ 
-                      fontSize: 18,
+                      fontSize: GAME_CONFIG.layout.iconFontSize,
                       cursor: 'pointer', 
                       opacity: 1,
-                      lineHeight: '32px', 
-                      width: '32px', 
-                      height: '32px', 
+                      lineHeight: GAME_CONFIG.layout.iconSize, 
+                      width: GAME_CONFIG.layout.iconSize, 
+                      height: GAME_CONFIG.layout.iconSize, 
                       display: 'flex', 
                       alignItems: 'center', 
                       justifyContent: 'center'
@@ -151,8 +156,8 @@ const Header = ({ icons, gameTitle }: HeaderProps) => {
                   key={index}
                   onClick={iconConfig.onClick}
                   style={{
-                    width: '32px',
-                    height: '32px',
+                    width: GAME_CONFIG.layout.iconSize,
+                    height: GAME_CONFIG.layout.iconSize,
                     cursor: 'pointer',
                     color: '#60A5FA',
                     display: 'flex',
