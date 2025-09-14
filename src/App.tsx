@@ -9,36 +9,48 @@ import './styles/scrollPrevention.css';
 import Header from './Header';
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import { InfoModal } from "./components/modals/InfoModal";
+import LanguageDropdown from "./components/LanguageDropdown";
+import { useState } from "react";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <LanguageProvider>
-        <div style={{ minHeight: '100vh' }}>
-          <Header 
-            gameTitle="Panga Kupu"
-            icons={[
-              { icon: "ℹ️", onClick: () => console.log('Info modal') },
-              { icon: "🌐", onClick: () => console.log('Language selector') }
-            ]}
-          />
-          
-          <BrowserRouter basename={import.meta.env.PROD ? "/panga-kupu" : "/"}>
-            <div className="max-w-7xl mx-auto sm:px-6 lg:px-8" style={{ paddingTop: '2px' }}>
-              <Toaster />
-              <Sonner />
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </div>
-          </BrowserRouter>
-        </div>
-      </LanguageProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  const [isInfoModalOpen, setIsInfoModalOpen] = useState(false);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <LanguageProvider>
+          <div style={{ minHeight: '100vh' }}>
+            <Header 
+              gameTitle="Panga Kupu"
+              icons={[
+                { icon: "ℹ️", onClick: () => setIsInfoModalOpen(true) },
+                { icon: LanguageDropdown, onClick: () => {} }
+              ]}
+            />
+            
+            <BrowserRouter basename={import.meta.env.PROD ? "/panga-kupu" : "/"}>
+              <div className="max-w-7xl mx-auto sm:px-6 lg:px-8" style={{ paddingTop: '2px' }}>
+                <Toaster />
+                <Sonner />
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </div>
+            </BrowserRouter>
+            
+            <InfoModal 
+              isOpen={isInfoModalOpen}
+              handleClose={() => setIsInfoModalOpen(false)}
+            />
+          </div>
+        </LanguageProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

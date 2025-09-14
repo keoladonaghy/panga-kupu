@@ -2271,8 +2271,8 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
                          transition-all duration-200 hover:scale-110
                          flex items-center justify-center mb-2"
                 style={{
-                  backgroundColor: 'hsl(210, 30%, 75%)',
-                  color: 'hsl(210, 30%, 20%)'
+                  backgroundColor: 'hsl(35, 85%, 58%)',
+                  color: 'hsl(0, 0%, 20%)'
                 }}
                 title="Refresh Game"
               >
@@ -2331,8 +2331,8 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
                          transition-all duration-200 hover:scale-110 disabled:scale-100 disabled:cursor-not-allowed
                          flex items-center justify-center"
                 style={{
-                  backgroundColor: (!gameState.currentWord || buttonsDisabled) ? 'hsl(210, 15%, 50%)' : 'hsl(210, 30%, 75%)',
-                  color: (!gameState.currentWord || buttonsDisabled) ? 'hsl(0, 0%, 70%)' : 'hsl(210, 30%, 20%)'
+                  backgroundColor: (!gameState.currentWord || buttonsDisabled) ? 'hsl(210, 15%, 50%)' : 'hsl(35, 85%, 58%)',
+                  color: (!gameState.currentWord || buttonsDisabled) ? 'hsl(0, 0%, 70%)' : 'hsl(0, 0%, 20%)'
                 }}
                 title="Clear current word"
               >
@@ -2355,8 +2355,8 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
                            transition-all duration-200 hover:scale-110 disabled:scale-100 disabled:cursor-not-allowed
                            flex items-center justify-center mb-2"
                   style={{
-                    backgroundColor: (gameState.hintAttemptsLeft <= 0 || buttonsDisabled) ? 'hsl(210, 15%, 50%)' : 'hsl(210, 30%, 75%)',
-                    color: (gameState.hintAttemptsLeft <= 0 || buttonsDisabled) ? 'hsl(0, 0%, 70%)' : 'hsl(210, 30%, 20%)'
+                    backgroundColor: (gameState.hintAttemptsLeft <= 0 || buttonsDisabled) ? 'hsl(210, 15%, 50%)' : 'hsl(35, 85%, 58%)',
+                    color: (gameState.hintAttemptsLeft <= 0 || buttonsDisabled) ? 'hsl(0, 0%, 70%)' : 'hsl(0, 0%, 20%)'
                   }}
                   title={gameState.hintAttemptsLeft > 0 ? `Hint (${gameState.hintAttemptsLeft} left)` : 'No hints left'}
                 >
@@ -2395,8 +2395,8 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
                            transition-all duration-200 hover:scale-110 disabled:scale-100 disabled:cursor-not-allowed
                            flex items-center justify-center mb-2"
                   style={{
-                    backgroundColor: buttonsDisabled ? 'hsl(210, 15%, 50%)' : 'hsl(210, 30%, 75%)',
-                    color: buttonsDisabled ? 'hsl(0, 0%, 70%)' : 'hsl(210, 30%, 20%)'
+                    backgroundColor: buttonsDisabled ? 'hsl(210, 15%, 50%)' : 'hsl(35, 85%, 58%)',
+                    color: buttonsDisabled ? 'hsl(0, 0%, 70%)' : 'hsl(0, 0%, 20%)'
                   }}
                   title="Reveal all words"
                 >
@@ -2453,8 +2453,8 @@ const newFoundWords = [...gameState.foundWords, wordWithPosition];
               style={{
                 left: '50%',
                 top: '50%',
-                backgroundColor: (!gameState.currentWord || buttonsDisabled) ? 'hsl(210, 15%, 50%)' : 'hsl(210, 30%, 75%)',
-                color: (!gameState.currentWord || buttonsDisabled) ? 'hsl(0, 0%, 70%)' : 'hsl(210, 30%, 20%)'
+                backgroundColor: (!gameState.currentWord || buttonsDisabled) ? 'hsl(210, 15%, 50%)' : 'hsl(35, 85%, 58%)',
+                color: (!gameState.currentWord || buttonsDisabled) ? 'hsl(0, 0%, 70%)' : 'hsl(0, 0%, 20%)'
               }}
               title="Backspace (Delete key)"
             >
